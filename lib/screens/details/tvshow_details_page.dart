@@ -19,13 +19,16 @@ class _TVShowDetailsState extends State<TVShowDetails> {
 
   @override
   void initState() {
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      Provider.of<Moview>(context, listen: false).tvShowId = widget.id;
-      Provider.of<Moview>(context, listen: false).favoriteTvId = widget.id;
-      Provider.of<Moview>(context, listen: false).setId();
-      Provider.of<Moview>(context, listen: false).getTvShowDetails();
-    });
     super.initState();
+    print("tv show id: ${widget.id}");
+    var moview = Provider.of<Moview>(context, listen: false);
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+      moview.favoriteType = 'tv';
+      moview.favoriteMediaId = widget.id;
+      moview.tvShowId = widget.id;
+      moview.setAndGetId();
+      moview.getTvShowDetails();
+    });
   }
 
   @override
@@ -99,28 +102,23 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                                 style: TextStyle(fontSize: 20),
                               ),
                               IconButton(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    await moview.setAndGetId();
                                     if (moview.theId == null) {
                                       setState(() {
                                         isFavorite = !isFavorite;
                                         moview.theId = moview.favoriteId;
                                       });
-                                      moview.favoriteType = 'tv';
                                       moview.isFave = isFavorite;
-                                      moview.favoriteTvId = widget.id;
-                                      moview.setFavorite();
+                                      await moview.setFavorite();
                                     } else if (moview.theId ==
                                         moview.favoriteId) {
                                       setState(() {
                                         isFavorite = !isFavorite;
                                       });
                                       moview.isFave = isFavorite;
-                                      moview.favoriteType = 'tv';
-                                      moview.favoriteTvId = widget.id;
-                                      moview.setId().then((value) => moview
-                                          .unsetFavorite()
-                                          .then((value) =>
-                                              moview.favoriteId = null));
+                                      await moview.unsetFavorite().whenComplete(
+                                          () => moview.favoriteId = null);
                                     }
                                   },
                                   icon: moview.theId == moview.favoriteId

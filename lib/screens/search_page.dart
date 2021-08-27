@@ -12,15 +12,11 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   var input;
 
-  @override
-  void initState() {
-    Provider.of<Moview>(context, listen: false).genreMovieNameList.clear();
-    Provider.of<Moview>(context, listen: false).genreMovieIdList.clear();
-    // if(input!=null){
-    //   Provider.of<Moview>(context, listen: false).getSearchResults();
-    // }
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   var moview = Provider.of<Moview>(context, listen: false);
+  // }
 
   @override
   Widget build(BuildContext context) {

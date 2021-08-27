@@ -35,10 +35,15 @@ class _GenresPageState extends State<GenresPage> {
 
   @override
   void initState() {
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      Provider.of<Moview>(context, listen: false).getMovieGenreList();
-    });
     super.initState();
+    var moview = Provider.of<Moview>(context, listen: false);
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+      if(moview.genreMovieNameList.isEmpty){
+        await moview.getMovieGenreList();
+      }else{
+        return null;
+      }
+    });
   }
 
   @override

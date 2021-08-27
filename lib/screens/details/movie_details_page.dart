@@ -17,11 +17,16 @@ class _MovieDetailsState extends State<MovieDetails> {
 
   @override
   void initState() {
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      Provider.of<Moview>(context, listen: false).movieId = widget.id;
-      Provider.of<Moview>(context, listen: false).getMovieDetails();
-    });
     super.initState();
+    print("movie id: ${widget.id}");
+    var moview = Provider.of<Moview>(context, listen: false);
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      moview.favoriteType = 'movie';
+      moview.favoriteMediaId = widget.id;
+      moview.movieId = widget.id;
+      moview.setAndGetId();
+      moview.getMovieDetails();
+    });
   }
 
   @override
@@ -93,17 +98,33 @@ class _MovieDetailsState extends State<MovieDetails> {
                                 style: TextStyle(fontSize: 20),
                               ),
                               IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      isFavorite = !isFavorite;
-                                    });
+                                  onPressed: () async {
+                                    await moview.setAndGetId();
+                                    if (moview.theId == null) {
+                                      setState(() {
+                                        isFavorite = !isFavorite;
+                                        moview.theId = moview.favoriteId;
+                                      });
+                                      moview.isFave = isFavorite;
+                                      await moview.setFavorite();
+                                    } else if (moview.theId ==
+                                        moview.favoriteId) {
+                                      setState(() {
+                                        isFavorite = !isFavorite;
+                                      });
+                                      moview.isFave = isFavorite;
+                                      await moview.unsetFavorite().whenComplete(
+                                              () => moview.favoriteId = null);
+                                    }
                                   },
-                                  icon: isFavorite == false
-                                      ? Icon(Icons.favorite_border_rounded)
+                                  icon: moview.theId == moview.favoriteId
+                                      ? Icon(
+                                    Icons.favorite_rounded,
+                                    color: Colors.red,
+                                  )
                                       : Icon(
-                                          Icons.favorite_rounded,
-                                          color: Colors.red,
-                                        )),
+                                    Icons.favorite_border_rounded,
+                                  )),
                             ],
                           ),
                         )

@@ -109,7 +109,7 @@ class Moview with ChangeNotifier {
 
   ///favorite
   var favoriteType;
-  var favoriteTvId;
+  var favoriteMediaId;
   var objectId;
   var isFave;
   var favoriteId;
@@ -123,18 +123,21 @@ class Moview with ChangeNotifier {
 
   ///Get Favorites
   var dbMovieId;
+  var dbFavoriteType;
+  var dbResponse;
   var favoriteNumbers;
-  var favoriteTvShowId;
-  var favoriteTvShowName;
-  var favoriteTvShowPoster;
-  var favoriteTvShowFirstAir;
-  var favoriteTvShowPosterUrl;
+  var favoritePageId;
+  var favoritePageName;
+  var favoritePagePoster;
+  var favoritePageYear;
+  var favoritePagePosterUrl;
   var iiindex;
   List dbMovieIdList = [];
-  List favoriteTvShowIdList = [];
-  List favoriteTvShowNameList = [];
-  List favoriteTvShowFirstAirList = [];
-  List favoriteTvShowPosterUrlList = [];
+  List dbFavoriteTypeList = [];
+  List favoritePageIdList = [];
+  List favoritePageNameList = [];
+  List favoritePageYearList = [];
+  List favoritePagePosterUrlList = [];
 
   Future getMovieGenreList() async {
     genreMovieNameList.clear();
@@ -196,7 +199,6 @@ class Moview with ChangeNotifier {
     }
     movieCoverUrl = imageUrl + movieCover;
     moviePosterUrl = imageUrl + moviePoster;
-    print(movieCoverUrl);
     notifyListeners();
   }
 
@@ -204,8 +206,8 @@ class Moview with ChangeNotifier {
     tvShowGenreList.clear();
     tvShowLanguagesList.clear();
     tvShowCountryList.clear();
-    var url = Uri.https(apiUrl, '/3/tv/$tvShowId',
-        {'api_key': '$apiKey', 'language': 'en-US'});
+    var url = Uri.https(
+        apiUrl, '/3/tv/$tvShowId', {'api_key': '$apiKey', 'language': 'en-US'});
     Response response = await get(url);
     var json = jsonDecode(response.body);
     tvShowId = json['id'];
@@ -339,56 +341,66 @@ class Moview with ChangeNotifier {
 
   ///Database
   Future setFavorite() async {
-    if (favoriteType == 'tv') {
-      ParseUser user = await ParseUser.currentUser();
-      final acl = ParseACL(owner: user);
-      acl.setPublicReadAccess(allowed: false);
-      acl.setPublicWriteAccess(allowed: false);
-      final data = ParseObject('favorites')
-        ..set('movieId', tvShowId)
-        ..set('isFavorite', isFave)
-        ..set('id', favoriteId)
-        ..setACL(acl);
-      final response = await data.save();
-      objectId = (response.results!.first as ParseObject).objectId;
-      print('movie with $objectId id saved successfully.');
-    }
+    // set security
+    ParseUser user = await ParseUser.currentUser();
+    final acl = ParseACL(owner: user);
+    acl.setPublicReadAccess(allowed: false);
+    acl.setPublicWriteAccess(allowed: false);
+    // set tv show data to database
+    final data = ParseObject('favorites')
+      ..set('mediaId', favoriteMediaId)
+      ..set('isFavorite', isFave)
+      ..set('id', favoriteId)
+      ..set('favoriteType', favoriteType)
+      ..setACL(acl);
+    final response = await data.save();
+    objectId = (response.results!.first as ParseObject).objectId;
+    print('$favoriteType with $objectId id saved successfully!');
+
     notifyListeners();
   }
 
-  Future setId() async {
+  Future setAndGetId() async {
     theObject = null;
     theId = null;
     favoriteId = null;
-    var url = Uri.https(apiUrl, '/3/tv/$tvShowId',
+    // set id for media in database
+    var url = Uri.https(apiUrl, '/3/$favoriteType/$favoriteMediaId',
         {'api_key': '$apiKey', 'language': 'en-US'});
     ParseUser user = await ParseUser.currentUser();
     var _userId = user.objectId;
-    var _id =
-        _userId.toString() + 'tv' + favoriteTvId.toString() + url.toString();
+    var _id = _userId.toString() +
+        '$favoriteType' +
+        favoriteMediaId.toString() +
+        url.toString();
     favoriteId = _id.hashCode;
-    QueryBuilder<ParseObject> queryT =
+    // find if the movie/tv is marked as favorite or not
+    QueryBuilder<ParseObject> query =
         QueryBuilder<ParseObject>(ParseObject('favorites'))
           ..whereEqualTo('id', favoriteId);
-    final response = await queryT.find();
-    theObject = response.single.objectId;
-    print('object is: $theObject');
-    theId = response.single.get('id');
-    print('id is: $theId');
+    final response = await query.find();
+    if (response.isNotEmpty) {
+      theObject = response.single.objectId;
+      theId = response.single.get('id');
+      print(
+          '$favoriteType is in favorite list.\nid is: $theId,\tobjectId is: $theObject');
+    } else {
+      print("this $favoriteType is not user's favorite!");
+    }
     notifyListeners();
   }
 
   Future unsetFavorite() async {
-    if (favoriteType == 'tv') {
-      final data = ParseObject('favorites')
-        ..objectId = theObject
-        ..delete();
-      await data.save();
-      print('movie with $theObject id deleted successfully.');
-    }
+    // delete complete row in database
+    final data = ParseObject('favorites')
+      ..objectId = theObject
+      ..delete();
+    await data.save();
+    print('movie/tv with $theObject id deleted successfully.');
     notifyListeners();
   }
 
+  ///Profile
   Future getUser() async {
     ParseUser parseUser = await ParseUser.currentUser();
     username = parseUser.username;
@@ -398,36 +410,45 @@ class Moview with ChangeNotifier {
   }
 
   Future favoritesList() async {
-    favoriteTvShowIdList.clear();
-    favoriteTvShowNameList.clear();
-    favoriteTvShowFirstAirList.clear();
-    favoriteTvShowPosterUrlList.clear();
+    favoriteNumbers = null;
+    favoritePageIdList.clear();
+    favoritePageNameList.clear();
+    favoritePageYearList.clear();
+    favoritePagePosterUrlList.clear();
+    dbFavoriteTypeList.clear();
     QueryBuilder<ParseObject> queryBuilder =
         QueryBuilder<ParseObject>(ParseObject('favorites'));
     var i = await queryBuilder.count();
     favoriteNumbers = i.count;
-    print(favoriteNumbers);
-    var n = favoriteNumbers - 1;
-    final dbResponse = await queryBuilder.find();
-    for (var i = 0; i <= n; i++) {
-      dbMovieId = dbResponse.elementAt(i).get('movieId');
-      var url = Uri.https(apiUrl, '/3/tv/$dbMovieId',
+    print('total favorites: $favoriteNumbers');
+    dbResponse = await queryBuilder.find();
+    for (var i = 0; i <= favoriteNumbers-1; i++) {
+      dbMovieId = dbResponse.elementAt(i).get('mediaId');
+      dbFavoriteType = dbResponse.elementAt(i).get('favoriteType');
+      dbFavoriteTypeList.add(dbFavoriteType);
+      var url = Uri.https(apiUrl, '/3/$dbFavoriteType/$dbMovieId',
           {'api_key': '$apiKey', 'language': 'en-US'});
-      print(url.toString());
       Response response = await get(url);
       var json = jsonDecode(response.body);
-      favoriteTvShowId = json['id'];
-      print('id: $favoriteTvShowId');
-      favoriteTvShowName = json['name'];
-      print('name: $favoriteTvShowName');
-      favoriteTvShowPoster = json['poster_path'];
-      favoriteTvShowPosterUrl = imageUrl + favoriteTvShowPoster;
-      favoriteTvShowFirstAir = json['first_air_date'];
-      favoriteTvShowIdList.add(favoriteTvShowId);
-      favoriteTvShowNameList.add(favoriteTvShowName);
-      print('list: $favoriteTvShowNameList');
-      favoriteTvShowPosterUrlList.add(favoriteTvShowPosterUrl);
-      favoriteTvShowFirstAirList.add(favoriteTvShowFirstAir);
+      favoritePageId = json['id'];
+      if (dbFavoriteType == 'tv'){
+        favoritePageName = json['name'];
+        favoritePageNameList.add(favoritePageName);
+      } else {
+        favoritePageName = json['title'];
+        favoritePageNameList.add(favoritePageName);
+      }
+      favoritePagePoster = json['poster_path'];
+      favoritePagePosterUrl = imageUrl + favoritePagePoster;
+      if (dbFavoriteType == 'tv'){
+        favoritePageYear = json['first_air_date'];
+        favoritePageYearList.add(favoritePageYear);
+      } else {
+        favoritePageYear = json['release_date'];
+        favoritePageYearList.add(favoritePageYear);
+      }
+      favoritePageIdList.add(favoritePageId);
+      favoritePagePosterUrlList.add(favoritePagePosterUrl);
     }
     notifyListeners();
   }

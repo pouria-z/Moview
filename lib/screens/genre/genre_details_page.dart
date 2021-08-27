@@ -23,15 +23,15 @@ class GenreDetails extends StatefulWidget {
 class _GenreDetailsState extends State<GenreDetails> {
   @override
   void initState() {
-    print(widget.id);
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      Provider.of<Moview>(context, listen: false).type = widget.type;
-      Provider.of<Moview>(context, listen: false).genreMovieId = widget.id;
-      Provider.of<Moview>(context, listen: false).genreResultPage =
-          widget.pageNumber;
-      Provider.of<Moview>(context, listen: false).getGenreResultList();
-    });
     super.initState();
+    print("genre id: ${widget.id}");
+    var moview = Provider.of<Moview>(context, listen: false);
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+      moview.type = widget.type;
+      moview.genreMovieId = widget.id;
+      moview.genreResultPage = widget.pageNumber;
+      await moview.getGenreResultList();
+    });
   }
 
   @override
@@ -58,7 +58,7 @@ class _GenreDetailsState extends State<GenreDetails> {
                               moview.movieGenreList.clear();
                               moview.movieLanguagesList.clear();
                               moview.movieCountryList.clear();
-                              if(moview.movieName!=null){
+                              if (moview.movieName != null) {
                                 moview.movieName = null;
                               }
                               Navigator.push(
