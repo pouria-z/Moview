@@ -24,9 +24,6 @@ class _SearchPageState extends State<SearchPage> {
     return Consumer<Moview>(
       builder: (context, value, child) {
         return Scaffold(
-          appBar: AppBar(
-            title: Text("Moview"),
-          ),
           body: Padding(
             padding: EdgeInsets.all(10),
             child: Column(

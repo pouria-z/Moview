@@ -4,7 +4,6 @@ import 'package:moview/services.dart';
 import 'package:moview/screens/genre/genres_page.dart';
 import 'package:moview/screens/search_page.dart';
 import 'package:moview/screens/profile_page.dart';
-import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -40,6 +39,10 @@ class _HomePageState extends State<HomePage>
     return Consumer<Moview>(
       builder: (context, value, child) {
         return Scaffold(
+          appBar: AppBar(
+            title: Text("Moview"),
+            elevation: 0,
+          ),
           body: TabBarView(
             children: [
               GenresPage(),

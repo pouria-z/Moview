@@ -40,7 +40,7 @@ class _GenreDetailsState extends State<GenreDetails> {
     return Scaffold(body: SafeArea(
       child: Consumer<Moview>(
         builder: (context, value, child) {
-          return moview.genreResultMovieNameList.isEmpty
+          return moview.genreResultNameList.isEmpty
               ? Center(child: CircularProgressIndicator())
               : Column(
                   children: [
@@ -52,7 +52,7 @@ class _GenreDetailsState extends State<GenreDetails> {
                         itemCount: 20,
                         itemBuilder: (context, index) {
                           return ListTile(
-                            title: Text(moview.genreResultMovieNameList[index]),
+                            title: Text(moview.genreResultNameList[index]),
                             leading: Icon(Icons.ac_unit_rounded),
                             onTap: () {
                               moview.movieGenreList.clear();
@@ -64,9 +64,13 @@ class _GenreDetailsState extends State<GenreDetails> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => MovieDetails(
-                                      id: moview.genreResultIdList[index],
-                                    ),
+                                    builder: (context) => widget.type == 'movie'
+                                        ? MovieDetails(
+                                            id: moview.genreResultIdList[index],
+                                          )
+                                        : TVShowDetails(
+                                            id: moview.genreResultIdList[index],
+                                          ),
                                   ));
                             },
                           );
@@ -84,8 +88,8 @@ class _GenreDetailsState extends State<GenreDetails> {
                           return TextButton(
                               onPressed: () {
                                 moview.genreResultPage = i;
-                                moview.genreResultTvNameList.clear();
-                                moview.genreResultMovieNameList.clear();
+                                moview.genreResultNameList.clear();
+                                moview.genreResultNameList.clear();
                                 moview.genreResultPosterList.clear();
                                 moview.genreResultRateList.clear();
                                 moview.getGenreResultList();

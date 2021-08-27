@@ -53,8 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
       moview.searchMediaTypeList.clear();
       moview.searchPosterUrlList.clear();
       moview.genreResultPageList.clear();
-      moview.genreResultTvNameList.clear();
-      moview.genreResultMovieNameList.clear();
+      moview.genreResultNameList.clear();
       moview.genreResultIdList.clear();
       moview.genreResultPosterList.clear();
       moview.genreResultPosterUrlList.clear();

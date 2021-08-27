@@ -92,16 +92,14 @@ class Moview with ChangeNotifier {
 
   ///Genre Result List
   var genreResultPage;
-  var genreResultTvName;
-  var genreResultMovieName;
+  var genreResultName;
   var genreResultId;
   var genreResultPoster;
   var genreResultPosterUrl;
   var genreResultRate;
   var genreResultTotalPages;
   List genreResultPageList = [];
-  List genreResultTvNameList = [];
-  List genreResultMovieNameList = [];
+  List genreResultNameList = [];
   List genreResultIdList = [];
   List genreResultPosterList = [];
   List genreResultPosterUrlList = [];
@@ -302,8 +300,7 @@ class Moview with ChangeNotifier {
   }
 
   Future getGenreResultList() async {
-    genreResultTvNameList.clear();
-    genreResultMovieNameList.clear();
+    genreResultNameList.clear();
     genreResultPosterList.clear();
     genreResultRateList.clear();
     genreResultIdList.clear();
@@ -321,11 +318,11 @@ class Moview with ChangeNotifier {
     genreResultTotalPages = json['total_pages'];
     for (var item in json['results']) {
       if (type == 'tv') {
-        genreResultTvName = item['name'];
-        genreResultTvNameList.add(genreResultTvName);
+        genreResultName = item['name'];
+        genreResultNameList.add(genreResultName);
       } else if (type == 'movie') {
-        genreResultMovieName = item['title'];
-        genreResultMovieNameList.add(genreResultMovieName);
+        genreResultName = item['title'];
+        genreResultNameList.add(genreResultName);
       }
       genreResultId = item['id'];
       genreResultIdList.add(genreResultId);
