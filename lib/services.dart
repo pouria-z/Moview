@@ -136,6 +136,7 @@ class Moview with ChangeNotifier {
   List favoritePageNameList = [];
   List favoritePageYearList = [];
   List favoritePagePosterUrlList = [];
+  bool isLoading = false;
 
   Future getMovieGenreList() async {
     genreMovieNameList.clear();
@@ -407,6 +408,7 @@ class Moview with ChangeNotifier {
   }
 
   Future favoritesList() async {
+    isLoading = true;
     favoriteNumbers = null;
     favoritePageIdList.clear();
     favoritePageNameList.clear();
@@ -447,6 +449,7 @@ class Moview with ChangeNotifier {
       favoritePageIdList.add(favoritePageId);
       favoritePagePosterUrlList.add(favoritePagePosterUrl);
     }
+    isLoading = false;
     notifyListeners();
   }
 }

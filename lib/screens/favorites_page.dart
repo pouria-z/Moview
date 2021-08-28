@@ -15,9 +15,16 @@ class _FavoritesPageState extends State<FavoritesPage> {
     super.initState();
     var moview = Provider.of<Moview>(context, listen: false);
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      moview.favoritesList();
+      if (moview.isLoading == false){
+
+          moview.favoritesList();
+
+      } else {
+        return null;
+      }
     });
   }
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +32,15 @@ class _FavoritesPageState extends State<FavoritesPage> {
     return Consumer<Moview>(
       builder: (context, value, child) {
         return Scaffold(
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              setState(() {
+                moview.favoritesList();
+              });
+            },
+            elevation: 7,
+            child: Icon(Icons.refresh_rounded),
+          ),
           body: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -34,7 +50,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       ? Center(child: Text("no data!"))
                       : ListView.builder(
                           shrinkWrap: true,
-                          itemCount: moview.favoriteNumbers,
+                          itemCount: moview.favoritePageNameList.length,
                           itemBuilder: (context, index) {
                             return ListTile(
                               leading: Text(

@@ -59,6 +59,7 @@ class _HomePageState extends State<HomePage>
           bottomNavigationBar: Material(
             color: Theme.of(context).primaryColor,
             child: TabBar(
+
               controller: tabController,
               isScrollable: false,
               tabs: [
