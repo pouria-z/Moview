@@ -11,12 +11,34 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   var input;
+  ScrollController _scrollController = ScrollController();
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   var moview = Provider.of<Moview>(context, listen: false);
-  // }
+  @override
+  void initState() {
+    super.initState();
+    var moview = Provider.of<Moview>(context, listen: false);
+    moview.searchPage = 1;
+    _scrollController.addListener(() async {
+      print("scroller is moving");
+      if (moview.searchNameList.isNotEmpty &&
+          _scrollController.position.pixels ==
+              _scrollController.position.maxScrollExtent &&
+          moview.searchPage <= moview.searchTotalPages) {
+        print("if condition is true");
+        moview.searchPage = moview.searchPage + 1;
+        print(moview.searchPage);
+        setState(() {
+          moview.getSearchResults();
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,22 +62,26 @@ class _SearchPageState extends State<SearchPage> {
                 ),
                 TextButton(
                     onPressed: () {
-                      moview.searchNameList.clear();
-                      moview.searchIdList.clear();
-                      moview.searchInput = input;
-                      moview.getSearchResults();
+                      setState(() {
+                        moview.searchPage = 1;
+                        moview.searchNameList.clear();
+                        moview.searchIdList.clear();
+                        moview.searchInput = input;
+                        moview.getSearchResults();
+                      });
                     },
                     child: Text("Search")),
                 moview.searchNameList.isEmpty
                     ? Text("no result")
                     : Expanded(
-                      child: Column(
+                        child: Column(
                           children: [
                             Expanded(
-                              flex: 15,
                               child: ListView.builder(
+                                controller: _scrollController,
+                                physics: BouncingScrollPhysics(),
                                 shrinkWrap: true,
-                                itemCount: moview.count - moview.personCount,
+                                itemCount: moview.searchNameList.length,
                                 itemBuilder: (context, index) {
                                   return ListTile(
                                     leading: Text(
@@ -78,7 +104,8 @@ class _SearchPageState extends State<SearchPage> {
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => TVShowDetails(
+                                              builder: (context) =>
+                                                  TVShowDetails(
                                                 id: moview.searchIdList[index],
                                               ),
                                             ));
@@ -88,8 +115,10 @@ class _SearchPageState extends State<SearchPage> {
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => MovieDetails(
-                                                  id: moview.searchIdList[index]),
+                                              builder: (context) =>
+                                                  MovieDetails(
+                                                      id: moview
+                                                          .searchIdList[index]),
                                             ));
                                       }
                                     },
@@ -97,28 +126,20 @@ class _SearchPageState extends State<SearchPage> {
                                 },
                               ),
                             ),
-                            Expanded(
-                              flex: 1,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                scrollDirection: Axis.horizontal,
-                                itemCount: moview.searchTotalPages,
-                                itemBuilder: (context, index) {
-                                  var i = index + 1;
-                                  return TextButton(
-                                      onPressed: () {
-                                        moview.searchPage = i;
-                                        moview.searchIdList.clear();
-                                        moview.searchNameList.clear();
-                                        moview.getSearchResults();
-                                      },
-                                      child: Text(i.toString()));
-                                },
-                              ),
-                            ),
+                            moview.searchIsLoading == false
+                                ? Container()
+                                : SizedBox(
+                                    height:
+                                        MediaQuery.of(context).size.height / 15,
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 1.2,
+                                      ),
+                                    ),
+                                  ),
                           ],
                         ),
-                    ),
+                      ),
               ],
             ),
           ),

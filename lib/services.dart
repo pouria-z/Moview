@@ -69,6 +69,7 @@ class Moview with ChangeNotifier {
   var tvShowTagLine;
 
   ///Search Result
+  bool searchIsLoading = false;
   var searchPage;
   var searchInput;
   var searchTotalPages;
@@ -91,6 +92,7 @@ class Moview with ChangeNotifier {
   var personCount = 0;
 
   ///Genre Result List
+  bool genreResultListIsLoading = false;
   var genreResultPage;
   var genreResultName;
   var genreResultId;
@@ -129,7 +131,6 @@ class Moview with ChangeNotifier {
   var favoritePagePoster;
   var favoritePageYear;
   var favoritePagePosterUrl;
-  var iiindex;
   List dbMovieIdList = [];
   List dbFavoriteTypeList = [];
   List favoritePageIdList = [];
@@ -254,10 +255,10 @@ class Moview with ChangeNotifier {
     notifyListeners();
   }
 
-  Future getSearchResults() async {
-    searchMediaTypeList.clear();
-    count = 0;
-    personCount = 0;
+  getSearchResults() async {
+    searchIsLoading = true;
+    // count = 0;
+    // personCount = 0;
     var url = Uri.https(apiUrl, '/3/search/multi', {
       'api_key': '$apiKey',
       'language': 'en-US',
@@ -297,14 +298,12 @@ class Moview with ChangeNotifier {
     }
     print('there are $personCount persons');
     print('result is ${count - personCount}');
+    searchIsLoading = false;
     notifyListeners();
   }
 
-  Future getGenreResultList() async {
-    genreResultNameList.clear();
-    genreResultPosterList.clear();
-    genreResultRateList.clear();
-    genreResultIdList.clear();
+  getGenreResultList() async {
+    genreResultListIsLoading = true;
     var url = Uri.https(apiUrl, '/3/discover/$type', {
       'api_key': '$apiKey',
       'language': 'en-US',
@@ -334,6 +333,7 @@ class Moview with ChangeNotifier {
       //genreResultPosterUrl = imageUrl + genreResultPoster;
       //genreResultPosterUrlList.add(genreResultPosterUrl);
     }
+    genreResultListIsLoading = false;
     notifyListeners();
   }
 

@@ -21,17 +21,42 @@ class GenreDetails extends StatefulWidget {
 }
 
 class _GenreDetailsState extends State<GenreDetails> {
+  ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
-    print("genre id: ${widget.id}");
     var moview = Provider.of<Moview>(context, listen: false);
+    print("genre id: ${widget.id}");
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
       moview.type = widget.type;
       moview.genreMovieId = widget.id;
       moview.genreResultPage = widget.pageNumber;
+      setState(() {
+        moview.genreResultNameList.clear();
+        moview.genreResultPosterList.clear();
+        moview.genreResultRateList.clear();
+        moview.genreResultIdList.clear();
+      });
       await moview.getGenreResultList();
     });
+    _scrollController.addListener(() async {
+      print("scroller is moving");
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent && moview.genreResultPage <= moview.genreResultTotalPages) {
+        print("if condition is true");
+        moview.genreResultPage = moview.genreResultPage + 1;
+        setState(() {
+          moview.getGenreResultList();
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
   }
 
   @override
@@ -44,12 +69,13 @@ class _GenreDetailsState extends State<GenreDetails> {
               ? Center(child: CircularProgressIndicator())
               : Column(
                   children: [
-                    Text("Page ${moview.genreResultPage}"),
+                    // Text("Page ${moview.genreResultPage}"),
                     Expanded(
-                      flex: 15,
                       child: ListView.builder(
+                        physics: BouncingScrollPhysics(),
+                        controller: _scrollController,
                         shrinkWrap: true,
-                        itemCount: 20,
+                        itemCount: moview.genreResultNameList.length,
                         itemBuilder: (context, index) {
                           return ListTile(
                             title: Text(moview.genreResultNameList[index]),
@@ -77,27 +103,16 @@ class _GenreDetailsState extends State<GenreDetails> {
                         },
                       ),
                     ),
-                    Expanded(
-                      flex: 1,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: moview.genreResultTotalPages,
-                        itemBuilder: (context, index) {
-                          var i = index + 1;
-                          return TextButton(
-                              onPressed: () {
-                                moview.genreResultPage = i;
-                                moview.genreResultNameList.clear();
-                                moview.genreResultNameList.clear();
-                                moview.genreResultPosterList.clear();
-                                moview.genreResultRateList.clear();
-                                moview.getGenreResultList();
-                              },
-                              child: Text(i.toString()));
-                        },
-                      ),
-                    )
+                    moview.genreResultListIsLoading == false
+                        ? Container()
+                        : SizedBox(
+                            height: MediaQuery.of(context).size.height / 15,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 1.2,
+                              ),
+                            ),
+                          ),
                   ],
                 );
         },
