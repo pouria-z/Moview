@@ -58,11 +58,9 @@ class _ProfilePageState extends State<ProfilePage> {
       moview.genreResultPosterList.clear();
       moview.genreResultPosterUrlList.clear();
       moview.genreResultRateList.clear();
-      moview.dbMovieIdList.clear();
-      moview.favoritePageIdList.clear();
-      moview.favoritePageNameList.clear();
-      moview.favoritePageYearList.clear();
-      moview.favoritePagePosterUrlList.clear();
+      moview.dbMediaIdList.clear();
+      moview.dbMediaNameList.clear();
+      moview.dbYearList.clear();
       print('user logged out successfully');
       Navigator.push(
           context,

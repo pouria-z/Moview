@@ -122,21 +122,18 @@ class Moview with ChangeNotifier {
   var password;
 
   ///Get Favorites
-  var dbMovieId;
+  var favoriteNumbers;
+  var dbMediaId;
   var dbFavoriteType;
   var dbResponse;
-  var favoriteNumbers;
-  var favoritePageId;
-  var favoritePageName;
-  var favoritePagePoster;
-  var favoritePageYear;
-  var favoritePagePosterUrl;
-  List dbMovieIdList = [];
+  var dbMediaName;
+  var dbYear;
+  var dbMediaPoster;
   List dbFavoriteTypeList = [];
-  List favoritePageIdList = [];
-  List favoritePageNameList = [];
-  List favoritePageYearList = [];
-  List favoritePagePosterUrlList = [];
+  List dbMediaIdList = [];
+  List dbMediaNameList = [];
+  List dbYearList = [];
+  List dbMediaPosterList = [];
   bool isLoading = false;
 
   Future getMovieGenreList() async {
@@ -255,7 +252,7 @@ class Moview with ChangeNotifier {
     notifyListeners();
   }
 
-  getSearchResults() async {
+  Future getSearchResults() async {
     searchIsLoading = true;
     // count = 0;
     // personCount = 0;
@@ -302,7 +299,7 @@ class Moview with ChangeNotifier {
     notifyListeners();
   }
 
-  getGenreResultList() async {
+  Future getGenreResultList() async {
     genreResultListIsLoading = true;
     var url = Uri.https(apiUrl, '/3/discover/$type', {
       'api_key': '$apiKey',
@@ -344,17 +341,20 @@ class Moview with ChangeNotifier {
     final acl = ParseACL(owner: user);
     acl.setPublicReadAccess(allowed: false);
     acl.setPublicWriteAccess(allowed: false);
-    // set tv show data to database
+    // set movie/tv data to database
     final data = ParseObject('favorites')
       ..set('mediaId', favoriteMediaId)
-      ..set('isFavorite', isFave)
       ..set('id', favoriteId)
-      ..set('favoriteType', favoriteType)
+      ..set('mediaType', favoriteType)
+      ..set('mediaName', favoriteType == 'movie' ? movieName : tvShowName)
+      ..set('year', favoriteType == 'movie' ? movieReleaseDate : tvShowFirstAir)
+      ..set('mediaPoster',
+          favoriteType == 'movie' ? moviePosterUrl : tvShowPosterUrl)
+      ..set('isFavorite', isFave)
       ..setACL(acl);
     final response = await data.save();
     objectId = (response.results!.first as ParseObject).objectId;
     print('$favoriteType with $objectId id saved successfully!');
-
     notifyListeners();
   }
 
@@ -400,6 +400,7 @@ class Moview with ChangeNotifier {
 
   ///Profile
   Future getUser() async {
+    // get current user details
     ParseUser parseUser = await ParseUser.currentUser();
     username = parseUser.username;
     email = parseUser.emailAddress;
@@ -407,47 +408,33 @@ class Moview with ChangeNotifier {
     notifyListeners();
   }
 
+  ///Favorite Page
   Future favoritesList() async {
     isLoading = true;
     favoriteNumbers = null;
-    favoritePageIdList.clear();
-    favoritePageNameList.clear();
-    favoritePageYearList.clear();
-    favoritePagePosterUrlList.clear();
+    dbMediaIdList.clear();
+    dbMediaNameList.clear();
+    dbYearList.clear();
     dbFavoriteTypeList.clear();
+    dbMediaPosterList.clear();
     QueryBuilder<ParseObject> queryBuilder =
         QueryBuilder<ParseObject>(ParseObject('favorites'));
     var i = await queryBuilder.count();
     favoriteNumbers = i.count;
     print('total favorites: $favoriteNumbers');
     dbResponse = await queryBuilder.find();
-    for (var i = 0; i <= favoriteNumbers-1; i++) {
-      dbMovieId = dbResponse.elementAt(i).get('mediaId');
-      dbFavoriteType = dbResponse.elementAt(i).get('favoriteType');
+    // get all favorites from database
+    for (var i = 0; i <= favoriteNumbers - 1; i++) {
+      dbMediaId = dbResponse.elementAt(i).get('mediaId');
+      dbMediaIdList.add(dbMediaId);
+      dbFavoriteType = dbResponse.elementAt(i).get('mediaType');
       dbFavoriteTypeList.add(dbFavoriteType);
-      var url = Uri.https(apiUrl, '/3/$dbFavoriteType/$dbMovieId',
-          {'api_key': '$apiKey', 'language': 'en-US'});
-      Response response = await get(url);
-      var json = jsonDecode(response.body);
-      favoritePageId = json['id'];
-      if (dbFavoriteType == 'tv'){
-        favoritePageName = json['name'];
-        favoritePageNameList.add(favoritePageName);
-      } else {
-        favoritePageName = json['title'];
-        favoritePageNameList.add(favoritePageName);
-      }
-      favoritePagePoster = json['poster_path'];
-      favoritePagePosterUrl = imageUrl + favoritePagePoster;
-      if (dbFavoriteType == 'tv'){
-        favoritePageYear = json['first_air_date'];
-        favoritePageYearList.add(favoritePageYear);
-      } else {
-        favoritePageYear = json['release_date'];
-        favoritePageYearList.add(favoritePageYear);
-      }
-      favoritePageIdList.add(favoritePageId);
-      favoritePagePosterUrlList.add(favoritePagePosterUrl);
+      dbMediaName = dbResponse.elementAt(i).get('mediaName');
+      dbMediaNameList.add(dbMediaName);
+      dbYear = dbResponse.elementAt(i).get('year');
+      dbYearList.add(dbYear);
+      dbMediaPoster = dbResponse.elementAt(i).get('mediaYear');
+      dbMediaPosterList.add(dbMediaPoster);
     }
     isLoading = false;
     notifyListeners();

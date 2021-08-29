@@ -66,6 +66,7 @@ class _SearchPageState extends State<SearchPage> {
                         moview.searchPage = 1;
                         moview.searchNameList.clear();
                         moview.searchIdList.clear();
+                        moview.searchMediaTypeList.clear();
                         moview.searchInput = input;
                         moview.getSearchResults();
                       });

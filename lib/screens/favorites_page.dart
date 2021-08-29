@@ -15,15 +15,14 @@ class _FavoritesPageState extends State<FavoritesPage> {
     super.initState();
     var moview = Provider.of<Moview>(context, listen: false);
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      if (moview.isLoading == false){
-
-          moview.favoritesList();
-
+      if (moview.isLoading == false) {
+        moview.favoritesList();
       } else {
         return null;
       }
     });
   }
+
   bool isLoading = false;
 
   @override
@@ -50,15 +49,15 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       ? Center(child: Text("no data!"))
                       : ListView.builder(
                           shrinkWrap: true,
-                          itemCount: moview.favoritePageNameList.length,
+                          itemCount: moview.dbMediaNameList.length,
                           itemBuilder: (context, index) {
                             return ListTile(
                               leading: Text(
                                   moview.dbFavoriteTypeList[index].toString()),
-                              title: Text(moview.favoritePageNameList[index]
-                                  .toString()),
-                              trailing: Text(moview.favoritePageYearList[index]
-                                  .toString()),
+                              title: Text(
+                                  moview.dbMediaNameList[index].toString()),
+                              trailing:
+                                  Text(moview.dbYearList[index].toString()),
                               onTap: () {
                                 Navigator.push(
                                     context,
@@ -67,16 +66,14 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                                   .dbFavoriteTypeList[index] ==
                                               'tv'
                                           ? TVShowDetails(
-                                              id: moview
-                                                  .favoritePageIdList[index])
+                                              id: moview.dbMediaIdList[index])
                                           : MovieDetails(
-                                              id: moview
-                                                  .favoritePageIdList[index]),
+                                              id: moview.dbMediaIdList[index]),
                                     ));
                               },
                             );
                           },
-                        )
+                        ),
             ],
           ),
         );
