@@ -420,18 +420,19 @@ class Moview with ChangeNotifier {
     var i = await queryBuilder.count();
     favoriteNumbers = i.count;
     print('total favorites: $favoriteNumbers');
-    dbResponse = await queryBuilder.find();
+    ParseResponse dbResponse = await queryBuilder.query();
+    var json = jsonDecode((dbResponse.results).toString());
     // get all favorites from database
-    for (var i = 0; i <= favoriteNumbers - 1; i++) {
-      dbMediaId = dbResponse.elementAt(i).get('mediaId');
+    for (var item in json) {
+      dbMediaId = item['mediaId'];
       dbMediaIdList.add(dbMediaId);
-      dbFavoriteType = dbResponse.elementAt(i).get('mediaType');
+      dbFavoriteType = item['mediaType'];
       dbFavoriteTypeList.add(dbFavoriteType);
-      dbMediaName = dbResponse.elementAt(i).get('mediaName');
+      dbMediaName = item['mediaName'];
       dbMediaNameList.add(dbMediaName);
-      dbYear = dbResponse.elementAt(i).get('year');
+      dbYear = item['year'];
       dbYearList.add(dbYear);
-      dbMediaPoster = dbResponse.elementAt(i).get('mediaYear');
+      dbMediaPoster = item['mediaYear'];
       dbMediaPosterList.add(dbMediaPoster);
     }
     isLoading = false;
