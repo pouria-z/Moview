@@ -111,7 +111,6 @@ class Moview with ChangeNotifier {
   var favoriteType;
   var favoriteMediaId;
   var objectId;
-  var isFave;
   var favoriteId;
   var theId;
   var theObject;
@@ -350,7 +349,6 @@ class Moview with ChangeNotifier {
       ..set('year', favoriteType == 'movie' ? movieReleaseDate : tvShowFirstAir)
       ..set('mediaPoster',
           favoriteType == 'movie' ? moviePosterUrl : tvShowPosterUrl)
-      ..set('isFavorite', isFave)
       ..setACL(acl);
     final response = await data.save();
     objectId = (response.results!.first as ParseObject).objectId;

@@ -109,14 +109,12 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                                         isFavorite = !isFavorite;
                                         moview.theId = moview.favoriteId;
                                       });
-                                      moview.isFave = isFavorite;
                                       await moview.setFavorite();
                                     } else if (moview.theId ==
                                         moview.favoriteId) {
                                       setState(() {
                                         isFavorite = !isFavorite;
                                       });
-                                      moview.isFave = isFavorite;
                                       await moview.unsetFavorite().whenComplete(
                                           () => moview.favoriteId = null);
                                     }
