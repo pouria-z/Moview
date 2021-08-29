@@ -74,7 +74,6 @@ class _MovieGenresState extends State<MovieGenres> {
     var moview = Provider.of<Moview>(context, listen: false);
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
       if (moview.genreMovieNameList.isEmpty) {
-        moview.favoritesList();
         await moview.getMovieGenreList();
       } else {
         return null;
