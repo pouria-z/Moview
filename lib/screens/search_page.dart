@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moview/widgets.dart';
 import 'package:moview/screens/details/movie_details_page.dart';
 import 'package:moview/screens/details/tvshow_details_page.dart';
 import 'package:moview/services.dart';
@@ -18,6 +19,7 @@ class _SearchPageState extends State<SearchPage> {
     super.initState();
     var moview = Provider.of<Moview>(context, listen: false);
     moview.searchPage = 1;
+    moview.timeOutException = false;
     _scrollController.addListener(() async {
       print("scroller is moving");
       if (moview.searchNameList.isNotEmpty &&
@@ -72,75 +74,88 @@ class _SearchPageState extends State<SearchPage> {
                       });
                     },
                     child: Text("Search")),
-                moview.searchNameList.isEmpty
-                    ? Text("no result")
-                    : Expanded(
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: ListView.builder(
-                                controller: _scrollController,
-                                physics: BouncingScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: moview.searchNameList.length,
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                    leading: Text(
-                                        moview.searchIdList[index].toString()),
-                                    title: Text(moview.searchNameList[index]),
-                                    trailing:
-                                        Text(moview.searchMediaTypeList[index]),
-                                    onTap: () {
-                                      moview.searchPage = 1;
-                                      moview.tvShowGenreList.clear();
-                                      moview.tvShowLanguagesList.clear();
-                                      moview.tvShowCountryList.clear();
-                                      //moview.getSearchResults();
-                                      moview.tvShowRuntime = "";
-                                      if (moview.tvShowName != null) {
-                                        moview.tvShowName = null;
-                                      }
-                                      if (moview.searchMediaTypeList[index] ==
-                                          'tv') {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  TVShowDetails(
-                                                id: moview.searchIdList[index],
-                                              ),
-                                            ));
-                                      } else if (moview
-                                              .searchMediaTypeList[index] ==
-                                          'movie') {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  MovieDetails(
-                                                      id: moview
-                                                          .searchIdList[index]),
-                                            ));
-                                      }
+                moview.timeOutException == true
+                    ? TimeOutWidget(
+                        function: () {
+                          setState(() {
+                            moview.getSearchResults();
+                          });
+                        },
+                      )
+                    : moview.searchNameList.isEmpty
+                        ? Text("no result")
+                        : Expanded(
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: ListView.builder(
+                                    controller: _scrollController,
+                                    physics: BouncingScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount: moview.searchNameList.length,
+                                    itemBuilder: (context, index) {
+                                      return ListTile(
+                                        leading: Text(moview.searchIdList[index]
+                                            .toString()),
+                                        title:
+                                            Text(moview.searchNameList[index]),
+                                        trailing: Text(
+                                            moview.searchMediaTypeList[index]),
+                                        onTap: () {
+                                          moview.searchPage = 1;
+                                          moview.tvShowGenreList.clear();
+                                          moview.tvShowLanguagesList.clear();
+                                          moview.tvShowCountryList.clear();
+                                          //moview.getSearchResults();
+                                          moview.tvShowRuntime = "";
+                                          if (moview.tvShowName != null) {
+                                            moview.tvShowName = null;
+                                          }
+                                          if (moview
+                                                  .searchMediaTypeList[index] ==
+                                              'tv') {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      TVShowDetails(
+                                                    id: moview
+                                                        .searchIdList[index],
+                                                  ),
+                                                ));
+                                          } else if (moview
+                                                  .searchMediaTypeList[index] ==
+                                              'movie') {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      MovieDetails(
+                                                          id: moview
+                                                                  .searchIdList[
+                                                              index]),
+                                                ));
+                                          }
+                                        },
+                                      );
                                     },
-                                  );
-                                },
-                              ),
-                            ),
-                            moview.searchIsLoading == false
-                                ? Container()
-                                : SizedBox(
-                                    height:
-                                        MediaQuery.of(context).size.height / 15,
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 1.2,
-                                      ),
-                                    ),
                                   ),
-                          ],
-                        ),
-                      ),
+                                ),
+                                moview.searchIsLoading == false
+                                    ? Container()
+                                    : SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                15,
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 1.2,
+                                          ),
+                                        ),
+                                      ),
+                              ],
+                            ),
+                          ),
               ],
             ),
           ),

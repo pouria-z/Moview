@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moview/widgets.dart';
 import 'package:moview/screens/genre/genre_details_page.dart';
 import 'package:moview/services.dart';
 import 'package:provider/provider.dart';
@@ -74,7 +75,9 @@ class _MovieGenresState extends State<MovieGenres> {
     var moview = Provider.of<Moview>(context, listen: false);
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
       if (moview.genreMovieNameList.isEmpty) {
-        await moview.getMovieGenreList();
+        setState(() {
+          moview.getMovieGenreList();
+        });
       } else {
         return null;
       }
@@ -87,30 +90,38 @@ class _MovieGenresState extends State<MovieGenres> {
     return Consumer<Moview>(
       builder: (context, value, child) {
         return Scaffold(
-          body: moview.genreMovieNameList.isEmpty ||
-                  moview.genreMovieIdList.isEmpty
-              ? Center(child: CircularProgressIndicator())
-              : ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: moview.genreMovieIdList.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(moview.genreMovieNameList[index]),
-                      leading: Icon(Icons.star_rounded),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => GenreDetails(
-                                type: 'movie',
-                                id: moview.genreMovieIdList[index],
-                                pageNumber: 1,
-                              ),
-                            ));
-                      },
-                    );
+          body: moview.timeOutException == true
+              ? TimeOutWidget(
+                  function: () {
+                    setState(() {
+                      moview.getMovieGenreList();
+                    });
                   },
-                ),
+                )
+              : moview.genreMovieNameList.isEmpty ||
+                      moview.genreMovieIdList.isEmpty
+                  ? Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: moview.genreMovieIdList.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(moview.genreMovieNameList[index]),
+                          leading: Icon(Icons.star_rounded),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => GenreDetails(
+                                    type: 'movie',
+                                    id: moview.genreMovieIdList[index],
+                                    pageNumber: 1,
+                                  ),
+                                ));
+                          },
+                        );
+                      },
+                    ),
         );
       },
     );
@@ -144,30 +155,38 @@ class _TVShowGenresState extends State<TVShowGenres> {
     return Consumer<Moview>(
       builder: (context, value, child) {
         return Scaffold(
-          body: moview.genreTvShowNameList.isEmpty ||
-                  moview.genreTvShowIdList.isEmpty
-              ? Center(child: CircularProgressIndicator())
-              : ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: moview.genreTvShowIdList.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(moview.genreTvShowNameList[index]),
-                      leading: Icon(Icons.star_rounded),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => GenreDetails(
-                                type: 'tv',
-                                id: moview.genreTvShowIdList[index],
-                                pageNumber: 1,
-                              ),
-                            ));
-                      },
-                    );
+          body: moview.timeOutException == true
+              ? TimeOutWidget(
+                  function: () {
+                    setState(() {
+                      moview.getTvShowGenreList();
+                    });
                   },
-                ),
+                )
+              : moview.genreTvShowNameList.isEmpty ||
+                      moview.genreTvShowIdList.isEmpty
+                  ? Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: moview.genreTvShowIdList.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(moview.genreTvShowNameList[index]),
+                          leading: Icon(Icons.star_rounded),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => GenreDetails(
+                                    type: 'tv',
+                                    id: moview.genreTvShowIdList[index],
+                                    pageNumber: 1,
+                                  ),
+                                ));
+                          },
+                        );
+                      },
+                    ),
         );
       },
     );
