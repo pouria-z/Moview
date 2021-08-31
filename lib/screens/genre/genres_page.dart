@@ -113,6 +113,7 @@ class _MovieGenresState extends State<MovieGenres> {
                             moview.genreResultNameList.clear();
                             moview.genreResultIdList.clear();
                             moview.genreResultPosterList.clear();
+                            moview.genreResultPosterUrlList.clear();
                             moview.genreResultRateList.clear();
                             Navigator.push(
                                 context,
@@ -185,6 +186,7 @@ class _TVShowGenresState extends State<TVShowGenres> {
                             moview.genreResultNameList.clear();
                             moview.genreResultIdList.clear();
                             moview.genreResultPosterList.clear();
+                            moview.genreResultPosterUrlList.clear();
                             moview.genreResultRateList.clear();
                             Navigator.push(
                                 context,

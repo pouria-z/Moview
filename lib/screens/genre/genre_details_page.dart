@@ -38,7 +38,8 @@ class _GenreDetailsState extends State<GenreDetails> {
     _scrollController.addListener(() async {
       print("scroller is moving");
       if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent && moview.genreResultPage <= moview.genreResultTotalPages) {
+              _scrollController.position.maxScrollExtent &&
+          moview.genreResultPage <= moview.genreResultTotalPages) {
         print("if condition is true");
         moview.genreResultPage = moview.genreResultPage + 1;
         setState(() {
@@ -60,60 +61,78 @@ class _GenreDetailsState extends State<GenreDetails> {
     return Scaffold(body: SafeArea(
       child: Consumer<Moview>(
         builder: (context, value, child) {
-          return moview.getGenreResultListIsLoading == true && moview.genreResultNameList.isEmpty
+          return moview.getGenreResultListIsLoading == true &&
+                  moview.genreResultNameList.isEmpty
               ? Center(child: CircularProgressIndicator())
-          : moview.timeOutException == true ? TimeOutWidget(
-            function: () {
-              setState(() {
-                moview.getGenreResultList();
-              });
-            },
-          )
-              : Column(
-                  children: [
-                    Expanded(
-                      child: ListView.builder(
-                        physics: BouncingScrollPhysics(),
-                        controller: _scrollController,
-                        shrinkWrap: true,
-                        itemCount: moview.genreResultNameList.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(moview.genreResultNameList[index]),
-                            leading: Text(moview.genreResultIdList[index].toString()),
-                            onTap: () {
-                              moview.movieName = null;
-                              moview.tvShowName = null;
-                              moview.getMovieDetailsIsLoading = true;
-                              moview.getTvShowDetailsIsLoading = true;
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => widget.type == 'movie'
-                                        ? MovieDetails(
-                                            id: moview.genreResultIdList[index],
-                                          )
-                                        : TVShowDetails(
-                                            id: moview.genreResultIdList[index],
-                                          ),
-                                  ));
+              : moview.timeOutException == true
+                  ? TimeOutWidget(
+                      function: () {
+                        setState(() {
+                          moview.getGenreResultList();
+                        });
+                      },
+                    )
+                  : Column(
+                      children: [
+                        Expanded(
+                          child: GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2),
+                            physics: BouncingScrollPhysics(),
+                            controller: _scrollController,
+                            shrinkWrap: true,
+                            itemCount: moview.genreResultNameList.length,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  moview.movieName = null;
+                                  moview.tvShowName = null;
+                                  moview.getMovieDetailsIsLoading = true;
+                                  moview.getTvShowDetailsIsLoading = true;
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => widget.type ==
+                                                'movie'
+                                            ? MovieDetails(
+                                                id: moview
+                                                    .genreResultIdList[index],
+                                              )
+                                            : TVShowDetails(
+                                                id: moview
+                                                    .genreResultIdList[index],
+                                              ),
+                                      ));
+                                },
+                                child: Container(
+                                  child: Column(
+                                    children: [
+                                      Image.network(
+                                        moview.genreResultPosterUrlList[index],
+                                        height: 150,
+                                        width: 150,
+                                      ),
+                                      Text(moview.genreResultNameList[index])
+                                    ],
+                                  ),
+                                ),
+                              );
                             },
-                          );
-                        },
-                      ),
-                    ),
-                    moview.genreResultListIsLoadingMore == false
-                        ? Container()
-                        : SizedBox(
-                            height: MediaQuery.of(context).size.height / 15,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 1.2,
-                              ),
-                            ),
                           ),
-                  ],
-                );
+                        ),
+                        moview.genreResultListIsLoadingMore == false
+                            ? Container()
+                            : SizedBox(
+                                height: MediaQuery.of(context).size.height / 15,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 1.2,
+                                  ),
+                                ),
+                              ),
+                      ],
+                    );
         },
       ),
     ));
