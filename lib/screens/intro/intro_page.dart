@@ -29,7 +29,17 @@ class _IntroPageState extends State<IntroPage> {
   void login() async {
     print('logging in...');
     var user = ParseUser(loginUser, loginPassword, null);
-    var response = await user.login();
+    var response;
+    try {
+      response = await user.login().timeout(Duration(seconds: 10));
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('something went wrong. please try again!'),
+        ),
+      );
+      throw error;
+    }
     if (response.success) {
       print('user logged in successfully');
       final current = await ParseUser.currentUser() as ParseUser;
@@ -37,13 +47,15 @@ class _IntroPageState extends State<IntroPage> {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => HomePage(
-                    // email: email,
-                    // password: loginPassword,
-                    // username: loginUser,
-                  )));
+            builder: (context) => HomePage(),
+          ));
     } else {
       print(response.error!.message);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("${response.error!.message}"),
+        ),
+      );
     }
   }
 

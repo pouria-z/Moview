@@ -16,7 +16,7 @@ class TVShowDetails extends StatefulWidget {
 class _TVShowDetailsState extends State<TVShowDetails> {
   var failed =
       "https://forums.codemasters.com/uploads/monthly_2020_03/image.png.f8c83b98a2250b117a112bcfb92ca287.png";
-  bool isFavorite = false;
+  var isFavorite;
 
   @override
   void initState() {
@@ -29,6 +29,7 @@ class _TVShowDetailsState extends State<TVShowDetails> {
       moview.favoriteMediaId = widget.id;
       moview.tvShowId = widget.id;
       await moview.setAndGetId();
+      isFavorite = moview.isFave;
       setState(() {
         moview.getTvShowDetails();
       });
@@ -77,7 +78,7 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                     });
                   },
                 )
-              : moview.tvShowName == null
+              : moview.getTvShowDetailsIsLoading == true
                   ? Center(child: CircularProgressIndicator())
                   : Column(
                       children: [
@@ -97,7 +98,8 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Image.network(
-                              moview.tvShowPosterUrl,
+                              moview.tvShowPoster  == null
+                                  ? failed : moview.tvShowPosterUrl,
                               width: MediaQuery.of(context).size.width / 2,
                               height: MediaQuery.of(context).size.height / 3,
                               alignment: Alignment.center,
@@ -114,33 +116,49 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                                     style: TextStyle(fontSize: 20),
                                   ),
                                   IconButton(
-                                      onPressed: () async {
-                                        await moview.setAndGetId();
-                                        if (moview.theId == null) {
-                                          setState(() {
-                                            isFavorite = !isFavorite;
-                                            moview.theId = moview.favoriteId;
-                                          });
-                                          await moview.setFavorite();
-                                        } else if (moview.theId ==
-                                            moview.favoriteId) {
-                                          setState(() {
-                                            isFavorite = !isFavorite;
-                                          });
-                                          await moview
-                                              .unsetFavorite()
-                                              .whenComplete(() =>
-                                                  moview.favoriteId = null);
-                                        }
-                                      },
-                                      icon: moview.theId == moview.favoriteId
-                                          ? Icon(
-                                              Icons.favorite_rounded,
-                                              color: Colors.red,
-                                            )
-                                          : Icon(
-                                              Icons.favorite_border_rounded,
-                                            )),
+                                    onPressed: () async {
+                                      setState(() {
+                                        isFavorite == null
+                                            ? isFavorite = true
+                                            : isFavorite = null;
+                                      });
+                                      await moview.setAndGetId().timeout(
+                                          Duration(seconds: 5), onTimeout: () {
+                                        setState(() {
+                                          isFavorite == null
+                                              ? isFavorite = true
+                                              : isFavorite = null;
+                                          moview.isFave = isFavorite;
+                                        });
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content:
+                                                Text('something went wrong!'),
+                                          ),
+                                        );
+                                      });
+                                      if (moview.isFave == null) {
+                                        setState(() {
+                                          moview.isFave = isFavorite;
+                                        });
+                                        await moview.setFavorite();
+                                      } else if (moview.isFave == true) {
+                                        setState(() {
+                                          moview.isFave = isFavorite;
+                                        });
+                                        await moview.unsetFavorite();
+                                      }
+                                    },
+                                    icon: isFavorite == true
+                                        ? Icon(
+                                            Icons.favorite_rounded,
+                                            color: Colors.red,
+                                          )
+                                        : Icon(
+                                            Icons.favorite_border_rounded,
+                                          ),
+                                  ),
                                 ],
                               ),
                             )

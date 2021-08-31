@@ -4,7 +4,6 @@ import 'package:moview/services.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:provider/provider.dart';
 
-
 class ProfilePage extends StatefulWidget {
   final email;
   final password;
@@ -22,13 +21,21 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
-
   void logout() async {
-    var moview = Provider.of<Moview>(context,listen: false);
+    var moview = Provider.of<Moview>(context, listen: false);
     print('logging out...');
     var user = ParseUser(widget.username, widget.password, widget.email);
-    var response = await user.logout();
+    var response;
+    try {
+      response = await user.logout().timeout(Duration(seconds: 10));
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('something went wrong. please try again!'),
+        ),
+      );
+      throw error;
+    }
     if (response.success) {
       moview.favoriteNumbers = null;
       moview.genreMovieIdList.clear();
@@ -69,6 +76,11 @@ class _ProfilePageState extends State<ProfilePage> {
           ));
     } else {
       print(response.error!.message);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("${response.error!.message}"),
+        ),
+      );
     }
   }
 

@@ -16,7 +16,7 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   var tabController;
   Connectivity connectivity = Connectivity();
-  ConnectivityResult _connectivityResult = ConnectivityResult.none;
+  ConnectivityResult _connectivityResult = ConnectivityResult.wifi;
 
   @override
   void initState() {

@@ -109,6 +109,11 @@ class _MovieGenresState extends State<MovieGenres> {
                           title: Text(moview.genreMovieNameList[index]),
                           leading: Icon(Icons.star_rounded),
                           onTap: () {
+                            moview.getGenreResultListIsLoading = true;
+                            moview.genreResultNameList.clear();
+                            moview.genreResultIdList.clear();
+                            moview.genreResultPosterList.clear();
+                            moview.genreResultRateList.clear();
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -143,7 +148,7 @@ class _TVShowGenresState extends State<TVShowGenres> {
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
       if (moview.genreTvShowNameList.isEmpty) {
         setState(() {
-          moview.getMovieGenreList();
+          moview.getTvShowGenreList();
         });
       } else {
         return null;
@@ -176,6 +181,11 @@ class _TVShowGenresState extends State<TVShowGenres> {
                           title: Text(moview.genreTvShowNameList[index]),
                           leading: Icon(Icons.star_rounded),
                           onTap: () {
+                            moview.getGenreResultListIsLoading = true;
+                            moview.genreResultNameList.clear();
+                            moview.genreResultIdList.clear();
+                            moview.genreResultPosterList.clear();
+                            moview.genreResultRateList.clear();
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(

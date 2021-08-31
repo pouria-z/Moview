@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moview/services.dart';
+import 'package:moview/widgets.dart';
 import 'package:moview/screens/details/movie_details_page.dart';
 import 'package:moview/screens/details/tvshow_details_page.dart';
 import 'package:provider/provider.dart';
@@ -32,12 +33,6 @@ class _GenreDetailsState extends State<GenreDetails> {
       moview.type = widget.type;
       moview.genreMovieId = widget.id;
       moview.genreResultPage = widget.pageNumber;
-      setState(() {
-        moview.genreResultNameList.clear();
-        moview.genreResultPosterList.clear();
-        moview.genreResultRateList.clear();
-        moview.genreResultIdList.clear();
-      });
       await moview.getGenreResultList();
     });
     _scrollController.addListener(() async {
@@ -65,11 +60,17 @@ class _GenreDetailsState extends State<GenreDetails> {
     return Scaffold(body: SafeArea(
       child: Consumer<Moview>(
         builder: (context, value, child) {
-          return moview.genreResultNameList.isEmpty
+          return moview.getGenreResultListIsLoading == true && moview.genreResultNameList.isEmpty
               ? Center(child: CircularProgressIndicator())
+          : moview.timeOutException == true ? TimeOutWidget(
+            function: () {
+              setState(() {
+                moview.getGenreResultList();
+              });
+            },
+          )
               : Column(
                   children: [
-                    // Text("Page ${moview.genreResultPage}"),
                     Expanded(
                       child: ListView.builder(
                         physics: BouncingScrollPhysics(),
@@ -79,14 +80,12 @@ class _GenreDetailsState extends State<GenreDetails> {
                         itemBuilder: (context, index) {
                           return ListTile(
                             title: Text(moview.genreResultNameList[index]),
-                            leading: Icon(Icons.ac_unit_rounded),
+                            leading: Text(moview.genreResultIdList[index].toString()),
                             onTap: () {
-                              moview.movieGenreList.clear();
-                              moview.movieLanguagesList.clear();
-                              moview.movieCountryList.clear();
-                              if (moview.movieName != null) {
-                                moview.movieName = null;
-                              }
+                              moview.movieName = null;
+                              moview.tvShowName = null;
+                              moview.getMovieDetailsIsLoading = true;
+                              moview.getTvShowDetailsIsLoading = true;
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -103,7 +102,7 @@ class _GenreDetailsState extends State<GenreDetails> {
                         },
                       ),
                     ),
-                    moview.genreResultListIsLoading == false
+                    moview.genreResultListIsLoadingMore == false
                         ? Container()
                         : SizedBox(
                             height: MediaQuery.of(context).size.height / 15,

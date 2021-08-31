@@ -14,7 +14,7 @@ class MovieDetails extends StatefulWidget {
 }
 
 class _MovieDetailsState extends State<MovieDetails> {
-  bool isFavorite = false;
+  var isFavorite;
 
   @override
   void initState() {
@@ -27,9 +27,8 @@ class _MovieDetailsState extends State<MovieDetails> {
       moview.favoriteMediaId = widget.id;
       moview.movieId = widget.id;
       await moview.setAndGetId();
-      setState(() {
-        moview.getMovieDetails();
-      });
+      isFavorite = moview.isFave;
+      await moview.getMovieDetails();
     });
   }
 
@@ -75,7 +74,7 @@ class _MovieDetailsState extends State<MovieDetails> {
                     });
                   },
                 )
-              : moview.movieName == null
+              : moview.getMovieDetailsIsLoading == true
                   ? Center(child: CircularProgressIndicator())
                   : Column(
                       children: [
@@ -111,25 +110,42 @@ class _MovieDetailsState extends State<MovieDetails> {
                                   ),
                                   IconButton(
                                       onPressed: () async {
-                                        await moview.setAndGetId();
-                                        if (moview.theId == null) {
+                                        setState(() {
+                                          isFavorite == null
+                                              ? isFavorite = true
+                                              : isFavorite = null;
+                                        });
+                                        await moview
+                                            .setAndGetId()
+                                            .timeout(Duration(seconds: 5),
+                                                onTimeout: () {
                                           setState(() {
-                                            isFavorite = !isFavorite;
-                                            moview.theId = moview.favoriteId;
+                                            isFavorite == null
+                                                ? isFavorite = true
+                                                : isFavorite = null;
+                                            moview.isFave = isFavorite;
+                                          });
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content:
+                                                  Text('something went wrong!'),
+                                            ),
+                                          );
+                                        });
+                                        if (moview.isFave == null) {
+                                          setState(() {
+                                            moview.isFave = isFavorite;
                                           });
                                           await moview.setFavorite();
-                                        } else if (moview.theId ==
-                                            moview.favoriteId) {
+                                        } else if (moview.isFave == true) {
                                           setState(() {
-                                            isFavorite = !isFavorite;
+                                            moview.isFave = isFavorite;
                                           });
-                                          await moview
-                                              .unsetFavorite()
-                                              .whenComplete(() =>
-                                                  moview.favoriteId = null);
+                                          await moview.unsetFavorite();
                                         }
                                       },
-                                      icon: moview.theId == moview.favoriteId
+                                      icon: isFavorite == true
                                           ? Icon(
                                               Icons.favorite_rounded,
                                               color: Colors.red,

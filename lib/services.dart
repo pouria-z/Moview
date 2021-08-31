@@ -26,6 +26,7 @@ class Moview with ChangeNotifier {
   List genreTvShowNameList = [];
 
   ///Movie Details
+  bool getMovieDetailsIsLoading = false;
   var movieId;
   var movieName;
   var movieGenre;
@@ -44,6 +45,7 @@ class Moview with ChangeNotifier {
   var movieTagLine;
 
   ///TVShow Details
+  bool getTvShowDetailsIsLoading = false;
   var tvShowId;
   var tvShowName;
   var tvShowGenre;
@@ -73,7 +75,8 @@ class Moview with ChangeNotifier {
   var tvShowTagLine;
 
   ///Search Result
-  bool searchIsLoading = false;
+  bool isLoadingMore = false;
+  bool isSearching = false;
   var searchPage;
   var searchInput;
   var searchTotalPages;
@@ -96,7 +99,8 @@ class Moview with ChangeNotifier {
   var personCount = 0;
 
   ///Genre Result List
-  bool genreResultListIsLoading = false;
+  bool genreResultListIsLoadingMore = false;
+  bool getGenreResultListIsLoading = false;
   var genreResultPage;
   var genreResultName;
   var genreResultId;
@@ -118,6 +122,7 @@ class Moview with ChangeNotifier {
   var favoriteId;
   var theId;
   var theObject;
+  var isFave;
 
   ///Parse User
   var username;
@@ -128,7 +133,6 @@ class Moview with ChangeNotifier {
   var favoriteNumbers;
   var dbMediaId;
   var dbFavoriteType;
-  var dbResponse;
   var dbMediaName;
   var dbYear;
   var dbMediaPoster;
@@ -137,7 +141,7 @@ class Moview with ChangeNotifier {
   List dbMediaNameList = [];
   List dbYearList = [];
   List dbMediaPosterList = [];
-  bool isLoading = false;
+  bool favoriteListIsLoading = false;
 
   Future getMovieGenreList() async {
     timeOutException = false;
@@ -197,9 +201,13 @@ class Moview with ChangeNotifier {
 
   Future getMovieDetails() async {
     timeOutException = false;
-    movieGenreList.clear();
+    movieName = null;
+    movieCover = null;
+    moviePoster = null;
     movieLanguagesList.clear();
     movieCountryList.clear();
+    movieGenreList.clear();
+    getMovieDetailsIsLoading = true;
     var url = Uri.https(apiUrl, '/3/movie/$movieId',
         {'api_key': '$apiKey', 'language': 'en-US'});
     late Response response;
@@ -237,11 +245,20 @@ class Moview with ChangeNotifier {
     }
     movieCoverUrl = imageUrl + movieCover;
     moviePosterUrl = imageUrl + moviePoster;
+    getMovieDetailsIsLoading = false;
     notifyListeners();
   }
 
   Future getTvShowDetails() async {
     timeOutException = false;
+    getTvShowDetailsIsLoading = true;
+    tvShowName = null;
+    tvShowCover = null;
+    tvShowPoster = null;
+    tvShowSeasonAirDateList.clear();
+    tvShowSeasonNameList.clear();
+    tvShowSeasonPosterList.clear();
+    tvShowCreatedByList.clear();
     tvShowGenreList.clear();
     tvShowLanguagesList.clear();
     tvShowCountryList.clear();
@@ -301,13 +318,17 @@ class Moview with ChangeNotifier {
     if (tvShowCover != null) {
       tvShowCoverUrl = imageUrl + tvShowCover;
     }
-    tvShowPosterUrl = imageUrl + tvShowPoster;
+    if (tvShowPoster != null) {
+      tvShowPosterUrl = imageUrl + tvShowPoster;
+    }
+    getTvShowDetailsIsLoading = false;
     notifyListeners();
   }
 
   Future getSearchResults() async {
     timeOutException = false;
-    searchIsLoading = true;
+    isLoadingMore = true;
+    isSearching = true;
     var url = Uri.https(apiUrl, '/3/search/multi', {
       'api_key': '$apiKey',
       'language': 'en-US',
@@ -358,13 +379,15 @@ class Moview with ChangeNotifier {
     }
     print('there are $personCount persons');
     print('result is ${count - personCount}');
-    searchIsLoading = false;
+    isLoadingMore = false;
+    isSearching = false;
     notifyListeners();
   }
 
   Future getGenreResultList() async {
     timeOutException = false;
-    genreResultListIsLoading = true;
+    genreResultListIsLoadingMore = true;
+    getGenreResultListIsLoading = true;
     var url = Uri.https(apiUrl, '/3/discover/$type', {
       'api_key': '$apiKey',
       'language': 'en-US',
@@ -402,10 +425,13 @@ class Moview with ChangeNotifier {
       genreResultRate = item['vote_average'];
       genreResultPosterList.add(genreResultPoster);
       genreResultRateList.add(genreResultRate);
-      //genreResultPosterUrl = imageUrl + genreResultPoster;
-      //genreResultPosterUrlList.add(genreResultPosterUrl);
+      if (genreResultPoster != null){
+        genreResultPosterUrl = imageUrl + genreResultPoster;
+        genreResultPosterUrlList.add(genreResultPosterUrl);
+      }
     }
-    genreResultListIsLoading = false;
+    genreResultListIsLoadingMore = false;
+    getGenreResultListIsLoading = false;
     notifyListeners();
   }
 
@@ -425,6 +451,7 @@ class Moview with ChangeNotifier {
       ..set('year', favoriteType == 'movie' ? movieReleaseDate : tvShowFirstAir)
       ..set('mediaPoster',
           favoriteType == 'movie' ? moviePosterUrl : tvShowPosterUrl)
+      ..set('isFavorite', isFave)
       ..setACL(acl);
     final response = await data.save();
     objectId = (response.results!.first as ParseObject).objectId;
@@ -433,6 +460,7 @@ class Moview with ChangeNotifier {
   }
 
   Future setAndGetId() async {
+    isFave = null;
     theObject = null;
     theId = null;
     favoriteId = null;
@@ -454,6 +482,7 @@ class Moview with ChangeNotifier {
     if (response.isNotEmpty) {
       theObject = response.single.objectId;
       theId = response.single.get('id');
+      isFave = response.single.get('isFavorite');
       print(
           '$favoriteType is in favorite list.\nid is: $theId,\tobjectId is: $theObject');
     } else {
@@ -474,17 +503,26 @@ class Moview with ChangeNotifier {
 
   ///Profile
   Future getUser() async {
+    timeOutException = false;
     // get current user details
-    ParseUser parseUser = await ParseUser.currentUser();
-    username = parseUser.username;
-    email = parseUser.emailAddress;
-    password = parseUser.password;
+    try {
+      ParseUser parseUser =
+          await ParseUser.currentUser().timeout(Duration(seconds: 15));
+      username = parseUser.username;
+      email = parseUser.emailAddress;
+      password = parseUser.password;
+    } on SocketException catch (e) {
+      timeOutException = true;
+      notifyListeners();
+      throw e;
+    }
     notifyListeners();
   }
 
   ///Favorite Page
   Future favoritesList() async {
-    isLoading = true;
+    timeOutException = false;
+    favoriteListIsLoading = true;
     favoriteNumbers = null;
     dbMediaIdList.clear();
     dbMediaNameList.clear();
@@ -496,7 +534,14 @@ class Moview with ChangeNotifier {
     var i = await queryBuilder.count();
     favoriteNumbers = i.count;
     print('total favorites: $favoriteNumbers');
-    ParseResponse dbResponse = await queryBuilder.query();
+    late ParseResponse dbResponse;
+    try {
+      dbResponse = await queryBuilder.query();
+    } on SocketException catch (e) {
+      timeOutException = true;
+      notifyListeners();
+      throw e;
+    }
     var json = jsonDecode((dbResponse.results).toString());
     // get all favorites from database
     for (var item in json) {
@@ -511,7 +556,7 @@ class Moview with ChangeNotifier {
       dbMediaPoster = item['mediaYear'];
       dbMediaPosterList.add(dbMediaPoster);
     }
-    isLoading = false;
+    favoriteListIsLoading = false;
     notifyListeners();
   }
 }
