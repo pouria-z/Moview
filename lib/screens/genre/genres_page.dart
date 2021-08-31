@@ -142,7 +142,9 @@ class _TVShowGenresState extends State<TVShowGenres> {
     var moview = Provider.of<Moview>(context, listen: false);
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
       if (moview.genreTvShowNameList.isEmpty) {
-        await moview.getTvShowGenreList();
+        setState(() {
+          moview.getMovieGenreList();
+        });
       } else {
         return null;
       }
