@@ -11,9 +11,10 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.2
   iconsax: ^0.0.8
-  shimmer: ^2.0.0
   animations: ^2.0.1
+  shimmer: ^2.0.0
   marquee: ^2.2.0
+  cached_network_image: ^3.1.0
   provider: ^5.0.0
   connectivity_plus: ^1.0.6
   parse_server_sdk_flutter: ^3.1.0

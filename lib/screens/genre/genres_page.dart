@@ -121,6 +121,7 @@ class _MovieGenresState extends State<MovieGenres> {
                                   builder: (context) => GenreDetails(
                                     type: 'movie',
                                     id: moview.genreMovieIdList[index],
+                                    name: moview.genreMovieNameList[index],
                                     pageNumber: 1,
                                   ),
                                 ));
@@ -194,6 +195,7 @@ class _TVShowGenresState extends State<TVShowGenres> {
                                   builder: (context) => GenreDetails(
                                     type: 'tv',
                                     id: moview.genreTvShowIdList[index],
+                                    name: moview.genreTvShowNameList[index],
                                     pageNumber: 1,
                                   ),
                                 ));
