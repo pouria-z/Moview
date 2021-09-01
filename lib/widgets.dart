@@ -64,9 +64,14 @@ class MoviewCard extends StatelessWidget {
             height: MediaQuery.of(context).size.height / 4.1,
             width: MediaQuery.of(context).size.width / 3,
           ),
-          Text(
-            title,
-            textAlign: TextAlign.center,
+          Flexible(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+              ),
+            ),
           ),
           Text(rating),
         ],

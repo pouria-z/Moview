@@ -56,40 +56,63 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       ? Center(child: CircularProgressIndicator())
                       : moview.favoriteNumbers == 0
                           ? Center(child: Text("no data!"))
-                          : ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: moview.dbMediaNameList.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  leading: Text(moview.dbFavoriteTypeList[index]
-                                      .toString()),
-                                  title: Text(
-                                      moview.dbMediaNameList[index].toString()),
-                                  trailing:
-                                      Text(moview.dbYearList[index].toString()),
-                                  onTap: () {
-                                    moview.tvShowName = null;
-                                    moview.movieName = null;
-                                    moview.getTvShowDetailsIsLoading = true;
-                                    moview.getMovieDetailsIsLoading = true;
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => moview
-                                                          .dbFavoriteTypeList[
-                                                      index] ==
-                                                  'tv'
-                                              ? TVShowDetails(
-                                                  id: moview
-                                                      .dbMediaIdList[index])
-                                              : MovieDetails(
-                                                  id: moview
-                                                      .dbMediaIdList[index]),
-                                        ));
-                                  },
-                                );
-                              },
-                            ),
+                          : Expanded(
+                            child: GridView.builder(
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  mainAxisSpacing: 10,
+                                  crossAxisSpacing: 2,
+                                  mainAxisExtent:
+                                      MediaQuery.of(context).size.height / 3,
+                                ),
+                                physics: BouncingScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: moview.dbMediaNameList.length,
+                                itemBuilder: (context, index) {
+                                  return InkWell(
+                                    splashColor: Color(0xFF36367C),
+                                    borderRadius: BorderRadius.circular(5),
+                                    onTap: () {
+                                      moview.tvShowName = null;
+                                      moview.movieName = null;
+                                      moview.getTvShowDetailsIsLoading = true;
+                                      moview.getMovieDetailsIsLoading = true;
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => moview
+                                                            .dbFavoriteTypeList[
+                                                        index] ==
+                                                    'tv'
+                                                ? TVShowDetails(
+                                                    id: moview
+                                                        .dbMediaIdList[index])
+                                                : MovieDetails(
+                                                    id: moview
+                                                        .dbMediaIdList[index]),
+                                          ));
+                                    },
+                                    child: MoviewCard(
+                                      imageUrl:
+                                          moview.dbMediaPosterList[index],
+                                      title: moview.dbMediaNameList[index],
+                                      rating: moview.dbYearList[index]
+                                          .toString(),
+                                    ),
+                                  );
+                                  //   ListTile(
+                                  //   leading: Text(moview.dbFavoriteTypeList[index]
+                                  //       .toString()),
+                                  //   title: Text(
+                                  //       moview.dbMediaNameList[index].toString()),
+                                  //   trailing:
+                                  //       Text(moview.dbYearList[index].toString()),
+                                  //
+                                  // );
+                                },
+                              ),
+                          ),
             ],
           ),
         );

@@ -81,74 +81,71 @@ class _GenreDetailsState extends State<GenreDetails> {
               : moview.getGenreResultListIsLoading == true &&
                       moview.genreResultNameList.isEmpty
                   ? Center(child: CircularProgressIndicator())
-                  : Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 7),
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: GridView.builder(
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                mainAxisSpacing: 10,
-                                crossAxisSpacing: 2,
-                                mainAxisExtent:
-                                    MediaQuery.of(context).size.height / 3,
-                              ),
-                              physics: BouncingScrollPhysics(),
-                              controller: _scrollController,
-                              shrinkWrap: true,
-                              itemCount: moview.genreResultNameList.length,
-                              itemBuilder: (context, index) {
-                                return InkWell(
-                                  splashColor: Color(0xFF36367C),
-                                  borderRadius: BorderRadius.circular(5),
-                                  onTap: () {
-                                    moview.movieName = null;
-                                    moview.tvShowName = null;
-                                    moview.getMovieDetailsIsLoading = true;
-                                    moview.getTvShowDetailsIsLoading = true;
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => widget.type ==
-                                                  'movie'
-                                              ? MovieDetails(
-                                                  id: moview
-                                                      .genreResultIdList[index],
-                                                )
-                                              : TVShowDetails(
-                                                  id: moview
-                                                      .genreResultIdList[index],
-                                                ),
-                                        ));
-                                  },
-                                  child: MoviewCard(
-                                    imageUrl:
-                                        moview.genreResultPosterUrlList[index],
-                                    title: moview.genreResultNameList[index],
-                                    rating: moview.genreResultRateList[index]
-                                        .toDouble()
-                                        .toString(),
-                                  ),
-                                );
-                              },
-                            ),
+                  : Column(
+                    children: [
+                      Expanded(
+                        child: GridView.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 10,
+                            crossAxisSpacing: 2,
+                            mainAxisExtent:
+                                MediaQuery.of(context).size.height / 3,
                           ),
-                          moview.genreResultListIsLoadingMore == false
-                              ? Container()
-                              : SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height / 15,
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 1.2,
-                                    ),
-                                  ),
-                                ),
-                        ],
+                          physics: BouncingScrollPhysics(),
+                          controller: _scrollController,
+                          shrinkWrap: true,
+                          itemCount: moview.genreResultNameList.length,
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              splashColor: Color(0xFF36367C),
+                              borderRadius: BorderRadius.circular(5),
+                              onTap: () {
+                                moview.movieName = null;
+                                moview.tvShowName = null;
+                                moview.getMovieDetailsIsLoading = true;
+                                moview.getTvShowDetailsIsLoading = true;
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => widget.type ==
+                                              'movie'
+                                          ? MovieDetails(
+                                              id: moview
+                                                  .genreResultIdList[index],
+                                            )
+                                          : TVShowDetails(
+                                              id: moview
+                                                  .genreResultIdList[index],
+                                            ),
+                                    ));
+                              },
+                              child: MoviewCard(
+                                imageUrl:
+                                    moview.genreResultPosterUrlList[index],
+                                title: moview.genreResultNameList[index],
+                                rating: moview.genreResultRateList[index]
+                                    .toDouble()
+                                    .toString(),
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                    ),
+                      moview.genreResultListIsLoadingMore == false
+                          ? Container()
+                          : SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height / 15,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 1.2,
+                                ),
+                              ),
+                            ),
+                    ],
+                  ),
         );
       },
     );

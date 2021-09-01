@@ -553,7 +553,7 @@ class Moview with ChangeNotifier {
       dbMediaNameList.add(dbMediaName);
       dbYear = item['year'];
       dbYearList.add(dbYear);
-      dbMediaPoster = item['mediaYear'];
+      dbMediaPoster = item['mediaPoster'];
       dbMediaPosterList.add(dbMediaPoster);
     }
     favoriteListIsLoading = false;
