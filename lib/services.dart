@@ -370,12 +370,12 @@ class Moview with ChangeNotifier {
         searchIdList.add(searchId);
         searchRateList.add(searchRate);
         searchOverviewList.add(searchOverview);
+        searchPosterUrl = searchPoster != null ? imageUrl + searchPoster : "";
+        searchPosterUrlList.add(searchPosterUrl);
       } else if (searchMediaType == 'person') {
         personCount++;
         print('its person');
       }
-      //searchPosterUrl = imageUrl + searchPoster;
-      //searchPosterUrlList.add(searchPosterUrl);
     }
     print('there are $personCount persons');
     print('result is ${count - personCount}');
@@ -425,7 +425,7 @@ class Moview with ChangeNotifier {
       genreResultRate = item['vote_average'];
       genreResultPosterList.add(genreResultPoster);
       genreResultRateList.add(genreResultRate);
-      if (genreResultPoster != null){
+      if (genreResultPoster != null) {
         genreResultPosterUrl = imageUrl + genreResultPoster;
         genreResultPosterUrlList.add(genreResultPosterUrl);
       }

@@ -92,20 +92,26 @@ class _SearchPageState extends State<SearchPage> {
                                 child: Column(
                                   children: [
                                     Expanded(
-                                      child: ListView.builder(
-                                        controller: _scrollController,
+                                      child: GridView.builder(
+                                        gridDelegate:
+                                            SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2,
+                                          mainAxisSpacing: 10,
+                                          crossAxisSpacing: 2,
+                                          mainAxisExtent: MediaQuery.of(context)
+                                                  .size
+                                                  .height /
+                                              3,
+                                        ),
                                         physics: BouncingScrollPhysics(),
+                                        controller: _scrollController,
                                         shrinkWrap: true,
                                         itemCount: moview.searchNameList.length,
                                         itemBuilder: (context, index) {
-                                          return ListTile(
-                                            leading: Text(moview
-                                                .searchIdList[index]
-                                                .toString()),
-                                            title: Text(
-                                                moview.searchNameList[index]),
-                                            trailing: Text(moview
-                                                .searchMediaTypeList[index]),
+                                          return InkWell(
+                                            splashColor: Color(0xFF36367C),
+                                            borderRadius:
+                                                BorderRadius.circular(5),
                                             onTap: () {
                                               moview.tvShowName = null;
                                               moview.movieName = null;
@@ -119,30 +125,39 @@ class _SearchPageState extends State<SearchPage> {
                                               if (moview.searchMediaTypeList[
                                                       index] ==
                                                   'tv') {
-                                                Navigator.push(
-                                                    context,
+                                                Navigator.push(context,
                                                     MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          TVShowDetails(
-                                                        id: moview.searchIdList[
-                                                            index],
-                                                      ),
-                                                    ));
+                                                  builder: (context) {
+                                                    return TVShowDetails(
+                                                      id: moview
+                                                          .searchIdList[index],
+                                                    );
+                                                  },
+                                                ));
                                               } else if (moview
                                                           .searchMediaTypeList[
                                                       index] ==
                                                   'movie') {
-                                                Navigator.push(
-                                                    context,
+                                                Navigator.push(context,
                                                     MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          MovieDetails(
-                                                              id: moview
-                                                                      .searchIdList[
-                                                                  index]),
-                                                    ));
+                                                  builder: (context) {
+                                                    return MovieDetails(
+                                                        id: moview.searchIdList[
+                                                            index]);
+                                                  },
+                                                ));
                                               }
                                             },
+                                            child: MoviewCard(
+                                              imageUrl: moview
+                                                  .searchPosterUrlList[index],
+                                              title:
+                                                  moview.searchNameList[index],
+                                              rating: moview
+                                                  .searchRateList[index]
+                                                  .toDouble()
+                                                  .toString(),
+                                            ),
                                           );
                                         },
                                       ),

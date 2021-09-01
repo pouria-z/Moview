@@ -123,61 +123,13 @@ class _GenreDetailsState extends State<GenreDetails> {
                                                 ),
                                         ));
                                   },
-                                  child: Card(
-                                    color: Theme.of(context)
-                                        .scaffoldBackgroundColor,
-                                    elevation: 5,
-                                    shadowColor: Colors.black,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        CachedNetworkImage(
-                                          imageUrl: moview
-                                              .genreResultPosterUrlList[index],
-                                          progressIndicatorBuilder: (context,
-                                                  url, downloadProgress) =>
-                                              Shimmer.fromColors(
-                                                  child: Container(
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height /
-                                                            4.1,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            3,
-                                                    color: Theme.of(context)
-                                                        .scaffoldBackgroundColor,
-                                                  ),
-                                                  baseColor: Theme.of(context)
-                                                      .scaffoldBackgroundColor,
-                                                  highlightColor:
-                                                      Color(0xFF383838)),
-                                          errorWidget: (context, url, error) =>
-                                              Icon(Icons.error),
-                                          fadeInDuration: Duration(
-                                            milliseconds: 500,
-                                          ),
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height /
-                                              4.1,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              3,
-                                        ),
-                                        Text(
-                                          moview.genreResultNameList[index],
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        Text(moview.genreResultRateList[index]
-                                            .toString()),
-                                      ],
-                                    ),
+                                  child: MoviewCard(
+                                    imageUrl:
+                                        moview.genreResultPosterUrlList[index],
+                                    title: moview.genreResultNameList[index],
+                                    rating: moview.genreResultRateList[index]
+                                        .toDouble()
+                                        .toString(),
                                   ),
                                 );
                               },
