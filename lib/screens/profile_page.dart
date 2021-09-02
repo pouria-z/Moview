@@ -69,7 +69,7 @@ class _ProfilePageState extends State<ProfilePage> {
       moview.dbMediaNameList.clear();
       moview.dbYearList.clear();
       print('user logged out successfully');
-      Navigator.push(
+      Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => IntroPage(),

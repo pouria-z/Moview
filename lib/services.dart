@@ -543,17 +543,19 @@ class Moview with ChangeNotifier {
     }
     var json = jsonDecode((dbResponse.results).toString());
     // get all favorites from database
-    for (var item in json) {
-      dbMediaId = item['mediaId'];
-      dbMediaIdList.add(dbMediaId);
-      dbFavoriteType = item['mediaType'];
-      dbFavoriteTypeList.add(dbFavoriteType);
-      dbMediaName = item['mediaName'];
-      dbMediaNameList.add(dbMediaName);
-      dbYear = item['year'];
-      dbYearList.add(dbYear);
-      dbMediaPoster = item['mediaPoster'];
-      dbMediaPosterList.add(dbMediaPoster);
+    if (json != null) {
+      for (var item in json) {
+        dbMediaId = item['mediaId'];
+        dbMediaIdList.add(dbMediaId);
+        dbFavoriteType = item['mediaType'];
+        dbFavoriteTypeList.add(dbFavoriteType);
+        dbMediaName = item['mediaName'];
+        dbMediaNameList.add(dbMediaName);
+        dbYear = item['year'];
+        dbYearList.add(dbYear);
+        dbMediaPoster = item['mediaPoster'];
+        dbMediaPosterList.add(dbMediaPoster);
+      }
     }
     favoriteListIsLoading = false;
     notifyListeners();

@@ -1,5 +1,6 @@
+import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:moview/screens/genre/genres_page.dart';
 import 'package:moview/screens/home_page.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
@@ -32,18 +33,23 @@ class _IntroPageState extends State<IntroPage> {
     var response;
     try {
       response = await user.login().timeout(Duration(seconds: 10));
-    } catch (error) {
+    } on TimeoutException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('something went wrong. please try again!'),
         ),
       );
-      throw error;
+      throw e;
+    } on SocketException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('something went wrong. please try again!'),
+        ),
+      );
+      throw e;
     }
     if (response.success) {
       print('user logged in successfully');
-      final current = await ParseUser.currentUser() as ParseUser;
-      final userId = current.objectId;
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
