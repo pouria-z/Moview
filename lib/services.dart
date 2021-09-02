@@ -425,10 +425,9 @@ class Moview with ChangeNotifier {
       genreResultRate = item['vote_average'];
       genreResultPosterList.add(genreResultPoster);
       genreResultRateList.add(genreResultRate);
-      if (genreResultPoster != null) {
-        genreResultPosterUrl = imageUrl + genreResultPoster;
-        genreResultPosterUrlList.add(genreResultPosterUrl);
-      }
+      genreResultPosterUrl =
+          genreResultPoster != null ? imageUrl + genreResultPoster : "";
+      genreResultPosterUrlList.add(genreResultPosterUrl);
     }
     genreResultListIsLoadingMore = false;
     getGenreResultListIsLoading = false;

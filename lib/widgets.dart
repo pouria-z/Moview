@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 class TimeOutWidget extends StatelessWidget {
   final function;
@@ -64,16 +65,21 @@ class MoviewCard extends StatelessWidget {
             height: MediaQuery.of(context).size.height / 4.1,
             width: MediaQuery.of(context).size.width / 3,
           ),
-          Flexible(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Text(
-                title,
-                textAlign: TextAlign.center,
-              ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                AutoSizeText(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(rating),
+              ],
             ),
-          ),
-          Text(rating),
+          )
         ],
       ),
     );

@@ -13,6 +13,7 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   var input;
   ScrollController _scrollController = ScrollController();
+  TextEditingController _textEditingController = TextEditingController();
 
   @override
   void initState() {
@@ -54,12 +55,22 @@ class _SearchPageState extends State<SearchPage> {
                 child: TextField(
                   onChanged: (value) {
                     input = value;
-                    //moview.searchMediaTypeList.clear();
                   },
+                  controller: _textEditingController,
                   decoration: InputDecoration(
-                      hintText: "Movie name, TV Show name...",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20))),
+                    hintText: "Movie name, TV Show name...",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.clear),
+                      onPressed: () {
+                        setState(() {
+                          _textEditingController.clear();
+                        });
+                      },
+                    )
+                  ),
                 ),
               ),
               TextButton(
@@ -80,12 +91,13 @@ class _SearchPageState extends State<SearchPage> {
                   ? TimeOutWidget(
                       function: () {
                         setState(() {
-                          moview.getSearchResults();
+                          moview.getSearchResults().whenComplete(() =>
+                              _scrollController.jumpTo(
+                                  _scrollController.position.maxScrollExtent));
                         });
                       },
                     )
-                  : moview.searchNameList.isEmpty &&
-                          moview.isSearching == true
+                  : moview.searchNameList.isEmpty && moview.isSearching == true
                       ? Center(
                           child: CircularProgressIndicator(),
                         )
@@ -101,10 +113,9 @@ class _SearchPageState extends State<SearchPage> {
                                         crossAxisCount: 2,
                                         mainAxisSpacing: 10,
                                         crossAxisSpacing: 2,
-                                        mainAxisExtent: MediaQuery.of(context)
-                                                .size
-                                                .height /
-                                            3,
+                                        mainAxisExtent:
+                                            MediaQuery.of(context).size.height /
+                                                3,
                                       ),
                                       physics: BouncingScrollPhysics(),
                                       controller: _scrollController,
@@ -145,8 +156,8 @@ class _SearchPageState extends State<SearchPage> {
                                                   MaterialPageRoute(
                                                 builder: (context) {
                                                   return MovieDetails(
-                                                      id: moview.searchIdList[
-                                                          index]);
+                                                      id: moview
+                                                          .searchIdList[index]);
                                                 },
                                               ));
                                             }
@@ -154,10 +165,8 @@ class _SearchPageState extends State<SearchPage> {
                                           child: MoviewCard(
                                             imageUrl: moview
                                                 .searchPosterUrlList[index],
-                                            title:
-                                                moview.searchNameList[index],
-                                            rating: moview
-                                                .searchRateList[index]
+                                            title: moview.searchNameList[index],
+                                            rating: moview.searchRateList[index]
                                                 .toDouble()
                                                 .toString(),
                                           ),
