@@ -9,7 +9,7 @@ import 'dart:convert';
 
 class Moview with ChangeNotifier {
   String apiUrl = "api.themoviedb.org";
-  String imageUrl = "https://image.tmdb.org/t/p/original";
+  String imageUrl = "https://image.tmdb.org/t/p/w300";
   var type; // 'movie' or 'tv'
   bool timeOutException = false;
 
@@ -97,6 +97,24 @@ class Moview with ChangeNotifier {
   List searchPosterUrlList = [];
   var count = 0;
   var personCount = 0;
+
+  ///Search On Typing
+  bool isSearchingOnType = false;
+  var searchTypeInput;
+  var searchTypeName;
+  var searchTypePoster;
+  var searchTypePosterUrl;
+  var searchTypeId;
+  var searchTypeRate;
+  var searchTypeMediaType;
+  List searchTypeNameList = [];
+  List searchTypePosterList = [];
+  List searchTypePosterUrlList = [];
+  List searchTypeIdList = [];
+  List searchTypeRateList = [];
+  List searchTypeMediaTypeList = [];
+  var typeCount = 0;
+  var typePersonCount = 0;
 
   ///Genre Result List
   bool genreResultListIsLoadingMore = false;
@@ -381,6 +399,69 @@ class Moview with ChangeNotifier {
     print('result is ${count - personCount}');
     isLoadingMore = false;
     isSearching = false;
+    notifyListeners();
+  }
+
+  Future getSearchOnType() async {
+    timeOutException = false;
+    isSearchingOnType = true;
+    searchTypeNameList.clear();
+    searchTypeRateList.clear();
+    searchTypePosterList.clear();
+    searchTypePosterUrlList.clear();
+    searchTypeIdList.clear();
+    searchTypeMediaTypeList.clear();
+    var url = Uri.https(apiUrl, '/3/search/multi', {
+      'api_key': '$apiKey',
+      'language': 'en-US',
+      'page': '1',
+      'query': '$searchTypeInput',
+      'include_adult': 'false'
+    });
+    late Response response;
+    try {
+      response = await get(url).timeout(Duration(seconds: 15));
+    } on TimeoutException catch (e) {
+      timeOutException = true;
+      notifyListeners();
+      throw e;
+    } on SocketException catch (e) {
+      timeOutException = true;
+      notifyListeners();
+      throw e;
+    }
+    var json = jsonDecode(response.body);
+    searchTypeNameList.clear();
+    searchTypeRateList.clear();
+    searchTypePosterList.clear();
+    searchTypePosterUrlList.clear();
+    searchTypeIdList.clear();
+    searchTypeMediaTypeList.clear();
+    for (var item in json['results']) {
+      typeCount++;
+      searchTypeMediaType = item['media_type'];
+      if (searchTypeMediaType == 'tv' || searchTypeMediaType == 'movie') {
+        searchTypeMediaTypeList.add(searchTypeMediaType);
+        searchTypePoster = item['poster_path'];
+        searchTypeId = item['id'];
+        searchTypeRate = item['vote_average'];
+        if (searchTypeMediaType == 'tv') {
+          searchTypeName = item['name'];
+        } else if (searchTypeMediaType == 'movie') {
+          searchTypeName = item['title'];
+        }
+        searchTypeNameList.add(searchTypeName);
+        searchTypePosterList.add(searchTypePoster);
+        searchTypeIdList.add(searchTypeId);
+        searchTypeRateList.add(searchTypeRate);
+        searchTypePosterUrl = searchTypePoster != null ? imageUrl + searchTypePoster : "";
+        searchTypePosterUrlList.add(searchTypePosterUrl);
+      } else if (searchTypeMediaType == 'person') {
+        typePersonCount++;
+        print('its person');
+      }
+    }
+    isSearchingOnType = false;
     notifyListeners();
   }
 

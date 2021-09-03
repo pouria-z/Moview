@@ -12,6 +12,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   var input;
+  bool showSuggestions = false;
   ScrollController _scrollController = ScrollController();
   TextEditingController _textEditingController = TextEditingController();
 
@@ -36,6 +37,46 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
+  Widget suggestionCard() {
+    var moview = Provider.of<Moview>(context, listen: false);
+    return moview.searchTypeNameList.isNotEmpty
+        ? GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 1,
+              mainAxisExtent: MediaQuery.of(context).size.height / 6.5,
+            ),
+            shrinkWrap: true,
+            itemCount: moview.searchTypeNameList.length > 5
+                ? 5
+                : moview.searchTypeNameList.length,
+            itemBuilder: (context, index) {
+              return InkWell(
+                onTap: () {
+                  moview.tvShowName = null;
+                  moview.movieName = null;
+                  moview.getTvShowDetailsIsLoading = true;
+                  moview.getMovieDetailsIsLoading = true;
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => moview
+                                    .searchTypeMediaTypeList[index] ==
+                                'tv'
+                            ? TVShowDetails(id: moview.searchTypeIdList[index])
+                            : MovieDetails(id: moview.searchTypeIdList[index]),
+                      ));
+                },
+                child: MoviewSuggestionCard(
+                  title: moview.searchTypeNameList[index],
+                  imageUrl: moview.searchTypePosterUrlList[index],
+                  rating: moview.searchTypeRateList[index].toString(),
+                ),
+              );
+            },
+          )
+        : Text("Oops! Found Nothing :(");
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -53,38 +94,73 @@ class _SearchPageState extends State<SearchPage> {
               Padding(
                 padding: EdgeInsets.only(top: 10, left: 10, right: 10),
                 child: TextField(
-                  onChanged: (value) {
-                    input = value;
+                  textCapitalization: TextCapitalization.words,
+                  textInputAction: TextInputAction.search,
+                  onChanged: (value) async {
+                    if (value.trim().length >= 3) {
+                      setState(() {
+                        moview.searchTypeInput =
+                            _textEditingController.text.trim();
+                        showSuggestions = true;
+                      });
+                      await moview.getSearchOnType();
+                    } else {
+                      setState(() {
+                        moview.searchTypeNameList.clear();
+                        moview.searchTypeRateList.clear();
+                        showSuggestions = false;
+                      });
+                    }
                   },
                   controller: _textEditingController,
                   decoration: InputDecoration(
-                    hintText: "Movie name, TV Show name...",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.clear),
-                      onPressed: () {
-                        setState(() {
-                          _textEditingController.clear();
-                        });
-                      },
-                    )
-                  ),
+                      hintText: "Movie name, TV Show name...",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.clear),
+                        onPressed: () {
+                          setState(() {
+                            _textEditingController.clear();
+                            showSuggestions = false;
+                          });
+                        },
+                      )),
                 ),
               ),
+              showSuggestions == true && moview.isSearchingOnType == false
+                  ? Expanded(
+                      flex: 15,
+                      child: suggestionCard(),
+                    )
+                  : showSuggestions == true && moview.isSearchingOnType == true
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : Container(),
               TextButton(
                   onPressed: () {
-                    setState(() {
-                      moview.searchPage = 1;
-                      moview.searchNameList.clear();
-                      moview.searchIdList.clear();
-                      moview.searchMediaTypeList.clear();
-                      moview.searchPosterUrlList.clear();
-                      moview.searchRateList.clear();
-                      moview.searchInput = input;
-                      moview.getSearchResults();
-                    });
+                    if (_textEditingController.text.trim().isNotEmpty) {
+                      setState(() {
+                        showSuggestions = false;
+                        moview.searchPage = 1;
+                        moview.searchNameList.clear();
+                        moview.searchIdList.clear();
+                        moview.searchMediaTypeList.clear();
+                        moview.searchPosterUrlList.clear();
+                        moview.searchRateList.clear();
+                        moview.searchInput = _textEditingController.text.trim();
+                        _textEditingController.clear();
+                        moview.getSearchResults();
+                      });
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Please enter movie/TV show name!'),
+                        ),
+                      );
+                    }
                   },
                   child: Text("Search")),
               moview.timeOutException == true
@@ -104,6 +180,7 @@ class _SearchPageState extends State<SearchPage> {
                       : moview.searchNameList.isEmpty
                           ? Text("no result")
                           : Expanded(
+                              flex: showSuggestions == true ? 1 : 15,
                               child: Column(
                                 children: [
                                   Expanded(

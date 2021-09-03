@@ -86,4 +86,68 @@ class MoviewCard extends StatelessWidget {
   }
 }
 
+class MoviewSuggestionCard extends StatelessWidget {
+  final imageUrl;
+  final title;
+  final rating;
+
+  const MoviewSuggestionCard({Key? key, this.imageUrl, this.title, this.rating})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      elevation: 5,
+      shadowColor: Colors.black,
+      child: Row(
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.width / 25,
+          ),
+          CachedNetworkImage(
+            imageUrl: imageUrl,
+            progressIndicatorBuilder: (context, url, progress) {
+              return Shimmer.fromColors(
+                child: Container(
+                  height: MediaQuery.of(context).size.height / 7.5,
+                  width: MediaQuery.of(context).size.width / 5.5,
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                ),
+                baseColor: Theme.of(context).scaffoldBackgroundColor,
+                highlightColor: Color(0xFF383838),
+              );
+            },
+            errorWidget: (context, url, error) => Icon(Iconsax.danger5),
+            fadeInDuration: Duration(
+              milliseconds: 500,
+            ),
+            height: MediaQuery.of(context).size.height / 7.5,
+            width: MediaQuery.of(context).size.width / 5.5,
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width / 15,
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AutoSizeText(
+                  title,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontSize: 18),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(rating),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
 
