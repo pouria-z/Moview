@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:moview/widgets.dart';
-import 'package:moview/screens/details/tvshow_details_page.dart';
-import 'package:moview/screens/details/movie_details_page.dart';
 import 'package:moview/services.dart';
 import 'package:provider/provider.dart';
 
@@ -56,63 +54,16 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       ? Center(child: CircularProgressIndicator())
                       : moview.favoriteNumbers == 0
                           ? Center(child: Text("no data!"))
-                          : Expanded(
-                            child: GridView.builder(
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  mainAxisSpacing: 10,
-                                  crossAxisSpacing: 2,
-                                  mainAxisExtent:
-                                      MediaQuery.of(context).size.height / 3,
-                                ),
-                                physics: BouncingScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: moview.dbMediaNameList.length,
-                                itemBuilder: (context, index) {
-                                  return InkWell(
-                                    splashColor: Color(0xFF36367C),
-                                    borderRadius: BorderRadius.circular(5),
-                                    onTap: () {
-                                      moview.tvShowName = null;
-                                      moview.movieName = null;
-                                      moview.getTvShowDetailsIsLoading = true;
-                                      moview.getMovieDetailsIsLoading = true;
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => moview
-                                                            .dbFavoriteTypeList[
-                                                        index] ==
-                                                    'tv'
-                                                ? TVShowDetails(
-                                                    id: moview
-                                                        .dbMediaIdList[index])
-                                                : MovieDetails(
-                                                    id: moview
-                                                        .dbMediaIdList[index]),
-                                          ));
-                                    },
-                                    child: MoviewCard(
-                                      imageUrl:
-                                          moview.dbMediaPosterList[index],
-                                      title: moview.dbMediaNameList[index],
-                                      rating: moview.dbYearList[index]
-                                          .toString(),
-                                    ),
-                                  );
-                                  //   ListTile(
-                                  //   leading: Text(moview.dbFavoriteTypeList[index]
-                                  //       .toString()),
-                                  //   title: Text(
-                                  //       moview.dbMediaNameList[index].toString()),
-                                  //   trailing:
-                                  //       Text(moview.dbYearList[index].toString()),
-                                  //
-                                  // );
-                                },
-                              ),
-                          ),
+                          : moviewGridView(
+                              context,
+                              null,
+                              moview.dbFavoriteTypeList,
+                              moview.dbMediaIdList,
+                              moview.dbMediaPosterList,
+                              moview.dbMediaNameList,
+                              moview.dbYearList,
+                              moview.dbMediaNameList.length,
+                            ),
             ],
           ),
         );

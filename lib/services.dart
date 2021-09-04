@@ -1,15 +1,14 @@
 import 'dart:async';
 import 'dart:io';
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:moview/key.dart';
 import 'package:http/http.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
-import 'dart:convert';
 
 class Moview with ChangeNotifier {
   String apiUrl = "api.themoviedb.org";
-  String imageUrl = "https://image.tmdb.org/t/p/w300";
+  String imageUrl = "https://image.tmdb.org/t/p/w500";
   var type; // 'movie' or 'tv'
   bool timeOutException = false;
 
@@ -454,7 +453,8 @@ class Moview with ChangeNotifier {
         searchTypePosterList.add(searchTypePoster);
         searchTypeIdList.add(searchTypeId);
         searchTypeRateList.add(searchTypeRate);
-        searchTypePosterUrl = searchTypePoster != null ? imageUrl + searchTypePoster : "";
+        searchTypePosterUrl =
+            searchTypePoster != null ? imageUrl + searchTypePoster : "";
         searchTypePosterUrlList.add(searchTypePosterUrl);
       } else if (searchTypeMediaType == 'person') {
         typePersonCount++;

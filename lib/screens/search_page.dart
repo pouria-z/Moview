@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:moview/widgets.dart';
-import 'package:moview/screens/details/movie_details_page.dart';
-import 'package:moview/screens/details/tvshow_details_page.dart';
 import 'package:moview/services.dart';
 import 'package:provider/provider.dart';
 
@@ -35,46 +33,6 @@ class _SearchPageState extends State<SearchPage> {
         });
       }
     });
-  }
-
-  Widget suggestionCard() {
-    var moview = Provider.of<Moview>(context, listen: false);
-    return moview.searchTypeNameList.isNotEmpty
-        ? GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-              mainAxisExtent: MediaQuery.of(context).size.height / 6.5,
-            ),
-            shrinkWrap: true,
-            itemCount: moview.searchTypeNameList.length > 5
-                ? 5
-                : moview.searchTypeNameList.length,
-            itemBuilder: (context, index) {
-              return InkWell(
-                onTap: () {
-                  moview.tvShowName = null;
-                  moview.movieName = null;
-                  moview.getTvShowDetailsIsLoading = true;
-                  moview.getMovieDetailsIsLoading = true;
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => moview
-                                    .searchTypeMediaTypeList[index] ==
-                                'tv'
-                            ? TVShowDetails(id: moview.searchTypeIdList[index])
-                            : MovieDetails(id: moview.searchTypeIdList[index]),
-                      ));
-                },
-                child: MoviewSuggestionCard(
-                  title: moview.searchTypeNameList[index],
-                  imageUrl: moview.searchTypePosterUrlList[index],
-                  rating: moview.searchTypeRateList[index].toString(),
-                ),
-              );
-            },
-          )
-        : Text("Oops! Found Nothing :(");
   }
 
   @override
@@ -132,7 +90,7 @@ class _SearchPageState extends State<SearchPage> {
               showSuggestions == true && moview.isSearchingOnType == false
                   ? Expanded(
                       flex: 15,
-                      child: suggestionCard(),
+                      child: suggestionCardGridView(context),
                     )
                   : showSuggestions == true && moview.isSearchingOnType == true
                       ? Center(
@@ -183,73 +141,15 @@ class _SearchPageState extends State<SearchPage> {
                               flex: showSuggestions == true ? 1 : 15,
                               child: Column(
                                 children: [
-                                  Expanded(
-                                    child: GridView.builder(
-                                      gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2,
-                                        mainAxisSpacing: 10,
-                                        crossAxisSpacing: 2,
-                                        mainAxisExtent:
-                                            MediaQuery.of(context).size.height /
-                                                3,
-                                      ),
-                                      physics: BouncingScrollPhysics(),
-                                      controller: _scrollController,
-                                      shrinkWrap: true,
-                                      itemCount: moview.searchNameList.length,
-                                      itemBuilder: (context, index) {
-                                        return InkWell(
-                                          splashColor: Color(0xFF36367C),
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                          onTap: () {
-                                            moview.tvShowName = null;
-                                            moview.movieName = null;
-                                            moview.getTvShowDetailsIsLoading =
-                                                true;
-                                            moview.getMovieDetailsIsLoading =
-                                                true;
-                                            if (moview.tvShowName != null) {
-                                              moview.tvShowName = null;
-                                            }
-                                            if (moview.searchMediaTypeList[
-                                                    index] ==
-                                                'tv') {
-                                              Navigator.push(context,
-                                                  MaterialPageRoute(
-                                                builder: (context) {
-                                                  return TVShowDetails(
-                                                    id: moview
-                                                        .searchIdList[index],
-                                                  );
-                                                },
-                                              ));
-                                            } else if (moview
-                                                        .searchMediaTypeList[
-                                                    index] ==
-                                                'movie') {
-                                              Navigator.push(context,
-                                                  MaterialPageRoute(
-                                                builder: (context) {
-                                                  return MovieDetails(
-                                                      id: moview
-                                                          .searchIdList[index]);
-                                                },
-                                              ));
-                                            }
-                                          },
-                                          child: MoviewCard(
-                                            imageUrl: moview
-                                                .searchPosterUrlList[index],
-                                            title: moview.searchNameList[index],
-                                            rating: moview.searchRateList[index]
-                                                .toDouble()
-                                                .toString(),
-                                          ),
-                                        );
-                                      },
-                                    ),
+                                  moviewGridView(
+                                    context,
+                                    _scrollController,
+                                    moview.searchMediaTypeList,
+                                    moview.searchIdList,
+                                    moview.searchPosterUrlList,
+                                    moview.searchNameList,
+                                    moview.searchRateList,
+                                    moview.searchNameList.length,
                                   ),
                                   moview.isLoadingMore == false
                                       ? Container()

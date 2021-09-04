@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:moview/services.dart';
+import 'package:moview/screens/details/movie_details_page.dart';
+import 'package:moview/screens/details/tvshow_details_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -86,6 +90,63 @@ class MoviewCard extends StatelessWidget {
   }
 }
 
+Widget moviewGridView(
+    context, scrollController, type, id, poster, name, rate, length) {
+  var moview = Provider.of<Moview>(context, listen: false);
+  return Expanded(
+    child: GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 2,
+        mainAxisExtent: MediaQuery.of(context).size.height / 3,
+      ),
+      physics: BouncingScrollPhysics(),
+      controller: scrollController,
+      shrinkWrap: true,
+      itemCount: length,
+      itemBuilder: (context, index) {
+        return InkWell(
+          splashColor: Color(0xFF36367C),
+          borderRadius: BorderRadius.circular(5),
+          onTap: () {
+            moview.tvShowName = null;
+            moview.movieName = null;
+            moview.getTvShowDetailsIsLoading = true;
+            moview.getMovieDetailsIsLoading = true;
+            if (type.runtimeType == String
+                ? type == 'tv'
+                : type[index] == 'tv') {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) {
+                  return TVShowDetails(
+                    id: id[index],
+                  );
+                },
+              ));
+            } else if (type.runtimeType == String
+                ? type == 'movie'
+                : type[index] == 'movie') {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) {
+                  return MovieDetails(id: id[index]);
+                },
+              ));
+            }
+          },
+          child: MoviewCard(
+            imageUrl: poster[index],
+            title: name[index],
+            rating: rate[index].runtimeType == String
+                ? rate[index]
+                : rate[index].toDouble().toString(),
+          ),
+        );
+      },
+    ),
+  );
+}
+
 class MoviewSuggestionCard extends StatelessWidget {
   final imageUrl;
   final title;
@@ -150,4 +211,42 @@ class MoviewSuggestionCard extends StatelessWidget {
   }
 }
 
-
+Widget suggestionCardGridView(context) {
+  var moview = Provider.of<Moview>(context, listen: false);
+  return moview.searchTypeNameList.isNotEmpty
+      ? GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 1,
+            mainAxisExtent: MediaQuery.of(context).size.height / 6.5,
+          ),
+          shrinkWrap: true,
+          itemCount: moview.searchTypeNameList.length > 5
+              ? 5
+              : moview.searchTypeNameList.length,
+          itemBuilder: (context, index) {
+            return InkWell(
+              onTap: () {
+                moview.tvShowName = null;
+                moview.movieName = null;
+                moview.getTvShowDetailsIsLoading = true;
+                moview.getMovieDetailsIsLoading = true;
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => moview
+                                  .searchTypeMediaTypeList[index] ==
+                              'tv'
+                          ? TVShowDetails(id: moview.searchTypeIdList[index])
+                          : MovieDetails(id: moview.searchTypeIdList[index]),
+                    ));
+              },
+              child: MoviewSuggestionCard(
+                title: moview.searchTypeNameList[index],
+                imageUrl: moview.searchTypePosterUrlList[index],
+                rating: moview.searchTypeRateList[index].toString(),
+              ),
+            );
+          },
+        )
+      : Text("Oops! Found Nothing :(");
+}

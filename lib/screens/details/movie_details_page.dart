@@ -3,6 +3,7 @@ import 'package:moview/widgets.dart';
 import 'package:moview/services.dart';
 import 'package:provider/provider.dart';
 import 'package:marquee/marquee.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class MovieDetails extends StatefulWidget {
   final id;
@@ -78,8 +79,8 @@ class _MovieDetailsState extends State<MovieDetails> {
                   ? Center(child: CircularProgressIndicator())
                   : Column(
                       children: [
-                        Image.network(
-                          moview.movieCoverUrl,
+                        CachedNetworkImage(
+                          imageUrl: moview.movieCoverUrl,
                           width: MediaQuery.of(context).size.width,
                           height: MediaQuery.of(context).size.height / 3.5,
                           fit: BoxFit.fill,
@@ -91,8 +92,8 @@ class _MovieDetailsState extends State<MovieDetails> {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Image.network(
-                              moview.moviePosterUrl,
+                            CachedNetworkImage(
+                              imageUrl: moview.moviePosterUrl,
                               width: MediaQuery.of(context).size.width / 2,
                               height: MediaQuery.of(context).size.height / 3,
                               alignment: Alignment.center,

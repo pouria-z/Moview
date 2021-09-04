@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moview/services.dart';
 import 'package:moview/widgets.dart';
-import 'package:moview/screens/details/movie_details_page.dart';
-import 'package:moview/screens/details/tvshow_details_page.dart';
 import 'package:provider/provider.dart';
 
 class GenreDetails extends StatefulWidget {
@@ -91,55 +89,15 @@ class _GenreDetailsState extends State<GenreDetails> {
                   ? Center(child: CircularProgressIndicator())
                   : Column(
                       children: [
-                        Expanded(
-                          child: GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 10,
-                              crossAxisSpacing: 2,
-                              mainAxisExtent:
-                                  MediaQuery.of(context).size.height / 3,
-                            ),
-                            physics: BouncingScrollPhysics(),
-                            controller: _scrollController,
-                            shrinkWrap: true,
-                            itemCount: moview.genreResultNameList.length,
-                            itemBuilder: (context, index) {
-                              return InkWell(
-                                splashColor: Color(0xFF36367C),
-                                borderRadius: BorderRadius.circular(5),
-                                onTap: () {
-                                  moview.movieName = null;
-                                  moview.tvShowName = null;
-                                  moview.getMovieDetailsIsLoading = true;
-                                  moview.getTvShowDetailsIsLoading = true;
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => widget.type ==
-                                                'movie'
-                                            ? MovieDetails(
-                                                id: moview
-                                                    .genreResultIdList[index],
-                                              )
-                                            : TVShowDetails(
-                                                id: moview
-                                                    .genreResultIdList[index],
-                                              ),
-                                      ));
-                                },
-                                child: MoviewCard(
-                                  imageUrl:
-                                      moview.genreResultPosterUrlList[index],
-                                  title: moview.genreResultNameList[index],
-                                  rating: moview.genreResultRateList[index]
-                                      .toDouble()
-                                      .toString(),
-                                ),
-                              );
-                            },
-                          ),
+                        moviewGridView(
+                          context,
+                          _scrollController,
+                          widget.type,
+                          moview.genreResultIdList,
+                          moview.genreResultPosterUrlList,
+                          moview.genreResultNameList,
+                          moview.genreResultRateList,
+                          moview.genreResultNameList.length,
                         ),
                         moview.genreResultListIsLoadingMore == false
                             ? Container()
