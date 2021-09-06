@@ -250,3 +250,11 @@ Widget suggestionCardGridView(context) {
         )
       : Text("Oops! Found Nothing :(");
 }
+
+ScaffoldFeatureController message(context, response) {
+  return ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(response.toString()),
+    ),
+  );
+}

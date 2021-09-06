@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:moview/key.dart';
 import 'package:http/http.dart';
+import 'package:moview/screens/home_page.dart';
+import 'package:moview/widgets.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:moview/screens/intro/intro_page.dart';
 
@@ -582,7 +584,7 @@ class Moview with ChangeNotifier {
     notifyListeners();
   }
 
-  ///Profile
+  ///User
   Future getUser() async {
     timeOutException = false;
     // get current user details
@@ -626,6 +628,142 @@ class Moview with ChangeNotifier {
     } else {
       return true;
     }
+  }
+
+  void register(context, username, password, email) async {
+    print('signing up...');
+    var user = ParseUser.createUser(username, password, email);
+    late ParseResponse response;
+    try {
+      response = await user.signUp().timeout(Duration(seconds: 10));
+    } on TimeoutException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('something went wrong. please try again!'),
+        ),
+      );
+      throw e;
+    } on SocketException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('something went wrong. please try again!'),
+        ),
+      );
+      throw e;
+    }
+    if (response.success) {
+      print('user created successfully');
+    } else if (response.error!.code == -1) {
+      print(response.error!.message);
+      message(context, "Check your connection");
+    } else {
+      print(response.error!.message);
+      message(context, response.error!.message);
+    }
+    notifyListeners();
+  }
+
+  void login(context, username, password) async {
+    print('logging in...');
+    var user = ParseUser(username, password, null);
+    late ParseResponse response;
+    try {
+      response = await user.login().timeout(Duration(seconds: 10));
+    } on TimeoutException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('something went wrong. please try again!'),
+        ),
+      );
+      throw e;
+    } on SocketException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('something went wrong. please try again!'),
+        ),
+      );
+      throw e;
+    }
+    if (response.success) {
+      print('user logged in successfully');
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(),
+          ));
+    } else if (response.error!.code == -1) {
+      print(response.error!.message);
+      message(context, "Check your connection");
+    } else {
+      print(response.error!.message);
+      message(context, response.error!.message);
+    }
+    notifyListeners();
+  }
+
+  void logout(context) async {
+    username = null;
+    password = null;
+    email = null;
+    print('logging out...');
+    var user = ParseUser(username, password, email);
+    late ParseResponse response;
+    try {
+      response = await user.logout().timeout(Duration(seconds: 10));
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('something went wrong. please try again!'),
+        ),
+      );
+      throw error;
+    }
+    if (response.success) {
+      favoriteNumbers = null;
+      genreMovieIdList.clear();
+      genreMovieNameList.clear();
+      genreTvShowIdList.clear();
+      genreTvShowNameList.clear();
+      movieGenreList.clear();
+      movieCountryList.clear();
+      movieLanguagesList.clear();
+      tvShowGenreList.clear();
+      tvShowCreatedByList.clear();
+      tvShowCountryList.clear();
+      tvShowSeasonNameList.clear();
+      tvShowSeasonAirDateList.clear();
+      tvShowSeasonPosterList.clear();
+      tvShowLanguagesList.clear();
+      searchNameList.clear();
+      searchPosterList.clear();
+      searchIdList.clear();
+      searchRateList.clear();
+      searchOverviewList.clear();
+      searchMediaTypeList.clear();
+      searchPosterUrlList.clear();
+      genreResultPageList.clear();
+      genreResultNameList.clear();
+      genreResultIdList.clear();
+      genreResultPosterList.clear();
+      genreResultPosterUrlList.clear();
+      genreResultRateList.clear();
+      dbMediaIdList.clear();
+      dbMediaNameList.clear();
+      dbYearList.clear();
+      print('user logged out successfully');
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => IntroPage(),
+          ));
+    } else if (response.error!.code == -1) {
+      print(response.error!.message);
+      message(context, "Check your connection");
+    } else {
+      print(response.error!.message);
+      message(context, response.error!.message);
+    }
+    notifyListeners();
   }
 
   ///Favorite Page
