@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:moview/key.dart';
 import 'package:http/http.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+import 'package:moview/screens/intro/intro_page.dart';
 
 class Moview with ChangeNotifier {
   String apiUrl = "api.themoviedb.org";
@@ -597,6 +598,34 @@ class Moview with ChangeNotifier {
       throw e;
     }
     notifyListeners();
+  }
+
+  Future<bool> hasUserLogged(context) async {
+    ParseUser? currentUser = await ParseUser.currentUser() as ParseUser?;
+    if (currentUser == null) {
+      return false;
+    }
+    //Checks whether the user's session token is valid
+    final ParseResponse? parseResponse =
+        await ParseUser.getCurrentUserFromServer(currentUser.sessionToken!);
+
+    if (parseResponse?.success == null || !parseResponse!.success) {
+      //Invalid session. Logout
+      await currentUser.logout();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Sorry you have to go :("),
+        ),
+      );
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => IntroPage(),
+          ));
+      return false;
+    } else {
+      return true;
+    }
   }
 
   ///Favorite Page

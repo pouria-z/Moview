@@ -11,13 +11,29 @@ void main() async {
   final keyParseServerUrl = 'https://parseapi.back4app.com';
   await Parse().initialize(keyApplicationId, keyParseServerUrl,
       clientKey: keyClientKey, autoSendSessionId: true);
-  final current = await ParseUser.currentUser();
-  runApp(ChangeNotifierProvider(
-    create: (context) => Moview(),
-    child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(),
-      home: current == null ? IntroPage() : HomePage(),
+
+  ParseResponse? parseResponse;
+  Future isUserLoggedIn() async {
+    ParseUser? currentUser = await ParseUser.currentUser() as ParseUser?;
+    if (currentUser == null) {
+      return false;
+    }
+    //Checks whether the user's session token is valid
+    parseResponse =
+        await ParseUser.getCurrentUserFromServer(currentUser.sessionToken!);
+  }
+  await isUserLoggedIn();
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => Moview(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.dark(),
+        home: parseResponse?.success == null || !parseResponse!.success
+            ? IntroPage()
+            : HomePage(),
+      ),
     ),
-  ));
+  );
 }

@@ -29,6 +29,7 @@ class _HomePageState extends State<HomePage>
     });
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       moview.getUser();
+      moview.hasUserLogged(context);
     });
     tabController = TabController(
       length: 4,
