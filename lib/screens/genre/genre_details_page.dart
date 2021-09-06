@@ -30,10 +30,8 @@ class _GenreDetailsState extends State<GenreDetails> {
     var moview = Provider.of<Moview>(context, listen: false);
     print("genre id: ${widget.id}");
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
-      moview.type = widget.type;
-      moview.genreMovieId = widget.id;
       moview.genreResultPage = widget.pageNumber;
-      await moview.getGenreResultList();
+      await moview.getGenreResultList(widget.type, widget.id);
     });
     _scrollController.addListener(() async {
       print("scroller is moving");
@@ -43,7 +41,7 @@ class _GenreDetailsState extends State<GenreDetails> {
         print("if condition is true");
         moview.genreResultPage = moview.genreResultPage + 1;
         setState(() {
-          moview.getGenreResultList();
+          moview.getGenreResultList(widget.type, widget.id);
         });
       }
     });
@@ -78,7 +76,7 @@ class _GenreDetailsState extends State<GenreDetails> {
               ? TimeOutWidget(
                   function: () {
                     setState(() {
-                      moview.getGenreResultList().whenComplete(() =>
+                      moview.getGenreResultList(widget.type, widget.id).whenComplete(() =>
                           _scrollController.jumpTo(
                               _scrollController.position.maxScrollExtent));
                     });

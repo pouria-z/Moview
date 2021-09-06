@@ -16,7 +16,7 @@ class Moview with ChangeNotifier {
   bool timeOutException = false;
 
   ///Movie Genre List
-  var genreMovieId;
+  var genreMediaId;
   var genreMovieName;
   List genreMovieIdList = [];
   List genreMovieNameList = [];
@@ -29,7 +29,6 @@ class Moview with ChangeNotifier {
 
   ///Movie Details
   bool getMovieDetailsIsLoading = false;
-  var movieId;
   var movieName;
   var movieGenre;
   List movieGenreList = [];
@@ -48,7 +47,6 @@ class Moview with ChangeNotifier {
 
   ///TVShow Details
   bool getTvShowDetailsIsLoading = false;
-  var tvShowId;
   var tvShowName;
   var tvShowGenre;
   List tvShowGenreList = [];
@@ -79,8 +77,8 @@ class Moview with ChangeNotifier {
   ///Search Result
   bool isLoadingMore = false;
   bool isSearching = false;
-  var searchPage;
   var searchInput;
+  var searchPage;
   var searchTotalPages;
   var searchTotalResults;
   var searchName;
@@ -136,8 +134,6 @@ class Moview with ChangeNotifier {
   List genreResultRateList = [];
 
   ///favorite
-  var favoriteType;
-  var favoriteMediaId;
   var objectId;
   var favoriteId;
   var theId;
@@ -183,10 +179,10 @@ class Moview with ChangeNotifier {
     }
     var json = jsonDecode(response.body);
     for (var item in json['genres']) {
-      genreMovieId = item['id'];
+      genreMediaId = item['id'];
       genreMovieName = item['name'];
       genreMovieNameList.add(genreMovieName);
-      genreMovieIdList.add(genreMovieId);
+      genreMovieIdList.add(genreMediaId);
     }
     notifyListeners();
   }
@@ -219,7 +215,7 @@ class Moview with ChangeNotifier {
     notifyListeners();
   }
 
-  Future getMovieDetails() async {
+  Future getMovieDetails(int movieId) async {
     timeOutException = false;
     movieName = null;
     movieCover = null;
@@ -269,7 +265,7 @@ class Moview with ChangeNotifier {
     notifyListeners();
   }
 
-  Future getTvShowDetails() async {
+  Future getTvShowDetails(int tvShowId) async {
     timeOutException = false;
     getTvShowDetailsIsLoading = true;
     tvShowName = null;
@@ -468,18 +464,18 @@ class Moview with ChangeNotifier {
     notifyListeners();
   }
 
-  Future getGenreResultList() async {
+  Future getGenreResultList(String mediaType, int genreMediaId) async {
     timeOutException = false;
     genreResultListIsLoadingMore = true;
     getGenreResultListIsLoading = true;
-    var url = Uri.https(apiUrl, '/3/discover/$type', {
+    var url = Uri.https(apiUrl, '/3/discover/$mediaType', {
       'api_key': '$apiKey',
       'language': 'en-US',
       'sort_by': 'popularity.desc',
       'include_adult': 'false',
       'include_video': 'false',
       'page': '$genreResultPage',
-      'with_genres': '$genreMovieId'
+      'with_genres': '$genreMediaId'
     });
     late Response response;
     try {
@@ -496,10 +492,10 @@ class Moview with ChangeNotifier {
     var json = jsonDecode(response.body);
     genreResultTotalPages = json['total_pages'];
     for (var item in json['results']) {
-      if (type == 'tv') {
+      if (mediaType == 'tv') {
         genreResultName = item['name'];
         genreResultNameList.add(genreResultName);
-      } else if (type == 'movie') {
+      } else if (mediaType == 'movie') {
         genreResultName = item['title'];
         genreResultNameList.add(genreResultName);
       }
@@ -519,7 +515,7 @@ class Moview with ChangeNotifier {
   }
 
   ///Database
-  Future setFavorite() async {
+  Future setFavorite(int favoriteMediaId, String favoriteType) async {
     // set security
     ParseUser user = await ParseUser.currentUser();
     final acl = ParseACL(owner: user);
@@ -542,7 +538,7 @@ class Moview with ChangeNotifier {
     notifyListeners();
   }
 
-  Future setAndGetId() async {
+  Future setAndGetId(int favoriteMediaId, String favoriteType) async {
     isFave = null;
     theObject = null;
     theId = null;

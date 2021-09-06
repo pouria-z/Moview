@@ -24,12 +24,9 @@ class _MovieDetailsState extends State<MovieDetails> {
     var moview = Provider.of<Moview>(context, listen: false);
     moview.timeOutException = false;
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
-      moview.favoriteType = 'movie';
-      moview.favoriteMediaId = widget.id;
-      moview.movieId = widget.id;
-      await moview.setAndGetId();
+      await moview.setAndGetId(widget.id, 'movie');
       isFavorite = moview.isFave;
-      await moview.getMovieDetails();
+      await moview.getMovieDetails(widget.id);
     });
   }
 
@@ -71,7 +68,7 @@ class _MovieDetailsState extends State<MovieDetails> {
               ? TimeOutWidget(
                   function: () {
                     setState(() {
-                      moview.getMovieDetails();
+                      moview.getMovieDetails(widget.id);
                     });
                   },
                 )
@@ -117,7 +114,7 @@ class _MovieDetailsState extends State<MovieDetails> {
                                               : isFavorite = null;
                                         });
                                         await moview
-                                            .setAndGetId()
+                                            .setAndGetId(widget.id, 'movie')
                                             .timeout(Duration(seconds: 5),
                                                 onTimeout: () {
                                           setState(() {
@@ -138,7 +135,7 @@ class _MovieDetailsState extends State<MovieDetails> {
                                           setState(() {
                                             moview.isFave = isFavorite;
                                           });
-                                          await moview.setFavorite();
+                                          await moview.setFavorite(widget.id, 'movie');
                                         } else if (moview.isFave == true) {
                                           setState(() {
                                             moview.isFave = isFavorite;
