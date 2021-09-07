@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:animations/animations.dart';
 
 class TimeOutWidget extends StatelessWidget {
   final function;
@@ -42,49 +43,52 @@ class MoviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      elevation: 5,
-      shadowColor: Colors.black,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CachedNetworkImage(
-            imageUrl: imageUrl,
-            progressIndicatorBuilder: (context, url, progress) {
-              return Shimmer.fromColors(
-                child: Container(
-                  height: MediaQuery.of(context).size.height / 4.1,
-                  width: MediaQuery.of(context).size.width / 3,
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                ),
-                baseColor: Theme.of(context).scaffoldBackgroundColor,
-                highlightColor: Color(0xFF383838),
-              );
-            },
-            errorWidget: (context, url, error) => Icon(Iconsax.danger5),
-            fadeInDuration: Duration(
-              milliseconds: 500,
+    return InkWell(
+      splashColor: Colors.red,
+      child: Card(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 5,
+        shadowColor: Colors.black,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CachedNetworkImage(
+              imageUrl: imageUrl,
+              progressIndicatorBuilder: (context, url, progress) {
+                return Shimmer.fromColors(
+                  child: Container(
+                    height: MediaQuery.of(context).size.height / 4.1,
+                    width: MediaQuery.of(context).size.width / 3,
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                  ),
+                  baseColor: Theme.of(context).scaffoldBackgroundColor,
+                  highlightColor: Color(0xFF383838),
+                );
+              },
+              errorWidget: (context, url, error) => Icon(Iconsax.danger5),
+              fadeInDuration: Duration(
+                milliseconds: 500,
+              ),
+              height: MediaQuery.of(context).size.height / 4.1,
+              width: MediaQuery.of(context).size.width / 3,
             ),
-            height: MediaQuery.of(context).size.height / 4.1,
-            width: MediaQuery.of(context).size.width / 3,
-          ),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                AutoSizeText(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 18),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(rating),
-              ],
-            ),
-          )
-        ],
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AutoSizeText(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(rating),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -106,10 +110,23 @@ Widget moviewGridView(
       shrinkWrap: true,
       itemCount: length,
       itemBuilder: (context, index) {
-        return InkWell(
-          splashColor: Color(0xFF36367C),
-          borderRadius: BorderRadius.circular(5),
-          onTap: () {
+        return OpenContainer(
+          closedElevation: 0,
+          middleColor: Theme.of(context).scaffoldBackgroundColor,
+          closedColor: Theme.of(context).scaffoldBackgroundColor,
+          openColor: Theme.of(context).scaffoldBackgroundColor,
+          transitionDuration: Duration(milliseconds: 300),
+          transitionType: ContainerTransitionType.fade,
+          closedBuilder: (context, action) {
+            return MoviewCard(
+              imageUrl: poster[index],
+              title: name[index],
+              rating: rate[index].runtimeType == String
+                  ? rate[index]
+                  : rate[index].toDouble().toString(),
+            );
+          },
+          openBuilder: (context, action) {
             moview.tvShowName = null;
             moview.movieName = null;
             moview.getTvShowDetailsIsLoading = true;
@@ -117,30 +134,16 @@ Widget moviewGridView(
             if (type.runtimeType == String
                 ? type == 'tv'
                 : type[index] == 'tv') {
-              Navigator.push(context, MaterialPageRoute(
-                builder: (context) {
-                  return TVShowDetails(
-                    id: id[index],
-                  );
-                },
-              ));
+              return TVShowDetails(
+                id: id[index],
+              );
             } else if (type.runtimeType == String
                 ? type == 'movie'
                 : type[index] == 'movie') {
-              Navigator.push(context, MaterialPageRoute(
-                builder: (context) {
-                  return MovieDetails(id: id[index]);
-                },
-              ));
+              return MovieDetails(id: id[index]);
             }
+            return Container();
           },
-          child: MoviewCard(
-            imageUrl: poster[index],
-            title: name[index],
-            rating: rate[index].runtimeType == String
-                ? rate[index]
-                : rate[index].toDouble().toString(),
-          ),
         );
       },
     ),
@@ -224,27 +227,33 @@ Widget suggestionCardGridView(context) {
               ? 5
               : moview.searchTypeNameList.length,
           itemBuilder: (context, index) {
-            return InkWell(
-              onTap: () {
+            return OpenContainer(
+              closedElevation: 0,
+              middleColor: Theme.of(context).scaffoldBackgroundColor,
+              closedColor: Theme.of(context).scaffoldBackgroundColor,
+              openColor: Theme.of(context).scaffoldBackgroundColor,
+              transitionDuration: Duration(milliseconds: 300),
+              transitionType: ContainerTransitionType.fade,
+              closedBuilder: (context, action) {
+                return MoviewSuggestionCard(
+                  title: moview.searchTypeNameList[index],
+                  imageUrl: moview.searchTypePosterUrlList[index],
+                  rating: moview.searchTypeRateList[index].toString(),
+                );
+              },
+              openBuilder: (context, action) {
                 moview.tvShowName = null;
                 moview.movieName = null;
                 moview.getTvShowDetailsIsLoading = true;
                 moview.getMovieDetailsIsLoading = true;
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => moview
-                                  .searchTypeMediaTypeList[index] ==
-                              'tv'
-                          ? TVShowDetails(id: moview.searchTypeIdList[index])
-                          : MovieDetails(id: moview.searchTypeIdList[index]),
-                    ));
+                if (moview.searchTypeMediaTypeList[index] == 'tv') {
+                  FocusScope.of(context).unfocus();
+                  return TVShowDetails(id: moview.searchTypeIdList[index]);
+                } else {
+                  FocusScope.of(context).unfocus();
+                  return MovieDetails(id: moview.searchTypeIdList[index]);
+                }
               },
-              child: MoviewSuggestionCard(
-                title: moview.searchTypeNameList[index],
-                imageUrl: moview.searchTypePosterUrlList[index],
-                rating: moview.searchTypeRateList[index].toString(),
-              ),
             );
           },
         )
