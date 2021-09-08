@@ -37,8 +37,9 @@ class MoviewCard extends StatelessWidget {
   final imageUrl;
   final title;
   final rating;
+  final id;
 
-  const MoviewCard({Key? key, this.imageUrl, this.title, this.rating})
+  const MoviewCard({Key? key, this.imageUrl, this.title, this.rating, this.id})
       : super(key: key);
 
   @override
@@ -52,36 +53,45 @@ class MoviewCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CachedNetworkImage(
-              imageUrl: imageUrl,
-              progressIndicatorBuilder: (context, url, progress) {
-                return Shimmer.fromColors(
-                  child: Container(
-                    height: MediaQuery.of(context).size.height / 4.1,
-                    width: MediaQuery.of(context).size.width / 3,
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                  ),
-                  baseColor: Theme.of(context).scaffoldBackgroundColor,
-                  highlightColor: Color(0xFF383838),
-                );
-              },
-              errorWidget: (context, url, error) => Icon(Iconsax.danger5),
-              fadeInDuration: Duration(
-                milliseconds: 500,
+            Hero(
+              tag: imageUrl,
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
+                progressIndicatorBuilder: (context, url, progress) {
+                  return Shimmer.fromColors(
+                    child: Container(
+                      height: MediaQuery.of(context).size.height / 4.1,
+                      width: MediaQuery.of(context).size.width / 3,
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                    ),
+                    baseColor: Theme.of(context).scaffoldBackgroundColor,
+                    highlightColor: Color(0xFF383838),
+                  );
+                },
+                errorWidget: (context, url, error) => Icon(Iconsax.danger5),
+                fadeInDuration: Duration(
+                  milliseconds: 500,
+                ),
+                height: MediaQuery.of(context).size.height / 4.1,
+                width: MediaQuery.of(context).size.width / 3,
               ),
-              height: MediaQuery.of(context).size.height / 4.1,
-              width: MediaQuery.of(context).size.width / 3,
             ),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  AutoSizeText(
-                    title,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 18),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                  Hero(
+                    tag: id,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: AutoSizeText(
+                        title,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 18),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                   ),
                   Text(rating),
                 ],
@@ -110,23 +120,10 @@ Widget moviewGridView(
       shrinkWrap: true,
       itemCount: length,
       itemBuilder: (context, index) {
-        return OpenContainer(
-          closedElevation: 0,
-          middleColor: Theme.of(context).scaffoldBackgroundColor,
-          closedColor: Theme.of(context).scaffoldBackgroundColor,
-          openColor: Theme.of(context).scaffoldBackgroundColor,
-          transitionDuration: Duration(milliseconds: 300),
-          transitionType: ContainerTransitionType.fade,
-          closedBuilder: (context, action) {
-            return MoviewCard(
-              imageUrl: poster[index],
-              title: name[index],
-              rating: rate[index].runtimeType == String
-                  ? rate[index]
-                  : rate[index].toDouble().toString(),
-            );
-          },
-          openBuilder: (context, action) {
+        return InkWell(
+          splashColor: Color(0xFF36367C),
+          borderRadius: BorderRadius.circular(5),
+          onTap: () {
             moview.tvShowName = null;
             moview.movieName = null;
             moview.getTvShowDetailsIsLoading = true;
@@ -134,17 +131,66 @@ Widget moviewGridView(
             if (type.runtimeType == String
                 ? type == 'tv'
                 : type[index] == 'tv') {
-              return TVShowDetails(
-                id: id[index],
+              animationTransition(
+                context,
+                id,
+                index,
+                name,
+                poster,
+                TVShowDetails(
+                  id: id[index],
+                  tvShowName: name[index],
+                  tvShowPosterUrl: poster[index],
+                ),
               );
             } else if (type.runtimeType == String
                 ? type == 'movie'
                 : type[index] == 'movie') {
-              return MovieDetails(id: id[index]);
+              animationTransition(
+                context,
+                id,
+                index,
+                name,
+                poster,
+                MovieDetails(
+                  id: id[index],
+                  movieName: name[index],
+                  moviePosterUrl: poster[index],
+                ),
+              );
             }
-            return Container();
           },
+          child: MoviewCard(
+            id: id[index],
+            imageUrl: poster[index],
+            title: name[index],
+            rating: rate[index].runtimeType == String
+                ? rate[index]
+                : rate[index].toDouble().toString(),
+          ),
         );
+      },
+    ),
+  );
+}
+
+Future<dynamic> animationTransition(
+    BuildContext context, id, int index, name, poster, newPage) {
+  return Navigator.push(
+    context,
+    PageRouteBuilder(
+      transitionDuration: Duration(milliseconds: 500),
+      reverseTransitionDuration: Duration(milliseconds: 500),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return SharedAxisTransition(
+          animation: animation,
+          secondaryAnimation: secondaryAnimation,
+          transitionType: SharedAxisTransitionType.horizontal,
+          child: child,
+        );
+      },
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return newPage;
       },
     ),
   );
@@ -232,7 +278,7 @@ Widget suggestionCardGridView(context) {
               middleColor: Theme.of(context).scaffoldBackgroundColor,
               closedColor: Theme.of(context).scaffoldBackgroundColor,
               openColor: Theme.of(context).scaffoldBackgroundColor,
-              transitionDuration: Duration(milliseconds: 300),
+              transitionDuration: Duration(milliseconds: 400),
               transitionType: ContainerTransitionType.fade,
               closedBuilder: (context, action) {
                 return MoviewSuggestionCard(
@@ -248,10 +294,18 @@ Widget suggestionCardGridView(context) {
                 moview.getMovieDetailsIsLoading = true;
                 if (moview.searchTypeMediaTypeList[index] == 'tv') {
                   FocusScope.of(context).unfocus();
-                  return TVShowDetails(id: moview.searchTypeIdList[index]);
+                  return TVShowDetails(
+                    tvShowName: moview.searchTypeNameList[index],
+                    tvShowPosterUrl: moview.searchTypePosterUrlList[index],
+                    id: moview.searchTypeIdList[index],
+                  );
                 } else {
                   FocusScope.of(context).unfocus();
-                  return MovieDetails(id: moview.searchTypeIdList[index]);
+                  return MovieDetails(
+                    id: moview.searchTypeIdList[index],
+                    movieName: moview.searchTypeNameList[index],
+                    moviePosterUrl: moview.searchTypePosterUrlList[index],
+                  );
                 }
               },
             );

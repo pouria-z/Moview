@@ -4,11 +4,16 @@ import 'package:moview/services.dart';
 import 'package:provider/provider.dart';
 import 'package:marquee/marquee.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 
 class TVShowDetails extends StatefulWidget {
   final id;
+  final tvShowName;
+  final tvShowPosterUrl;
 
-  const TVShowDetails({Key? key, @required this.id}) : super(key: key);
+  const TVShowDetails(
+      {Key? key, @required this.id, this.tvShowName, this.tvShowPosterUrl})
+      : super(key: key);
 
   @override
   _TVShowDetailsState createState() => _TVShowDetailsState();
@@ -38,19 +43,19 @@ class _TVShowDetailsState extends State<TVShowDetails> {
     return Consumer<Moview>(
       builder: (context, value, child) {
         return Scaffold(
-          appBar: moview.tvShowName.toString().characters.length < 30
+          appBar: widget.tvShowName.toString().characters.length < 30
               ? AppBar(
                   title: Text(
-                    moview.tvShowName == null ? "" : moview.tvShowName,
+                    widget.tvShowName == null ? "" : widget.tvShowName,
                     style: TextStyle(fontSize: 25),
                   ),
                 )
               : AppBar(
                   flexibleSpace: SafeArea(
-                    child: moview.tvShowName == null
+                    child: widget.tvShowName == null
                         ? Container()
                         : Marquee(
-                            text: moview.tvShowName,
+                            text: widget.tvShowName,
                             style: TextStyle(fontSize: 25, color: Colors.white),
                             scrollAxis: Axis.horizontal,
                             blankSpace: MediaQuery.of(context).size.width / 2,
@@ -74,97 +79,129 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                     });
                   },
                 )
-              : moview.getTvShowDetailsIsLoading == true
-                  ? Center(child: CircularProgressIndicator())
-                  : Column(
-                      children: [
-                        CachedNetworkImage(
-                          imageUrl: moview.tvShowCover == null
-                              ? failed
-                              : moview.tvShowCoverUrl,
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height / 3.5,
-                          fit: BoxFit.fill,
-                          alignment: Alignment.topCenter,
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CachedNetworkImage(
-                              imageUrl: moview.tvShowPoster  == null
-                                  ? failed : moview.tvShowPosterUrl,
-                              width: MediaQuery.of(context).size.width / 2,
-                              height: MediaQuery.of(context).size.height / 3,
-                              alignment: Alignment.center,
+              : Column(
+                  children: [
+                    moview.getTvShowDetailsIsLoading == true
+                        ? Shimmer.fromColors(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height / 3.5,
+                              alignment: Alignment.topCenter,
+                              color: Theme.of(context).scaffoldBackgroundColor,
                             ),
-                            Flexible(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    moview.tvShowName,
+                            baseColor:
+                                Theme.of(context).scaffoldBackgroundColor,
+                            highlightColor: Colors.grey,
+                          )
+                        : CachedNetworkImage(
+                            imageUrl: moview.tvShowCoverUrl,
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height / 3.5,
+                            fit: BoxFit.fill,
+                            alignment: Alignment.topCenter,
+                          ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Hero(
+                          tag: widget.tvShowPosterUrl,
+                          child: CachedNetworkImage(
+                            imageUrl: widget.tvShowPosterUrl,
+                            width: MediaQuery.of(context).size.width / 2,
+                            height: MediaQuery.of(context).size.height / 3,
+                            alignment: Alignment.center,
+                          ),
+                        ),
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Hero(
+                                tag: widget.id,
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: Text(
+                                    widget.tvShowName,
                                     style: TextStyle(fontSize: 20),
                                   ),
-                                  IconButton(
-                                    onPressed: () async {
-                                      setState(() {
-                                        isFavorite == null
-                                            ? isFavorite = true
-                                            : isFavorite = null;
-                                      });
-                                      await moview.setAndGetId(widget.id, 'tv').timeout(
-                                          Duration(seconds: 5), onTimeout: () {
+                                ),
+                              ),
+                              moview.getTvShowDetailsIsLoading == true
+                                  ? Shimmer.fromColors(
+                                      baseColor: Theme.of(context)
+                                          .scaffoldBackgroundColor,
+                                      highlightColor: Colors.grey,
+                                      child: IconButton(
+                                        onPressed: () {},
+                                        icon: Icon(
+                                          Icons.favorite_border_rounded,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    )
+                                  : IconButton(
+                                      onPressed: () async {
                                         setState(() {
                                           isFavorite == null
                                               ? isFavorite = true
                                               : isFavorite = null;
-                                          moview.isFave = isFavorite;
                                         });
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content:
-                                                Text('something went wrong!'),
-                                          ),
-                                        );
-                                      });
-                                      if (moview.isFave == null) {
-                                        setState(() {
-                                          moview.isFave = isFavorite;
+                                        await moview
+                                            .setAndGetId(widget.id, 'tv')
+                                            .timeout(Duration(seconds: 5),
+                                                onTimeout: () {
+                                          setState(() {
+                                            isFavorite == null
+                                                ? isFavorite = true
+                                                : isFavorite = null;
+                                            moview.isFave = isFavorite;
+                                          });
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content:
+                                                  Text('something went wrong!'),
+                                            ),
+                                          );
                                         });
-                                        await moview.setFavorite(widget.id, 'tv');
-                                      } else if (moview.isFave == true) {
-                                        setState(() {
-                                          moview.isFave = isFavorite;
-                                        });
-                                        await moview.unsetFavorite();
-                                      }
-                                    },
-                                    icon: isFavorite == true
-                                        ? Icon(
-                                            Icons.favorite_rounded,
-                                            color: Colors.red,
-                                          )
-                                        : Icon(
-                                            Icons.favorite_border_rounded,
-                                          ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        Text(moview.tvShowTagLine),
-                        Text(moview.tvShowLanguagesList.toString()),
-                        Text(moview.tvShowGenreList.toString()),
+                                        if (moview.isFave == null) {
+                                          setState(() {
+                                            moview.isFave = isFavorite;
+                                          });
+                                          await moview.setFavorite(
+                                              widget.id, 'tv');
+                                        } else if (moview.isFave == true) {
+                                          setState(() {
+                                            moview.isFave = isFavorite;
+                                          });
+                                          await moview.unsetFavorite();
+                                        }
+                                      },
+                                      icon: isFavorite == true
+                                          ? Icon(
+                                              Icons.favorite_rounded,
+                                              color: Colors.red,
+                                            )
+                                          : Icon(
+                                              Icons.favorite_border_rounded,
+                                            ),
+                                    ),
+                            ],
+                          ),
+                        )
                       ],
                     ),
+                    Text(moview.tvShowTagLine.toString()),
+                    Text(moview.tvShowLanguagesList.toString()),
+                    Text(moview.tvShowGenreList.toString()),
+                  ],
+                ),
         );
       },
     );

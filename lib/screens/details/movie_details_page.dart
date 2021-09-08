@@ -4,11 +4,16 @@ import 'package:moview/services.dart';
 import 'package:provider/provider.dart';
 import 'package:marquee/marquee.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 
 class MovieDetails extends StatefulWidget {
   final id;
+  final movieName;
+  final moviePosterUrl;
 
-  const MovieDetails({Key? key, @required this.id}) : super(key: key);
+  const MovieDetails(
+      {Key? key, @required this.id, this.movieName, this.moviePosterUrl})
+      : super(key: key);
 
   @override
   _MovieDetailsState createState() => _MovieDetailsState();
@@ -36,19 +41,19 @@ class _MovieDetailsState extends State<MovieDetails> {
     return Consumer<Moview>(
       builder: (context, value, child) {
         return Scaffold(
-          appBar: moview.movieName.toString().characters.length < 30
+          appBar: widget.movieName.toString().characters.length < 30
               ? AppBar(
                   title: Text(
-                    moview.movieName == null ? "" : moview.movieName,
+                    widget.movieName == null ? "" : widget.movieName,
                     style: TextStyle(fontSize: 25),
                   ),
                 )
               : AppBar(
                   flexibleSpace: SafeArea(
-                    child: moview.movieName == null
+                    child: widget.movieName == null
                         ? Container()
                         : Marquee(
-                            text: moview.movieName,
+                            text: widget.movieName,
                             style: TextStyle(fontSize: 25, color: Colors.white),
                             scrollAxis: Axis.horizontal,
                             blankSpace: MediaQuery.of(context).size.width / 2,
@@ -72,41 +77,73 @@ class _MovieDetailsState extends State<MovieDetails> {
                     });
                   },
                 )
-              : moview.getMovieDetailsIsLoading == true
-                  ? Center(child: CircularProgressIndicator())
-                  : Column(
-                      children: [
-                        CachedNetworkImage(
-                          imageUrl: moview.movieCoverUrl,
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height / 3.5,
-                          fit: BoxFit.fill,
-                          alignment: Alignment.topCenter,
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CachedNetworkImage(
-                              imageUrl: moview.moviePosterUrl,
-                              width: MediaQuery.of(context).size.width / 2,
-                              height: MediaQuery.of(context).size.height / 3,
-                              alignment: Alignment.center,
+              : Column(
+                  children: [
+                    moview.getMovieDetailsIsLoading == true
+                        ? Shimmer.fromColors(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height / 3.5,
+                              alignment: Alignment.topCenter,
+                              color: Theme.of(context).scaffoldBackgroundColor,
                             ),
-                            Flexible(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    moview.movieName,
+                            baseColor:
+                                Theme.of(context).scaffoldBackgroundColor,
+                            highlightColor: Colors.grey,
+                          )
+                        : CachedNetworkImage(
+                            imageUrl: moview.movieCoverUrl,
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height / 3.5,
+                            fit: BoxFit.fill,
+                            alignment: Alignment.topCenter,
+                          ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Hero(
+                          tag: widget.moviePosterUrl,
+                          child: CachedNetworkImage(
+                            imageUrl: widget.moviePosterUrl,
+                            width: MediaQuery.of(context).size.width / 2,
+                            height: MediaQuery.of(context).size.height / 3,
+                            alignment: Alignment.center,
+                          ),
+                        ),
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Hero(
+                                tag: widget.id,
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: Text(
+                                    widget.movieName,
                                     style: TextStyle(fontSize: 20),
                                   ),
-                                  IconButton(
+                                ),
+                              ),
+                              moview.getMovieDetailsIsLoading == true
+                                  ? Shimmer.fromColors(
+                                      child: IconButton(
+                                        onPressed: () {},
+                                        icon: Icon(
+                                          Icons.favorite_border_rounded,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      baseColor: Theme.of(context)
+                                          .scaffoldBackgroundColor,
+                                      highlightColor: Colors.grey,
+                                    )
+                                  : IconButton(
                                       onPressed: () async {
                                         setState(() {
                                           isFavorite == null
@@ -135,7 +172,8 @@ class _MovieDetailsState extends State<MovieDetails> {
                                           setState(() {
                                             moview.isFave = isFavorite;
                                           });
-                                          await moview.setFavorite(widget.id, 'movie');
+                                          await moview.setFavorite(
+                                              widget.id, 'movie');
                                         } else if (moview.isFave == true) {
                                           setState(() {
                                             moview.isFave = isFavorite;
@@ -151,16 +189,16 @@ class _MovieDetailsState extends State<MovieDetails> {
                                           : Icon(
                                               Icons.favorite_border_rounded,
                                             )),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        Text(moview.movieTagLine),
-                        Text(moview.movieLanguagesList.toString()),
-                        Text(moview.movieGenreList.toString()),
+                            ],
+                          ),
+                        )
                       ],
                     ),
+                    Text(moview.movieTagLine.toString()),
+                    Text(moview.movieLanguagesList.toString()),
+                    Text(moview.movieGenreList.toString()),
+                  ],
+                ),
         );
       },
     );
