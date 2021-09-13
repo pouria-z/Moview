@@ -8,6 +8,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:animations/animations.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class TimeOutWidget extends StatelessWidget {
   final function;
@@ -319,5 +320,36 @@ ScaffoldFeatureController message(context, response) {
     SnackBar(
       content: Text(response.toString()),
     ),
+  );
+}
+
+AppBar buildAppBar(BuildContext context, String title) {
+  return AppBar(
+    leading: Row(
+      children: [
+        SizedBox(
+          width: 10,
+        ),
+        Expanded(
+          child: Column(
+            children: [
+              Flexible(
+                child: SvgPicture.asset(
+                  'assets/images/logo.svg',
+                  alignment: Alignment.centerRight,
+                ),
+              ),
+              SizedBox(
+                height: 3,
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+    leadingWidth: MediaQuery.of(context).size.width / 3,
+    title: Text(title),
+    centerTitle: true,
+    elevation: 0,
   );
 }

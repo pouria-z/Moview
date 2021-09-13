@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:moview/screens/favorites_page.dart';
 import 'package:moview/services.dart';
@@ -6,22 +7,23 @@ import 'package:moview/screens/search_page.dart';
 import 'package:moview/screens/profile_page.dart';
 import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
-  var tabController;
+class _HomePageState extends State<HomePage> {
   Connectivity connectivity = Connectivity();
   ConnectivityResult _connectivityResult = ConnectivityResult.wifi;
+  late PersistentTabController _controller;
 
   @override
   void initState() {
     super.initState();
     var moview = Provider.of<Moview>(context, listen: false);
+    _controller = PersistentTabController(initialIndex: 0);
     connectivity.onConnectivityChanged.listen((result) {
       setState(() {
         this._connectivityResult = result;
@@ -31,16 +33,6 @@ class _HomePageState extends State<HomePage>
       moview.getUser();
       moview.hasUserLogged(context);
     });
-    tabController = TabController(
-      length: 4,
-      vsync: this,
-    );
-  }
-
-  @override
-  void dispose() {
-    tabController.dispose();
-    super.dispose();
   }
 
   @override
@@ -48,56 +40,66 @@ class _HomePageState extends State<HomePage>
     var moview = Provider.of<Moview>(context, listen: false);
     return Consumer<Moview>(
       builder: (context, value, child) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text("Moview"),
-            elevation: 0,
-          ),
-          body: _connectivityResult == ConnectivityResult.none
-              ? Center(
-                  child: Text("No Network Connection. Please check your connection."),
-                )
-              : TabBarView(
-                  children: [
-                    GenresPage(),
-                    SearchPage(),
-                    ProfilePage(
-                      username: moview.username,
-                      email: moview.email,
-                      password: moview.password,
-                    ),
-                    FavoritesPage(),
-                  ],
-                  controller: tabController,
-                ),
-          bottomNavigationBar: _connectivityResult == ConnectivityResult.none
-              ? null
-              : Material(
-                  color: Theme.of(context).primaryColor,
-                  child: TabBar(
-                    controller: tabController,
-                    isScrollable: false,
-                    tabs: [
-                      Tab(
-                        child: Text("Genres"),
-                        icon: Icon(Icons.grid_view),
-                      ),
-                      Tab(
-                        child: Text("Search"),
-                        icon: Icon(Icons.search_rounded),
-                      ),
-                      Tab(
-                        child: Text("Profile"),
-                        icon: Icon(Icons.person),
-                      ),
-                      Tab(
-                        child: Text("Favorites"),
-                        icon: Icon(Icons.favorite_border_rounded),
-                      ),
-                    ],
+        return _connectivityResult == ConnectivityResult.none
+            ? Center(
+                child: Text(
+                    "No Network Connection. Please check your connection."),
+              )
+            : PersistentTabView(
+                context,
+                confineInSafeArea: true,
+                screens: [
+                  GenresPage(),
+                  SearchPage(),
+                  ProfilePage(
+                    email: moview.email,
+                    password: moview.password,
+                    username: moview.username,
                   ),
+                  FavoritesPage(),
+                ],
+                controller: _controller,
+                items: [
+                  PersistentBottomNavBarItem(
+                    icon: Icon(Icons.grid_view),
+                    activeColorPrimary: Theme.of(context).accentColor,
+                    activeColorSecondary: Colors.white,
+                    inactiveColorPrimary: Colors.grey,
+                  ),
+                  PersistentBottomNavBarItem(
+                    icon: Icon(Icons.search_rounded),
+                    activeColorPrimary: Theme.of(context).accentColor,
+                    activeColorSecondary: Colors.white,
+                    inactiveColorPrimary: Colors.grey,
+                  ),
+                  PersistentBottomNavBarItem(
+                    icon: Icon(Icons.person),
+                    activeColorPrimary: Theme.of(context).accentColor,
+                    activeColorSecondary: Colors.white,
+                    inactiveColorPrimary: Colors.grey,
+                  ),
+                  PersistentBottomNavBarItem(
+                    icon: Icon(Icons.favorite_border_rounded),
+                    activeColorPrimary: Theme.of(context).accentColor,
+                    activeColorSecondary: Colors.white,
+                    inactiveColorPrimary: Colors.grey,
+                  ),
+                ],
+                popActionScreens: PopActionScreensType.all,
+                itemAnimationProperties: ItemAnimationProperties(
+                  duration: Duration(milliseconds: 450),
+                  curve: Curves.easeInOutQuart,
                 ),
-        );
+                screenTransitionAnimation: ScreenTransitionAnimation(
+                  animateTabTransition: true,
+                  duration: Duration(milliseconds: 450),
+                  curve: Curves.easeInOutQuart,
+                ),
+                backgroundColor: Theme.of(context).primaryColor,
+                hideNavigationBarWhenKeyboardShows: true,
+                //navBarHeight: MediaQuery.of(context).viewInsets.bottom > 0 ? 0.0 : kBottomNavigationBarHeight,
+                navBarStyle: NavBarStyle.style3,
+              );
       },
     );
   }

@@ -14,7 +14,6 @@ class Moview with ChangeNotifier {
   String imageUrl = "https://image.tmdb.org/t/p/w500";
   var type; // 'movie' or 'tv'
   bool timeOutException = false;
-
   ///Movie Genre List
   var genreMediaId;
   var genreMovieName;

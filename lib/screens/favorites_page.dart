@@ -30,6 +30,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
     return Consumer<Moview>(
       builder: (context, value, child) {
         return Scaffold(
+          appBar: buildAppBar(context, "Favorites"),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               setState(() {

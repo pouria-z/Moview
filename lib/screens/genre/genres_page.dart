@@ -28,34 +28,33 @@ class _GenresPageState extends State<GenresPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Material(
-              color: Theme.of(context).primaryColor,
-              child: TabBar(
-                controller: _controller,
-                tabs: [
-                  Tab(
-                    text: 'Movie',
-                  ),
-                  Tab(
-                    text: 'TV Show',
-                  ),
-                ],
-              ),
+      appBar: buildAppBar(context, "Genres"),
+      body: Column(
+        children: [
+          Material(
+            color: Theme.of(context).primaryColor,
+            child: TabBar(
+              controller: _controller,
+              tabs: [
+                Tab(
+                  text: 'Movie',
+                ),
+                Tab(
+                  text: 'TV Show',
+                ),
+              ],
             ),
-            Expanded(
-              child: TabBarView(
-                controller: _controller,
-                children: [
-                  MovieGenres(),
-                  TVShowGenres(),
-                ],
-              ),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _controller,
+              children: [
+                MovieGenres(),
+                TVShowGenres(),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moview/services.dart';
+import 'package:moview/widgets.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -34,6 +35,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     var moview = Provider.of<Moview>(context, listen: false);
     return Scaffold(
+      appBar: buildAppBar(context, "Profile"),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
