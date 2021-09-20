@@ -14,6 +14,8 @@ class Moview with ChangeNotifier {
   String imageUrl = "https://image.tmdb.org/t/p/w500";
   var type; // 'movie' or 'tv'
   bool timeOutException = false;
+  bool showBottom = true;
+
   ///Movie Genre List
   var genreMediaId;
   var genreMovieName;
@@ -598,6 +600,7 @@ class Moview with ChangeNotifier {
   }
 
   Future<bool> hasUserLogged(context) async {
+    print('checking if its valid');
     ParseUser? currentUser = await ParseUser.currentUser() as ParseUser?;
     if (currentUser == null) {
       return false;
@@ -607,13 +610,10 @@ class Moview with ChangeNotifier {
         await ParseUser.getCurrentUserFromServer(currentUser.sessionToken!);
 
     if (parseResponse?.success == null || !parseResponse!.success) {
+      showBottom = false;
       //Invalid session. Logout
       await currentUser.logout();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Sorry you have to go :("),
-        ),
-      );
+      message(context, 'something went wrong! please login again.');
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -632,18 +632,10 @@ class Moview with ChangeNotifier {
     try {
       response = await user.signUp().timeout(Duration(seconds: 10));
     } on TimeoutException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('something went wrong. please try again!'),
-        ),
-      );
+      message(context, 'something went wrong. please try again!');
       throw e;
     } on SocketException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('something went wrong. please try again!'),
-        ),
-      );
+      message(context, 'something went wrong. please try again!');
       throw e;
     }
     if (response.success) {
@@ -665,21 +657,14 @@ class Moview with ChangeNotifier {
     try {
       response = await user.login().timeout(Duration(seconds: 10));
     } on TimeoutException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('something went wrong. please try again!'),
-        ),
-      );
+      message(context, 'something went wrong. please try again!');
       throw e;
     } on SocketException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('something went wrong. please try again!'),
-        ),
-      );
+      message(context, 'something went wrong. please try again!');
       throw e;
     }
     if (response.success) {
+      showBottom = true;
       print('user logged in successfully');
       Navigator.pushReplacement(
           context,
@@ -705,15 +690,15 @@ class Moview with ChangeNotifier {
     late ParseResponse response;
     try {
       response = await user.logout().timeout(Duration(seconds: 10));
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('something went wrong. please try again!'),
-        ),
-      );
-      throw error;
+    } on TimeoutException catch (e) {
+      message(context, 'something went wrong! please try again.');
+      throw e;
+    } on SocketException catch (e) {
+      message(context, 'something went wrong! please try again.');
+      throw e;
     }
     if (response.success) {
+      showBottom = false;
       favoriteNumbers = null;
       genreMovieIdList.clear();
       genreMovieNameList.clear();
@@ -747,10 +732,11 @@ class Moview with ChangeNotifier {
       dbYearList.clear();
       print('user logged out successfully');
       Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => IntroPage(),
-          ));
+        context,
+        MaterialPageRoute(
+          builder: (context) => IntroPage(),
+        ),
+      );
     } else if (response.error!.code == -1) {
       print(response.error!.message);
       message(context, "Check your connection");
@@ -759,6 +745,29 @@ class Moview with ChangeNotifier {
       message(context, response.error!.message);
     }
     notifyListeners();
+  }
+
+  void resetPassword(context) async {
+    print('resetting password...');
+    var user = ParseUser(null, null, email);
+    late ParseResponse response;
+    try {
+      response =
+          await user.requestPasswordReset().timeout(Duration(seconds: 10));
+    } on TimeoutException catch (e) {
+      message(context, 'something went wrong. please try again!');
+      throw e;
+    } on SocketException catch (e) {
+      message(context, 'something went wrong. please try again!');
+      throw e;
+    }
+    if (response.success) {
+      message(context,
+          'an email containing a link to reset your password, sent to $email.');
+      print('email sent to email address!');
+    } else {
+      message(context, 'something went wrong. please try again!');
+    }
   }
 
   ///Favorite Page

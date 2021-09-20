@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:moview/screens/favorites_page.dart';
+import 'package:moview/screens/intro/intro_page.dart';
 import 'package:moview/services.dart';
 import 'package:moview/screens/genre/genres_page.dart';
 import 'package:moview/screens/search_page.dart';
@@ -45,7 +46,7 @@ class _HomePageState extends State<HomePage> {
                 child: Text(
                     "No Network Connection. Please check your connection."),
               )
-            : PersistentTabView(
+            : moview.showBottom == true ? PersistentTabView(
                 context,
                 confineInSafeArea: true,
                 screens: [
@@ -61,24 +62,40 @@ class _HomePageState extends State<HomePage> {
                 controller: _controller,
                 items: [
                   PersistentBottomNavBarItem(
+                    onPressed: (ctx) {
+                      moview.hasUserLogged(context);
+                      _controller.jumpToTab(0);
+                    },
                     icon: Icon(Icons.grid_view),
                     activeColorPrimary: Theme.of(context).accentColor,
                     activeColorSecondary: Colors.white,
                     inactiveColorPrimary: Colors.grey,
                   ),
                   PersistentBottomNavBarItem(
+                    onPressed: (ctx) {
+                      moview.hasUserLogged(context);
+                      _controller.jumpToTab(1);
+                    },
                     icon: Icon(Icons.search_rounded),
                     activeColorPrimary: Theme.of(context).accentColor,
                     activeColorSecondary: Colors.white,
                     inactiveColorPrimary: Colors.grey,
                   ),
                   PersistentBottomNavBarItem(
+                    onPressed: (ctx) {
+                      moview.hasUserLogged(context);
+                      _controller.jumpToTab(2);
+                    },
                     icon: Icon(Icons.person),
                     activeColorPrimary: Theme.of(context).accentColor,
                     activeColorSecondary: Colors.white,
                     inactiveColorPrimary: Colors.grey,
                   ),
                   PersistentBottomNavBarItem(
+                    onPressed: (ctx) {
+                      moview.hasUserLogged(context);
+                      _controller.jumpToTab(3);
+                    },
                     icon: Icon(Icons.favorite_border_rounded),
                     activeColorPrimary: Theme.of(context).accentColor,
                     activeColorSecondary: Colors.white,
@@ -97,9 +114,8 @@ class _HomePageState extends State<HomePage> {
                 ),
                 backgroundColor: Theme.of(context).primaryColor,
                 hideNavigationBarWhenKeyboardShows: true,
-                //navBarHeight: MediaQuery.of(context).viewInsets.bottom > 0 ? 0.0 : kBottomNavigationBarHeight,
                 navBarStyle: NavBarStyle.style3,
-              );
+              ) : IntroPage();
       },
     );
   }

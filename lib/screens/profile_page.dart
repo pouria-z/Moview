@@ -46,6 +46,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   return moview.logout(context);
                 },
                 child: Text("logout")),
+            TextButton(
+                onPressed: () {
+                  return moview.resetPassword(context);
+                },
+                child: Text("reset password")),
           ],
         ),
       ),
