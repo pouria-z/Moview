@@ -46,76 +46,66 @@ class _HomePageState extends State<HomePage> {
                 child: Text(
                     "No Network Connection. Please check your connection."),
               )
-            : moview.showBottom == true ? PersistentTabView(
-                context,
-                confineInSafeArea: true,
-                screens: [
-                  GenresPage(),
-                  SearchPage(),
-                  ProfilePage(
-                    email: moview.email,
-                    password: moview.password,
-                    username: moview.username,
-                  ),
-                  FavoritesPage(),
-                ],
-                controller: _controller,
-                items: [
-                  PersistentBottomNavBarItem(
-                    onPressed: (ctx) {
-                      moview.hasUserLogged(context);
-                      _controller.jumpToTab(0);
-                    },
-                    icon: Icon(Icons.grid_view),
-                    activeColorPrimary: Theme.of(context).accentColor,
-                    activeColorSecondary: Colors.white,
-                    inactiveColorPrimary: Colors.grey,
-                  ),
-                  PersistentBottomNavBarItem(
-                    onPressed: (ctx) {
-                      moview.hasUserLogged(context);
-                      _controller.jumpToTab(1);
-                    },
-                    icon: Icon(Icons.search_rounded),
-                    activeColorPrimary: Theme.of(context).accentColor,
-                    activeColorSecondary: Colors.white,
-                    inactiveColorPrimary: Colors.grey,
-                  ),
-                  PersistentBottomNavBarItem(
-                    onPressed: (ctx) {
-                      moview.hasUserLogged(context);
-                      _controller.jumpToTab(2);
-                    },
-                    icon: Icon(Icons.person),
-                    activeColorPrimary: Theme.of(context).accentColor,
-                    activeColorSecondary: Colors.white,
-                    inactiveColorPrimary: Colors.grey,
-                  ),
-                  PersistentBottomNavBarItem(
-                    onPressed: (ctx) {
-                      moview.hasUserLogged(context);
-                      _controller.jumpToTab(3);
-                    },
-                    icon: Icon(Icons.favorite_border_rounded),
-                    activeColorPrimary: Theme.of(context).accentColor,
-                    activeColorSecondary: Colors.white,
-                    inactiveColorPrimary: Colors.grey,
-                  ),
-                ],
-                popActionScreens: PopActionScreensType.all,
-                itemAnimationProperties: ItemAnimationProperties(
-                  duration: Duration(milliseconds: 450),
-                  curve: Curves.easeInOutQuart,
-                ),
-                screenTransitionAnimation: ScreenTransitionAnimation(
-                  animateTabTransition: true,
-                  duration: Duration(milliseconds: 450),
-                  curve: Curves.easeInOutQuart,
-                ),
-                backgroundColor: Theme.of(context).primaryColor,
-                hideNavigationBarWhenKeyboardShows: true,
-                navBarStyle: NavBarStyle.style3,
-              ) : IntroPage();
+            : moview.showBottom == true
+                ? PersistentTabView(
+                    context,
+                    confineInSafeArea: true,
+                    screens: [
+                      GenresPage(),
+                      SearchPage(),
+                      ProfilePage(
+                        email: moview.email,
+                        password: moview.password,
+                        username: moview.username,
+                      ),
+                      FavoritesPage(),
+                    ],
+                    controller: _controller,
+                    items: [
+                      PersistentBottomNavBarItem(
+                        icon: Icon(Icons.grid_view),
+                        activeColorPrimary: Theme.of(context).accentColor,
+                        activeColorSecondary: Colors.white,
+                        inactiveColorPrimary: Colors.grey,
+                      ),
+                      PersistentBottomNavBarItem(
+                        icon: Icon(Icons.search_rounded),
+                        activeColorPrimary: Theme.of(context).accentColor,
+                        activeColorSecondary: Colors.white,
+                        inactiveColorPrimary: Colors.grey,
+                      ),
+                      PersistentBottomNavBarItem(
+                        onPressed: (ctx) {
+                          moview.hasUserLogged(context);
+                          _controller.jumpToTab(2);
+                        },
+                        icon: Icon(Icons.person),
+                        activeColorPrimary: Theme.of(context).accentColor,
+                        activeColorSecondary: Colors.white,
+                        inactiveColorPrimary: Colors.grey,
+                      ),
+                      PersistentBottomNavBarItem(
+                        icon: Icon(Icons.favorite_border_rounded),
+                        activeColorPrimary: Theme.of(context).accentColor,
+                        activeColorSecondary: Colors.white,
+                        inactiveColorPrimary: Colors.grey,
+                      ),
+                    ],
+                    popActionScreens: PopActionScreensType.all,
+                    itemAnimationProperties: ItemAnimationProperties(
+                      duration: Duration(milliseconds: 450),
+                      curve: Curves.easeInOutQuart,
+                    ),
+                    screenTransitionAnimation: ScreenTransitionAnimation(
+                      animateTabTransition: true,
+                      duration: Duration(milliseconds: 450),
+                      curve: Curves.easeInOutQuart,
+                    ),
+                    backgroundColor: Theme.of(context).primaryColor,
+                    hideNavigationBarWhenKeyboardShows: true,
+                    navBarStyle: NavBarStyle.style3,
+                  )
+                : IntroPage();
       },
     );
   }

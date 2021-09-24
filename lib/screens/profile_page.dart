@@ -42,15 +42,17 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             Text("Hey ${widget.username}!"),
             TextButton(
-                onPressed: () {
-                  return moview.logout(context);
-                },
-                child: Text("logout")),
+              onPressed: () {
+                return moview.logout(context);
+              },
+              child: Text("logout"),
+            ),
             TextButton(
-                onPressed: () {
-                  return moview.resetPassword(context);
-                },
-                child: Text("reset password")),
+              onPressed: () {
+                return moview.resetPassword(context);
+              },
+              child: Text("reset password"),
+            ),
           ],
         ),
       ),
