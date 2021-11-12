@@ -182,9 +182,14 @@ class Moview with ChangeNotifier {
     for (var item in json['genres']) {
       genreMediaId = item['id'];
       genreMovieName = item['name'];
-      genreMovieNameList.add(genreMovieName);
-      genreMovieIdList.add(genreMediaId);
+      if(genreMovieName != "Documentary"){
+        genreMovieNameList.add(genreMovieName);
+        genreMovieIdList.add(genreMediaId);
+      }
     }
+    genreMovieNameList.forEach((element) {
+      print("This is element: $element");
+    });
     notifyListeners();
   }
 
@@ -210,8 +215,10 @@ class Moview with ChangeNotifier {
     for (var item in json['genres']) {
       genreTvShowId = item['id'];
       genreTvShowName = item['name'];
-      genreTvShowNameList.add(genreTvShowName);
-      genreTvShowIdList.add(genreTvShowId);
+      if(genreTvShowName != "Soap"){
+        genreTvShowNameList.add(genreTvShowName);
+        genreTvShowIdList.add(genreTvShowId);
+      }
     }
     notifyListeners();
   }

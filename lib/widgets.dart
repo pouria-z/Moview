@@ -261,6 +261,7 @@ class MoviewSuggestionCard extends StatelessWidget {
   }
 }
 
+// for search page
 Widget suggestionCardGridView(context) {
   var moview = Provider.of<Moview>(context, listen: false);
   return moview.searchTypeNameList.isNotEmpty
@@ -325,6 +326,7 @@ ScaffoldFeatureController message(context, response) {
 
 AppBar buildAppBar(BuildContext context, String title) {
   return AppBar(
+    backgroundColor: Theme.of(context).primaryColor,
     leading: Row(
       children: [
         SizedBox(

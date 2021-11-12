@@ -10,6 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
+  firebase_messaging: ^10.0.8
+  firebase_core: ^1.7.0
   iconsax: ^0.0.8
   animations: ^2.0.1
   shimmer: ^2.0.0

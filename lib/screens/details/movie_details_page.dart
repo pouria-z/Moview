@@ -43,12 +43,14 @@ class _MovieDetailsState extends State<MovieDetails> {
         return Scaffold(
           appBar: widget.movieName.toString().characters.length < 30
               ? AppBar(
+                  backgroundColor: Theme.of(context).primaryColor,
                   title: Text(
                     widget.movieName == null ? "" : widget.movieName,
                     style: TextStyle(fontSize: 25),
                   ),
                 )
               : AppBar(
+                  backgroundColor: Theme.of(context).primaryColor,
                   flexibleSpace: SafeArea(
                     child: widget.movieName == null
                         ? Container()

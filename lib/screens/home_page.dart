@@ -9,6 +9,7 @@ import 'package:moview/screens/profile_page.dart';
 import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -19,6 +20,11 @@ class _HomePageState extends State<HomePage> {
   Connectivity connectivity = Connectivity();
   ConnectivityResult _connectivityResult = ConnectivityResult.wifi;
   late PersistentTabController _controller;
+
+  ///here
+  String messageTitle = "empty";
+  String notifAlert = "alert";
+  FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
   @override
   void initState() {
@@ -33,6 +39,18 @@ class _HomePageState extends State<HomePage> {
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       moview.getUser();
       moview.hasUserLogged(context);
+    });
+
+    ///here
+    firebaseMessaging.getToken().then((value) {
+      print(value);
+    });
+    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+      print("message recieved");
+      print(event.notification!.body);
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      print('Message clicked!');
     });
   }
 
