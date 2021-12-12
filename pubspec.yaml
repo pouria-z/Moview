@@ -14,6 +14,7 @@ dependencies:
   firebase_core: ^1.7.0
   iconsax: ^0.0.8
   animations: ^2.0.1
+  google_fonts: ^2.1.0
   shimmer: ^2.0.0
   marquee: ^2.2.0
   auto_size_text: ^3.0.0-nullsafety.0

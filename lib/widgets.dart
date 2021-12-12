@@ -34,6 +34,73 @@ class TimeOutWidget extends StatelessWidget {
   }
 }
 
+InputDecoration buildInputDecoration(
+    String hintText, String labelText, bool isPassword, Widget suffixIcon) {
+  return InputDecoration(
+    hintText: hintText,
+    labelText: labelText,
+    labelStyle: TextStyle(
+      color: Colors.orangeAccent.withAlpha(150),
+    ),
+    suffixIcon: isPassword ? suffixIcon : Padding(padding: EdgeInsets.zero),
+    focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+        borderSide: BorderSide(color: Colors.orange.shade700)),
+    enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+        borderSide: BorderSide(color: Colors.orangeAccent)),
+  );
+}
+
+class MoviewButton extends StatelessWidget {
+  const MoviewButton({
+    required this.title,
+    required this.onPressed,
+    required this.isLoading,
+    required this.enableCondition,
+  });
+
+  final String title;
+  final onPressed;
+  final bool isLoading;
+  final enableCondition;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      width: isLoading ? 50 : MediaQuery.of(context).size.width,
+      height: 40,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(isLoading ? 50 : 15),
+        gradient: LinearGradient(
+          colors: [
+            Color(0xFFDF8547),
+            Color(0xFFF15A29),
+          ],
+        ),
+      ),
+      duration: Duration(milliseconds: 200),
+      child: MaterialButton(
+        onPressed: isLoading || enableCondition ? null : onPressed,
+        child: isLoading
+            ? SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 1.5,
+                  color: Colors.white,
+                ),
+              )
+            : Text(title),
+        splashColor: Colors.orangeAccent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+      ),
+    );
+  }
+}
+
 class MoviewCard extends StatelessWidget {
   final imageUrl;
   final title;

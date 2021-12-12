@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:moview/screens/favorites_page.dart';
-import 'package:moview/screens/intro/intro_page.dart';
+import 'package:moview/screens/intro/login_page.dart';
 import 'package:moview/services.dart';
 import 'package:moview/screens/genre/genres_page.dart';
 import 'package:moview/screens/search_page.dart';
@@ -21,10 +22,8 @@ class _HomePageState extends State<HomePage> {
   ConnectivityResult _connectivityResult = ConnectivityResult.wifi;
   late PersistentTabController _controller;
 
-  ///here
-  String messageTitle = "empty";
-  String notifAlert = "alert";
-  FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+
+  // FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
   @override
   void initState() {
@@ -42,16 +41,16 @@ class _HomePageState extends State<HomePage> {
     });
 
     ///here
-    firebaseMessaging.getToken().then((value) {
-      print(value);
-    });
-    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
-      print("message recieved");
-      print(event.notification!.body);
-    });
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      print('Message clicked!');
-    });
+    // firebaseMessaging.getToken().then((value) {
+    //   print(value);
+    // });
+    // FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+    //   print("message recieved");
+    //   print(event.notification!.body);
+    // });
+    // FirebaseMessaging.onMessageOpenedApp.listen((message) {
+    //   print('Message clicked!');
+    // });
   }
 
   @override
@@ -123,7 +122,7 @@ class _HomePageState extends State<HomePage> {
                     hideNavigationBarWhenKeyboardShows: true,
                     navBarStyle: NavBarStyle.style3,
                   )
-                : IntroPage();
+                : LoginPage();
       },
     );
   }

@@ -7,7 +7,7 @@ import 'package:http/http.dart';
 import 'package:moview/screens/home_page.dart';
 import 'package:moview/widgets.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
-import 'package:moview/screens/intro/intro_page.dart';
+import 'package:moview/screens/intro/login_page.dart';
 
 class Moview with ChangeNotifier {
   String apiUrl = "api.themoviedb.org";
@@ -624,7 +624,7 @@ class Moview with ChangeNotifier {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => IntroPage(),
+            builder: (context) => LoginPage(),
           ));
       return false;
     } else {
@@ -657,17 +657,24 @@ class Moview with ChangeNotifier {
     notifyListeners();
   }
 
-  void login(context, username, password) async {
+  bool loginIsLoading = false;
+  Future<void> login(context, username, password) async {
     print('logging in...');
+    loginIsLoading = true;
+    notifyListeners();
     var user = ParseUser(username, password, null);
     late ParseResponse response;
     try {
       response = await user.login().timeout(Duration(seconds: 10));
     } on TimeoutException catch (e) {
       message(context, 'something went wrong. please try again!');
+      loginIsLoading = false;
+      notifyListeners();
       throw e;
     } on SocketException catch (e) {
       message(context, 'something went wrong. please try again!');
+      loginIsLoading = false;
+      notifyListeners();
       throw e;
     }
     if (response.success) {
@@ -685,10 +692,11 @@ class Moview with ChangeNotifier {
       print(response.error!.message);
       message(context, response.error!.message);
     }
+    loginIsLoading = false;
     notifyListeners();
   }
 
-  void logout(context) async {
+  Future<void> logout(context) async {
     username = null;
     password = null;
     email = null;
@@ -741,7 +749,7 @@ class Moview with ChangeNotifier {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => IntroPage(),
+          builder: (context) => LoginPage(),
         ),
       );
     } else if (response.error!.code == -1) {
@@ -754,8 +762,11 @@ class Moview with ChangeNotifier {
     notifyListeners();
   }
 
-  void resetPassword(context) async {
+  bool resetPasswordIsLoading = false;
+  Future<void> resetPassword(context) async {
     print('resetting password...');
+    resetPasswordIsLoading = true;
+    notifyListeners();
     var user = ParseUser(null, null, email);
     late ParseResponse response;
     try {
@@ -763,9 +774,13 @@ class Moview with ChangeNotifier {
           await user.requestPasswordReset().timeout(Duration(seconds: 10));
     } on TimeoutException catch (e) {
       message(context, 'something went wrong. please try again!');
+      resetPasswordIsLoading = false;
+      notifyListeners();
       throw e;
     } on SocketException catch (e) {
       message(context, 'something went wrong. please try again!');
+      resetPasswordIsLoading = false;
+      notifyListeners();
       throw e;
     }
     if (response.success) {
@@ -773,8 +788,10 @@ class Moview with ChangeNotifier {
           'an email containing a link to reset your password, sent to $email.');
       print('email sent to email address!');
     } else {
-      message(context, 'something went wrong. please try again!');
+      message(context, 'Cannot find a user with this email address.');
     }
+    resetPasswordIsLoading = false;
+    notifyListeners();
   }
 
   ///Favorite Page
