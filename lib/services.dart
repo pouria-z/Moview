@@ -632,17 +632,24 @@ class Moview with ChangeNotifier {
     }
   }
 
-  void register(context, username, password, email) async {
+  bool registerIsLoading = false;
+  Future<void> register(context, username, password, email) async {
     print('signing up...');
+    registerIsLoading = true;
+    notifyListeners();
     var user = ParseUser.createUser(username, password, email);
     late ParseResponse response;
     try {
       response = await user.signUp().timeout(Duration(seconds: 10));
     } on TimeoutException catch (e) {
       message(context, 'something went wrong. please try again!');
+      registerIsLoading = false;
+      notifyListeners();
       throw e;
     } on SocketException catch (e) {
       message(context, 'something went wrong. please try again!');
+      registerIsLoading = false;
+      notifyListeners();
       throw e;
     }
     if (response.success) {
@@ -654,6 +661,7 @@ class Moview with ChangeNotifier {
       print(response.error!.message);
       message(context, response.error!.message);
     }
+    registerIsLoading = false;
     notifyListeners();
   }
 

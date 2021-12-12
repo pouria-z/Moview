@@ -43,6 +43,12 @@ InputDecoration buildInputDecoration(
       color: Colors.orangeAccent.withAlpha(150),
     ),
     suffixIcon: isPassword ? suffixIcon : Padding(padding: EdgeInsets.zero),
+    errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+        borderSide: BorderSide(color: Colors.red)),
+    focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+        borderSide: BorderSide(color: Colors.red)),
     focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
         borderSide: BorderSide(color: Colors.orange.shade700)),
@@ -99,6 +105,25 @@ class MoviewButton extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<dynamic> animationNavigator(BuildContext context, newPage) {
+  return Navigator.push(
+    context,
+    PageRouteBuilder(
+      transitionDuration: Duration(milliseconds: 600),
+      reverseTransitionDuration: Duration(milliseconds: 500),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child,
+        );
+      },
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return newPage;
+      },
+    ),
+  );
 }
 
 class MoviewCard extends StatelessWidget {

@@ -25,12 +25,7 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     recognizer.onTap = () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SignUpPage(),
-        ),
-      );
+      animationNavigator(context, SignUpPage());
     };
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
@@ -63,6 +58,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               child: ListView(
+                physics: BouncingScrollPhysics(),
                 children: [
                   SizedBox(
                     height: 20,
@@ -75,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(
-                    height: 40,
+                    height: 20,
                   ),
                   Text(
                     "Welcome back!",
@@ -96,53 +92,65 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(
                     height: size.height / 10,
                   ),
-                  TextFormField(
-                    onChanged: (value) {
-                      setState(() {
-                        loginUser = value.trim();
-                      });
-                    },
-                    textInputAction: TextInputAction.next,
-                    cursorColor: Colors.deepOrangeAccent,
-                    cursorRadius: Radius.circular(1),
-                    decoration: buildInputDecoration(
-                      'Enter your username',
-                      'Username',
-                      false,
-                      Container(),
+                  Hero(
+                    tag: 'username',
+                    child: Material(
+                      color: Colors.transparent,
+                      child: TextFormField(
+                        onChanged: (value) {
+                          setState(() {
+                            loginUser = value.trim();
+                          });
+                        },
+                        textInputAction: TextInputAction.next,
+                        cursorColor: Colors.deepOrangeAccent,
+                        cursorRadius: Radius.circular(1),
+                        decoration: buildInputDecoration(
+                          'Enter your username',
+                          'Username',
+                          false,
+                          Container(),
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(
                     height: 20,
                   ),
-                  TextFormField(
-                    onChanged: (value) {
-                      setState(() {
-                        loginPassword = value;
-                      });
-                    },
-                    keyboardType: TextInputType.visiblePassword,
-                    obscureText: isHidden,
-                    textInputAction: TextInputAction.done,
-                    cursorColor: Colors.deepOrangeAccent,
-                    cursorRadius: Radius.circular(1),
-                    decoration: buildInputDecoration(
-                      'Enter your password',
-                      'Password',
-                      true,
-                      IconButton(
-                        onPressed: () {
+                  Hero(
+                    tag: 'password',
+                    child: Material(
+                      color: Colors.transparent,
+                      child: TextFormField(
+                        onChanged: (value) {
                           setState(() {
-                            isHidden = !isHidden;
+                            loginPassword = value;
                           });
                         },
-                        icon: Icon(
-                          isHidden ? Iconsax.eye_slash : Iconsax.eye,
-                          color: isHidden
-                              ? Colors.orangeAccent
-                              : Colors.orange.shade700,
+                        keyboardType: TextInputType.visiblePassword,
+                        obscureText: isHidden,
+                        textInputAction: TextInputAction.done,
+                        cursorColor: Colors.deepOrangeAccent,
+                        cursorRadius: Radius.circular(1),
+                        decoration: buildInputDecoration(
+                          'Enter your password',
+                          'Password',
+                          true,
+                          IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isHidden = !isHidden;
+                              });
+                            },
+                            icon: Icon(
+                              isHidden ? Iconsax.eye_slash : Iconsax.eye,
+                              color: isHidden
+                                  ? Colors.orangeAccent
+                                  : Colors.orange.shade700,
+                            ),
+                            splashRadius: 22,
+                          ),
                         ),
-                        splashRadius: 22,
                       ),
                     ),
                   ),
