@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:moview/screens/intro/reset_password_page.dart';
+import 'package:moview/screens/intro/signup_page.dart';
 import 'package:moview/services.dart';
 import 'package:moview/widgets.dart';
 import 'package:provider/provider.dart';
@@ -18,11 +19,19 @@ class _LoginPageState extends State<LoginPage> {
   String loginUser = '';
   String loginPassword = '';
   bool isHidden = true;
-  late GestureRecognizer recognizer;
+  TapGestureRecognizer recognizer = TapGestureRecognizer();
 
   @override
   void initState() {
     super.initState();
+    recognizer.onTap = () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SignUpPage(),
+        ),
+      );
+    };
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         systemNavigationBarColor: Color(0xFF1E3A53),
@@ -36,7 +45,6 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     var moview = Provider.of<Moview>(context, listen: false);
     var size = MediaQuery.of(context).size;
-    var theme = Theme.of(context);
     return Consumer<Moview>(
       builder: (context, value, child) {
         return SafeArea(
@@ -194,6 +202,7 @@ class _LoginPageState extends State<LoginPage> {
                           TextSpan(
                             text: "Sign up.",
                             style: TextStyle(color: Colors.white),
+                            recognizer: recognizer,
                           ),
                         ],
                       ),
