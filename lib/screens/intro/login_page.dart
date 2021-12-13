@@ -9,6 +9,7 @@ import 'package:moview/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:moview/model.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -215,6 +216,13 @@ class _LoginPageState extends State<LoginPage> {
                         ],
                       ),
                     ),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      var data = await APIManager().getGenres();
+                      print(data.genres[0].name);
+                    },
+                    child: Text("get genres"),
                   ),
                 ],
               ),
