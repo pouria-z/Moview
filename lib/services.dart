@@ -8,19 +8,14 @@ import 'package:moview/screens/home_page.dart';
 import 'package:moview/widgets.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:moview/screens/intro/login_page.dart';
+import 'package:moview/models/genres_model.dart';
 
 class Moview with ChangeNotifier {
   String apiUrl = "api.themoviedb.org";
   String imageUrl = "https://image.tmdb.org/t/p/w500";
   var type; // 'movie' or 'tv'
-  bool timeOutException = false;
+  bool timedOut = false;
   bool showBottom = true;
-
-  ///Movie Genre List
-  var genreMediaId;
-  var genreMovieName;
-  List genreMovieIdList = [];
-  List genreMovieNameList = [];
 
   ///TvShow Genre List
   var genreTvShowId;
@@ -160,62 +155,78 @@ class Moview with ChangeNotifier {
   List dbMediaPosterList = [];
   bool favoriteListIsLoading = false;
 
-  Future getMovieGenreList() async {
-    timeOutException = false;
-    genreMovieNameList.clear();
-    genreMovieIdList.clear();
-    var url = Uri.https(apiUrl, "/3/genre/movie/list",
-        {'api_key': '$apiKey', 'language': 'en-US'});
+  Future<Response> sendRequest(Uri url) async {
     late Response response;
     try {
-      response = await get(url).timeout(Duration(seconds: 15));
+      response = await get(url).timeout(
+        Duration(seconds: 15),
+      );
     } on TimeoutException catch (e) {
-      timeOutException = true;
+      timedOut = true;
       notifyListeners();
       throw e;
     } on SocketException catch (e) {
-      timeOutException = true;
+      timedOut = true;
       notifyListeners();
       throw e;
     }
-    var json = jsonDecode(response.body);
-    for (var item in json['genres']) {
-      genreMediaId = item['id'];
-      genreMovieName = item['name'];
-      if(genreMovieName != "Documentary"){
-        genreMovieNameList.add(genreMovieName);
-        genreMovieIdList.add(genreMediaId);
-      }
-    }
-    genreMovieNameList.forEach((element) {
-      print("This is element: $element");
-    });
-    notifyListeners();
+    return response;
   }
 
+  Future<MovieGenresModel> getMovieGenres() async {
+    MovieGenresModel movieGenresModel;
+    var url = Uri.parse(
+        'https://api.themoviedb.org/3/genre/movie/list?api_key=$apiKey&language=en-US');
+    Response response = await sendRequest(url);
+    Map<String, dynamic> jsonBody = jsonDecode(response.body);
+    movieGenresModel = MovieGenresModel.fromJson(jsonBody);
+    return movieGenresModel;
+  }
+
+  Future<TvShowGenresModel> getTvShowGenres() async {
+    TvShowGenresModel tvShowGenresModel;
+    var url = Uri.parse(
+        'api.themoviedb.org/3/genre/tv/list?api_key=$apiKey?language=en-US');
+    Response response = await sendRequest(url);
+    Map<String, dynamic> jsonBody = jsonDecode(response.body);
+    tvShowGenresModel = TvShowGenresModel.fromJson(jsonBody);
+    return tvShowGenresModel;
+  }
+
+  // Future getMovieGenreList() async {
+  //   timedOut = false;
+  //   genreMovieNameList.clear();
+  //   genreMovieIdList.clear();
+  //   var url = Uri.https(apiUrl, "/3/genre/movie/list",
+  //       {'api_key': '$apiKey', 'language': 'en-US'});
+  //   Response response = await sendRequest(url);
+  //   var json = jsonDecode(response.body);
+  //   for (var item in json['genres']) {
+  //     genreMediaId = item['id'];
+  //     genreMovieName = item['name'];
+  //     if (genreMovieName != "Documentary") {
+  //       genreMovieNameList.add(genreMovieName);
+  //       genreMovieIdList.add(genreMediaId);
+  //     }
+  //   }
+  //   genreMovieNameList.forEach((element) {
+  //     print("This is element: $element");
+  //   });
+  //   notifyListeners();
+  // }
+
   Future getTvShowGenreList() async {
-    timeOutException = false;
+    timedOut = false;
     genreTvShowNameList.clear();
     genreTvShowIdList.clear();
     var url = Uri.https(apiUrl, "/3/genre/tv/list",
         {'api_key': '$apiKey', 'language': 'en-US'});
-    late Response response;
-    try {
-      response = await get(url).timeout(Duration(seconds: 15));
-    } on TimeoutException catch (e) {
-      timeOutException = true;
-      notifyListeners();
-      throw e;
-    } on SocketException catch (e) {
-      timeOutException = true;
-      notifyListeners();
-      throw e;
-    }
+    Response response = await sendRequest(url);
     var json = jsonDecode(response.body);
     for (var item in json['genres']) {
       genreTvShowId = item['id'];
       genreTvShowName = item['name'];
-      if(genreTvShowName != "Soap"){
+      if (genreTvShowName != "Soap") {
         genreTvShowNameList.add(genreTvShowName);
         genreTvShowIdList.add(genreTvShowId);
       }
@@ -224,7 +235,7 @@ class Moview with ChangeNotifier {
   }
 
   Future getMovieDetails(int movieId) async {
-    timeOutException = false;
+    timedOut = false;
     movieName = null;
     movieCover = null;
     moviePoster = null;
@@ -234,18 +245,7 @@ class Moview with ChangeNotifier {
     getMovieDetailsIsLoading = true;
     var url = Uri.https(apiUrl, '/3/movie/$movieId',
         {'api_key': '$apiKey', 'language': 'en-US'});
-    late Response response;
-    try {
-      response = await get(url).timeout(Duration(seconds: 15));
-    } on TimeoutException catch (e) {
-      timeOutException = true;
-      notifyListeners();
-      throw e;
-    } on SocketException catch (e) {
-      timeOutException = true;
-      notifyListeners();
-      throw e;
-    }
+    Response response = await sendRequest(url);
     var json = jsonDecode(response.body);
     movieId = json['id'];
     movieName = json['title'];
@@ -274,7 +274,7 @@ class Moview with ChangeNotifier {
   }
 
   Future getTvShowDetails(int tvShowId) async {
-    timeOutException = false;
+    timedOut = false;
     getTvShowDetailsIsLoading = true;
     tvShowName = null;
     tvShowCover = null;
@@ -288,18 +288,7 @@ class Moview with ChangeNotifier {
     tvShowCountryList.clear();
     var url = Uri.https(
         apiUrl, '/3/tv/$tvShowId', {'api_key': '$apiKey', 'language': 'en-US'});
-    late Response response;
-    try {
-      response = await get(url).timeout(Duration(seconds: 15));
-    } on TimeoutException catch (e) {
-      timeOutException = true;
-      notifyListeners();
-      throw e;
-    } on SocketException catch (e) {
-      timeOutException = true;
-      notifyListeners();
-      throw e;
-    }
+    Response response = await sendRequest(url);
     var json = jsonDecode(response.body);
     tvShowId = json['id'];
     tvShowName = json['name'];
@@ -350,7 +339,7 @@ class Moview with ChangeNotifier {
   }
 
   Future getSearchResults() async {
-    timeOutException = false;
+    timedOut = false;
     isLoadingMore = true;
     isSearching = true;
     var url = Uri.https(apiUrl, '/3/search/multi', {
@@ -360,18 +349,7 @@ class Moview with ChangeNotifier {
       'query': '$searchInput',
       'include_adult': 'false'
     });
-    late Response response;
-    try {
-      response = await get(url).timeout(Duration(seconds: 15));
-    } on TimeoutException catch (e) {
-      timeOutException = true;
-      notifyListeners();
-      throw e;
-    } on SocketException catch (e) {
-      timeOutException = true;
-      notifyListeners();
-      throw e;
-    }
+    Response response = await sendRequest(url);
     var json = jsonDecode(response.body);
     searchTotalPages = json['total_pages'];
     searchTotalResults = json['total_results'];
@@ -409,7 +387,7 @@ class Moview with ChangeNotifier {
   }
 
   Future getSearchOnType() async {
-    timeOutException = false;
+    timedOut = false;
     isSearchingOnType = true;
     searchTypeNameList.clear();
     searchTypeRateList.clear();
@@ -424,18 +402,7 @@ class Moview with ChangeNotifier {
       'query': '$searchTypeInput',
       'include_adult': 'false'
     });
-    late Response response;
-    try {
-      response = await get(url).timeout(Duration(seconds: 15));
-    } on TimeoutException catch (e) {
-      timeOutException = true;
-      notifyListeners();
-      throw e;
-    } on SocketException catch (e) {
-      timeOutException = true;
-      notifyListeners();
-      throw e;
-    }
+    Response response = await sendRequest(url);
     var json = jsonDecode(response.body);
     searchTypeNameList.clear();
     searchTypeRateList.clear();
@@ -473,7 +440,7 @@ class Moview with ChangeNotifier {
   }
 
   Future getGenreResultList(String mediaType, int genreMediaId) async {
-    timeOutException = false;
+    timedOut = false;
     genreResultListIsLoadingMore = true;
     getGenreResultListIsLoading = true;
     var url = Uri.https(apiUrl, '/3/discover/$mediaType', {
@@ -485,18 +452,7 @@ class Moview with ChangeNotifier {
       'page': '$genreResultPage',
       'with_genres': '$genreMediaId'
     });
-    late Response response;
-    try {
-      response = await get(url).timeout(Duration(seconds: 15));
-    } on TimeoutException catch (e) {
-      timeOutException = true;
-      notifyListeners();
-      throw e;
-    } on SocketException catch (e) {
-      timeOutException = true;
-      notifyListeners();
-      throw e;
-    }
+    Response response = await sendRequest(url);
     var json = jsonDecode(response.body);
     genreResultTotalPages = json['total_pages'];
     for (var item in json['results']) {
@@ -590,7 +546,7 @@ class Moview with ChangeNotifier {
 
   ///User
   Future getUser() async {
-    timeOutException = false;
+    timedOut = false;
     // get current user details
     try {
       ParseUser parseUser =
@@ -599,7 +555,7 @@ class Moview with ChangeNotifier {
       email = parseUser.emailAddress;
       password = parseUser.password;
     } on SocketException catch (e) {
-      timeOutException = true;
+      timedOut = true;
       notifyListeners();
       throw e;
     }
@@ -633,6 +589,7 @@ class Moview with ChangeNotifier {
   }
 
   bool registerIsLoading = false;
+
   Future<void> register(context, username, password, email) async {
     print('signing up...');
     registerIsLoading = true;
@@ -666,6 +623,7 @@ class Moview with ChangeNotifier {
   }
 
   bool loginIsLoading = false;
+
   Future<void> login(context, username, password) async {
     print('logging in...');
     loginIsLoading = true;
@@ -723,8 +681,6 @@ class Moview with ChangeNotifier {
     if (response.success) {
       showBottom = false;
       favoriteNumbers = null;
-      genreMovieIdList.clear();
-      genreMovieNameList.clear();
       genreTvShowIdList.clear();
       genreTvShowNameList.clear();
       movieGenreList.clear();
@@ -771,6 +727,7 @@ class Moview with ChangeNotifier {
   }
 
   bool resetPasswordIsLoading = false;
+
   Future<void> resetPassword(context) async {
     print('resetting password...');
     resetPasswordIsLoading = true;
@@ -804,7 +761,7 @@ class Moview with ChangeNotifier {
 
   ///Favorite Page
   Future favoritesList() async {
-    timeOutException = false;
+    timedOut = false;
     favoriteListIsLoading = true;
     favoriteNumbers = null;
     dbMediaIdList.clear();
@@ -821,7 +778,7 @@ class Moview with ChangeNotifier {
     try {
       dbResponse = await queryBuilder.query();
     } on SocketException catch (e) {
-      timeOutException = true;
+      timedOut = true;
       notifyListeners();
       throw e;
     }

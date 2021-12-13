@@ -19,7 +19,7 @@ class _SearchPageState extends State<SearchPage> {
     super.initState();
     var moview = Provider.of<Moview>(context, listen: false);
     moview.searchPage = 1;
-    moview.timeOutException = false;
+    moview.timedOut = false;
     _scrollController.addListener(() async {
       print("scroller is moving");
       if (moview.searchNameList.isNotEmpty &&
@@ -122,9 +122,9 @@ class _SearchPageState extends State<SearchPage> {
                     }
                   },
                   child: Text("Search")),
-              moview.timeOutException == true
+              moview.timedOut == true
                   ? TimeOutWidget(
-                      function: () {
+                      onRefresh: () {
                         setState(() {
                           moview.getSearchResults().whenComplete(() =>
                               _scrollController.jumpTo(

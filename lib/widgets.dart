@@ -11,9 +11,9 @@ import 'package:animations/animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class TimeOutWidget extends StatelessWidget {
-  final function;
+  final onRefresh;
 
-  const TimeOutWidget({Key? key, this.function}) : super(key: key);
+  const TimeOutWidget({Key? key, this.onRefresh}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class TimeOutWidget extends StatelessWidget {
         children: [
           Text("something went wrong. please try again!"),
           TextButton(
-              onPressed: function,
+              onPressed: onRefresh,
               child: Icon(
                 Icons.refresh,
                 color: Colors.grey,

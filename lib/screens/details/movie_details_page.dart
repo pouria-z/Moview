@@ -27,7 +27,7 @@ class _MovieDetailsState extends State<MovieDetails> {
     super.initState();
     print("movie id: ${widget.id}");
     var moview = Provider.of<Moview>(context, listen: false);
-    moview.timeOutException = false;
+    moview.timedOut = false;
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
       await moview.setAndGetId(widget.id, 'movie');
       isFavorite = moview.isFave;
@@ -71,9 +71,9 @@ class _MovieDetailsState extends State<MovieDetails> {
                           ),
                   ),
                 ),
-          body: moview.timeOutException == true
+          body: moview.timedOut == true
               ? TimeOutWidget(
-                  function: () {
+                  onRefresh: () {
                     setState(() {
                       moview.getMovieDetails(widget.id);
                     });

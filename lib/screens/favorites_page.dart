@@ -43,9 +43,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
           body: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              moview.timeOutException == true
+              moview.timedOut == true
                   ? TimeOutWidget(
-                      function: () {
+                      onRefresh: () {
                         setState(() {
                           moview.favoritesList();
                         });

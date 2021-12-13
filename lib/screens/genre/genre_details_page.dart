@@ -72,9 +72,9 @@ class _GenreDetailsState extends State<GenreDetails> {
                   : "TV Show | " + widget.name),
             ),
           ),
-          body: moview.timeOutException == true
+          body: moview.timedOut == true
               ? TimeOutWidget(
-                  function: () {
+                  onRefresh: () {
                     setState(() {
                       moview.getGenreResultList(widget.type, widget.id).whenComplete(() =>
                           _scrollController.jumpTo(
