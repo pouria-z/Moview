@@ -1,12 +1,6 @@
 import 'dart:convert';
-
 import 'package:http/http.dart';
 import 'package:moview/key.dart';
-
-GenresModel genresModelFromJson(String str) =>
-    GenresModel.fromJson(json.decode(str));
-
-String genresModelToJson(GenresModel data) => json.encode(data.toJson());
 
 class GenresModel {
   GenresModel({
