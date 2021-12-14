@@ -4,6 +4,7 @@ import 'package:moview/widgets.dart';
 import 'package:moview/screens/genre/genre_details_page.dart';
 import 'package:moview/services.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GenresPage extends StatefulWidget {
   @override
@@ -68,22 +69,24 @@ class MovieGenres extends StatefulWidget {
   _MovieGenresState createState() => _MovieGenresState();
 }
 
-class _MovieGenresState extends State<MovieGenres> {
+class _MovieGenresState extends State<MovieGenres>
+    with AutomaticKeepAliveClientMixin {
   // late Future<MovieGenresModel> _movieGenresData;
-  late Future<MovieGenresModel> movieGenresModel;
-
+  Future<MovieGenresModel>? movieGenresModel;
+  var response;
 
   @override
   void initState() {
     super.initState();
-    var moview = Provider.of<Moview>(context, listen: false);
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+    Future.delayed(Duration.zero, () async {
+      var moview = Provider.of<Moview>(context, listen: false);
       movieGenresModel = moview.getMovieGenres();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     var moview = Provider.of<Moview>(context, listen: false);
     return Consumer<Moview>(
       builder: (context, value, child) {
@@ -91,7 +94,7 @@ class _MovieGenresState extends State<MovieGenres> {
           body: FutureBuilder<MovieGenresModel>(
             future: movieGenresModel,
             builder: (context, snapshot) {
-              if (!snapshot.hasData) {
+              if (snapshot.hasData) {
                 return moview.timedOut == true
                     ? TimeOutWidget(
                         onRefresh: () {
@@ -139,6 +142,9 @@ class _MovieGenresState extends State<MovieGenres> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class TVShowGenres extends StatefulWidget {
