@@ -156,6 +156,7 @@ class Moview with ChangeNotifier {
   bool favoriteListIsLoading = false;
 
   Future<Response> sendRequest(Uri url) async {
+    print("starting to send request");
     late Response response;
     try {
       response = await get(url).timeout(
@@ -173,11 +174,15 @@ class Moview with ChangeNotifier {
     return response;
   }
 
+  Future<MovieGenresModel>? movieGenresModel;
   Future<MovieGenresModel> getMovieGenres() async {
+    timedOut = false;
+    notifyListeners();
     MovieGenresModel movieGenresModel;
     var url = Uri.parse(
         'https://api.themoviedb.org/3/genre/movie/list?api_key=$apiKey&language=en-US');
     Response response = await sendRequest(url);
+    print('request completed!');
     Map<String, dynamic> jsonBody = jsonDecode(response.body);
     movieGenresModel = MovieGenresModel.fromJson(jsonBody);
     return movieGenresModel;

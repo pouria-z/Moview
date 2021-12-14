@@ -71,16 +71,14 @@ class MovieGenres extends StatefulWidget {
 
 class _MovieGenresState extends State<MovieGenres>
     with AutomaticKeepAliveClientMixin {
-  // late Future<MovieGenresModel> _movieGenresData;
-  Future<MovieGenresModel>? movieGenresModel;
-  var response;
 
   @override
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () async {
       var moview = Provider.of<Moview>(context, listen: false);
-      movieGenresModel = moview.getMovieGenres();
+      print("this future");
+      moview.movieGenresModel = moview.getMovieGenres();
     });
   }
 
@@ -91,19 +89,19 @@ class _MovieGenresState extends State<MovieGenres>
     return Consumer<Moview>(
       builder: (context, value, child) {
         return Scaffold(
-          body: FutureBuilder<MovieGenresModel>(
-            future: movieGenresModel,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return moview.timedOut == true
-                    ? TimeOutWidget(
-                        onRefresh: () {
-                          setState(() {
-                            moview.getMovieGenres();
-                          });
-                        },
-                      )
-                    : ListView.builder(
+          body: moview.timedOut == true
+              ? TimeOutWidget(
+                  onRefresh: () {
+                    setState(() {
+                      moview.movieGenresModel = moview.getMovieGenres();
+                    });
+                  },
+                )
+              : FutureBuilder<MovieGenresModel>(
+                  future: moview.movieGenresModel,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return ListView.builder(
                         shrinkWrap: true,
                         itemCount: snapshot.data!.movieGenres.length,
                         itemBuilder: (context, index) {
@@ -132,12 +130,21 @@ class _MovieGenresState extends State<MovieGenres>
                           );
                         },
                       );
-              }
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            },
-          ),
+                    } else if (snapshot.hasError) {
+                      print("====== ${snapshot.error.toString()}");
+                      TimeOutWidget(
+                        onRefresh: () {
+                          setState(() {
+                            moview.movieGenresModel = moview.getMovieGenres();
+                          });
+                        },
+                      );
+                    }
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                ),
         );
       },
     );
