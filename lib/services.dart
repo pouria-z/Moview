@@ -13,15 +13,10 @@ import 'package:moview/models/genres_model.dart';
 class Moview with ChangeNotifier {
   String apiUrl = "api.themoviedb.org";
   String imageUrl = "https://image.tmdb.org/t/p/w500";
-  var type; // 'movie' or 'tv'
+  String _apiUrl = "https://api.themoviedb.org";
   bool timedOut = false;
   bool showBottom = true;
 
-  ///TvShow Genre List
-  var genreTvShowId;
-  var genreTvShowName;
-  List genreTvShowIdList = [];
-  List genreTvShowNameList = [];
 
   ///Movie Details
   bool getMovieDetailsIsLoading = false;
@@ -180,7 +175,7 @@ class Moview with ChangeNotifier {
     notifyListeners();
     MovieGenresModel movieGenresModel;
     var url = Uri.parse(
-        'https://api.themoviedb.org/3/genre/movie/list?api_key=$apiKey&language=en-US');
+        '$_apiUrl/3/genre/movie/list?api_key=$apiKey&language=en-US');
     Response response = await sendRequest(url);
     print('request completed!');
     Map<String, dynamic> jsonBody = jsonDecode(response.body);
@@ -188,10 +183,13 @@ class Moview with ChangeNotifier {
     return movieGenresModel;
   }
 
+  Future<TvShowGenresModel>? tvShowGenresModel;
   Future<TvShowGenresModel> getTvShowGenres() async {
+    timedOut = false;
+    notifyListeners();
     TvShowGenresModel tvShowGenresModel;
     var url = Uri.parse(
-        'api.themoviedb.org/3/genre/tv/list?api_key=$apiKey?language=en-US');
+        '$_apiUrl/3/genre/tv/list?api_key=$apiKey&language=en-US');
     Response response = await sendRequest(url);
     Map<String, dynamic> jsonBody = jsonDecode(response.body);
     tvShowGenresModel = TvShowGenresModel.fromJson(jsonBody);
@@ -220,24 +218,24 @@ class Moview with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  Future getTvShowGenreList() async {
-    timedOut = false;
-    genreTvShowNameList.clear();
-    genreTvShowIdList.clear();
-    var url = Uri.https(apiUrl, "/3/genre/tv/list",
-        {'api_key': '$apiKey', 'language': 'en-US'});
-    Response response = await sendRequest(url);
-    var json = jsonDecode(response.body);
-    for (var item in json['genres']) {
-      genreTvShowId = item['id'];
-      genreTvShowName = item['name'];
-      if (genreTvShowName != "Soap") {
-        genreTvShowNameList.add(genreTvShowName);
-        genreTvShowIdList.add(genreTvShowId);
-      }
-    }
-    notifyListeners();
-  }
+  // Future getTvShowGenreList() async {
+  //   timedOut = false;
+  //   genreTvShowNameList.clear();
+  //   genreTvShowIdList.clear();
+  //   var url = Uri.https(apiUrl, "/3/genre/tv/list",
+  //       {'api_key': '$apiKey', 'language': 'en-US'});
+  //   Response response = await sendRequest(url);
+  //   var json = jsonDecode(response.body);
+  //   for (var item in json['genres']) {
+  //     genreTvShowId = item['id'];
+  //     genreTvShowName = item['name'];
+  //     if (genreTvShowName != "Soap") {
+  //       genreTvShowNameList.add(genreTvShowName);
+  //       genreTvShowIdList.add(genreTvShowId);
+  //     }
+  //   }
+  //   notifyListeners();
+  // }
 
   Future getMovieDetails(int movieId) async {
     timedOut = false;
@@ -686,8 +684,6 @@ class Moview with ChangeNotifier {
     if (response.success) {
       showBottom = false;
       favoriteNumbers = null;
-      genreTvShowIdList.clear();
-      genreTvShowNameList.clear();
       movieGenreList.clear();
       movieCountryList.clear();
       movieLanguagesList.clear();

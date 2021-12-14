@@ -71,7 +71,6 @@ class MovieGenres extends StatefulWidget {
 
 class _MovieGenresState extends State<MovieGenres>
     with AutomaticKeepAliveClientMixin {
-
   @override
   void initState() {
     super.initState();
@@ -117,15 +116,16 @@ class _MovieGenresState extends State<MovieGenres>
                               moview.genreResultPosterUrlList.clear();
                               moview.genreResultRateList.clear();
                               Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => GenreDetails(
-                                      type: 'movie',
-                                      id: movieGenres.id,
-                                      name: movieGenres.name,
-                                      pageNumber: 1,
-                                    ),
-                                  ));
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => GenreDetails(
+                                    type: 'movie',
+                                    id: movieGenres.id,
+                                    name: movieGenres.name,
+                                    pageNumber: 1,
+                                  ),
+                                ),
+                              );
                             },
                           );
                         },
@@ -161,24 +161,21 @@ class TVShowGenres extends StatefulWidget {
   _TVShowGenresState createState() => _TVShowGenresState();
 }
 
-class _TVShowGenresState extends State<TVShowGenres> {
+class _TVShowGenresState extends State<TVShowGenres>
+    with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    var moview = Provider.of<Moview>(context, listen: false);
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
-      if (moview.genreTvShowNameList.isEmpty) {
-        setState(() {
-          moview.getTvShowGenreList();
-        });
-      } else {
-        return null;
-      }
+    Future.delayed(Duration.zero, () async {
+      var moview = Provider.of<Moview>(context, listen: false);
+      print("this future");
+      moview.tvShowGenresModel = moview.getTvShowGenres();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     var moview = Provider.of<Moview>(context, listen: false);
     return Consumer<Moview>(
       builder: (context, value, child) {
@@ -187,43 +184,64 @@ class _TVShowGenresState extends State<TVShowGenres> {
               ? TimeOutWidget(
                   onRefresh: () {
                     setState(() {
-                      moview.getTvShowGenreList();
+                      moview.tvShowGenresModel = moview.getTvShowGenres();
                     });
                   },
                 )
-              : moview.genreTvShowNameList.isEmpty ||
-                      moview.genreTvShowIdList.isEmpty
-                  ? Center(child: CircularProgressIndicator())
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: moview.genreTvShowIdList.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(moview.genreTvShowNameList[index]),
-                          leading: Icon(Icons.star_rounded),
-                          onTap: () {
-                            moview.getGenreResultListIsLoading = true;
-                            moview.genreResultNameList.clear();
-                            moview.genreResultIdList.clear();
-                            moview.genreResultPosterList.clear();
-                            moview.genreResultPosterUrlList.clear();
-                            moview.genreResultRateList.clear();
-                            Navigator.push(
+              : FutureBuilder<TvShowGenresModel>(
+                  future: moview.tvShowGenresModel,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!.tvShowGenres.length,
+                        itemBuilder: (context, index) {
+                          var tvShowGenres = snapshot.data!.tvShowGenres[index];
+                          return ListTile(
+                            title: Text(tvShowGenres.name),
+                            leading: Icon(Icons.star_rounded),
+                            onTap: () {
+                              moview.getGenreResultListIsLoading = true;
+                              moview.genreResultNameList.clear();
+                              moview.genreResultIdList.clear();
+                              moview.genreResultPosterList.clear();
+                              moview.genreResultPosterUrlList.clear();
+                              moview.genreResultRateList.clear();
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => GenreDetails(
                                     type: 'tv',
-                                    id: moview.genreTvShowIdList[index],
-                                    name: moview.genreTvShowNameList[index],
+                                    id: tvShowGenres.id,
+                                    name: tvShowGenres.name,
                                     pageNumber: 1,
                                   ),
-                                ));
-                          },
-                        );
-                      },
-                    ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    } else if (snapshot.hasError) {
+                      print("====== ${snapshot.error.toString()}");
+                      TimeOutWidget(
+                        onRefresh: () {
+                          setState(() {
+                            moview.tvShowGenresModel = moview.getTvShowGenres();
+                          });
+                        },
+                      );
+                    }
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                ),
         );
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
