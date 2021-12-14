@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:moview/models/genre_result_model.dart';
+import 'package:moview/screens/details/movie_details_page.dart';
+import 'package:moview/screens/details/tvshow_details_page.dart';
 import 'package:moview/services.dart';
 import 'package:moview/widgets.dart';
 import 'package:provider/provider.dart';
@@ -24,24 +27,26 @@ class GenreDetails extends StatefulWidget {
 class _GenreDetailsState extends State<GenreDetails> {
   ScrollController _scrollController = ScrollController();
 
+  int? totalPages;
+
   @override
   void initState() {
     super.initState();
     var moview = Provider.of<Moview>(context, listen: false);
     print("genre id: ${widget.id}");
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+    Future.delayed(Duration.zero, () async {
       moview.genreResultPage = widget.pageNumber;
-      await moview.getGenreResultList(widget.type, widget.id);
+      moview.genreResultModel = moview.getGenreResult(widget.type, widget.id);
     });
     _scrollController.addListener(() async {
       print("scroller is moving");
       if (_scrollController.position.pixels ==
               _scrollController.position.maxScrollExtent &&
-          moview.genreResultPage <= moview.genreResultTotalPages) {
+          moview.genreResultPage <= moview.totalPages) {
         print("if condition is true");
         moview.genreResultPage = moview.genreResultPage + 1;
         setState(() {
-          moview.getGenreResultList(widget.type, widget.id);
+          moview.getGenreResult(widget.type, widget.id);
         });
       }
     });
@@ -63,9 +68,10 @@ class _GenreDetailsState extends State<GenreDetails> {
             title: GestureDetector(
               onTap: () {
                 _scrollController.animateTo(
-                    _scrollController.position.minScrollExtent,
-                    duration: Duration(milliseconds: 900),
-                    curve: Curves.fastOutSlowIn);
+                  _scrollController.position.minScrollExtent,
+                  duration: Duration(milliseconds: 900),
+                  curve: Curves.fastOutSlowIn,
+                );
               },
               child: Text(widget.type == 'movie'
                   ? "Movie | " + widget.name
@@ -76,34 +82,44 @@ class _GenreDetailsState extends State<GenreDetails> {
               ? TimeOutWidget(
                   onRefresh: () {
                     setState(() {
-                      moview.getGenreResultList(widget.type, widget.id).whenComplete(() =>
-                          _scrollController.jumpTo(
+                      moview.genreResultModel = moview
+                          .getGenreResult(widget.type, widget.id)
+                          .whenComplete(() => _scrollController.jumpTo(
                               _scrollController.position.maxScrollExtent));
                     });
                   },
                 )
-              : moview.getGenreResultListIsLoading == true &&
-                      moview.genreResultNameList.isEmpty
-                  ? Center(child: CircularProgressIndicator())
-                  : Column(
-                      children: [
-                        moviewGridView(
-                          context,
-                          _scrollController,
-                          widget.type,
-                          moview.genreResultIdList,
-                          moview.genreResultPosterUrlList,
-                          moview.genreResultNameList,
-                          moview.genreResultRateList,
-                          moview.genreResultNameList.length,
-                        ),
-                        moview.genreResultListIsLoadingMore == false
-                            ? Container()
-                            : CircularProgressIndicator(
-                                strokeWidth: 1.2,
-                              ),
-                      ],
-                    ),
+              : FutureBuilder(
+                  future: moview.genreResultModel,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Column(
+                        children: [
+                          moviewGridView2(context, widget.type,
+                              _scrollController, moview),
+                          moview.genreResultListIsLoadingMore == false
+                              ? Container()
+                              : CircularProgressIndicator(
+                                  strokeWidth: 1.2,
+                                ),
+                        ],
+                      );
+                    } else if (snapshot.hasError) {
+                      print("*** error: ${snapshot.stackTrace.toString()}");
+                      TimeOutWidget(
+                        onRefresh: () {
+                          setState(() {
+                            moview.genreResultModel =
+                                moview.getGenreResult(widget.type, widget.id);
+                          });
+                        },
+                      );
+                    }
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                ),
         );
       },
     );

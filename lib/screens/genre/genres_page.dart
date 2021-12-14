@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:moview/models/genres_model.dart';
 import 'package:moview/widgets.dart';
 import 'package:moview/screens/genre/genre_details_page.dart';
 import 'package:moview/services.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:moview/models/genre_result_model.dart';
 
 class GenresPage extends StatefulWidget {
   @override
@@ -88,6 +89,20 @@ class _MovieGenresState extends State<MovieGenres>
     return Consumer<Moview>(
       builder: (context, value, child) {
         return Scaffold(
+          floatingActionButton: FloatingActionButton(
+            onPressed: () async {
+              var data = await moview.getGenreResult('tv', 10759);
+              print(
+                  "title: ${data.results[0].title}\n"
+                      "id: ${data.results[0].id}\n"
+                      "genre ids: ${data.results[0].genreIds}\n"
+                      "vote: ${data.results[0].voteAverage}\n"
+                      "total pages: ${data.totalPages}\n"
+                      "year: ${data.results[0].releaseDate.year}",
+              );
+            },
+            child: Icon(Iconsax.import),
+          ),
           body: moview.timedOut == true
               ? TimeOutWidget(
                   onRefresh: () {
@@ -109,12 +124,12 @@ class _MovieGenresState extends State<MovieGenres>
                             title: Text(movieGenres.name),
                             leading: Icon(Icons.star_rounded),
                             onTap: () {
-                              moview.getGenreResultListIsLoading = true;
-                              moview.genreResultNameList.clear();
-                              moview.genreResultIdList.clear();
-                              moview.genreResultPosterList.clear();
-                              moview.genreResultPosterUrlList.clear();
-                              moview.genreResultRateList.clear();
+                              moview.genreIdsList.clear();
+                              moview.idList.clear();
+                              moview.posterPathList.clear();
+                              moview.releaseDateList.clear();
+                              moview.titleList.clear();
+                              moview.voteAverageList.clear();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -131,7 +146,7 @@ class _MovieGenresState extends State<MovieGenres>
                         },
                       );
                     } else if (snapshot.hasError) {
-                      print("====== ${snapshot.error.toString()}");
+                      print("*** error: ${snapshot.error.toString()}");
                       TimeOutWidget(
                         onRefresh: () {
                           setState(() {
@@ -201,12 +216,12 @@ class _TVShowGenresState extends State<TVShowGenres>
                             title: Text(tvShowGenres.name),
                             leading: Icon(Icons.star_rounded),
                             onTap: () {
-                              moview.getGenreResultListIsLoading = true;
-                              moview.genreResultNameList.clear();
-                              moview.genreResultIdList.clear();
-                              moview.genreResultPosterList.clear();
-                              moview.genreResultPosterUrlList.clear();
-                              moview.genreResultRateList.clear();
+                              moview.genreIdsList.clear();
+                              moview.idList.clear();
+                              moview.posterPathList.clear();
+                              moview.releaseDateList.clear();
+                              moview.titleList.clear();
+                              moview.voteAverageList.clear();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
