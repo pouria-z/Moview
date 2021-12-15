@@ -59,10 +59,12 @@ class _HomePageState extends State<HomePage> {
     return Consumer<Moview>(
       builder: (context, value, child) {
         return _connectivityResult == ConnectivityResult.none
-            ? Center(
-                child: Text(
-                    "No Network Connection. Please check your connection."),
-              )
+            ? Scaffold(
+              body: Center(
+                  child: Text(
+                      "No Network Connection. Please check your connection."),
+                ),
+            )
             : moview.showBottom == true
                 ? PersistentTabView(
                     context,

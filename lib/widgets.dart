@@ -260,67 +260,67 @@ Widget moviewGridView(
   );
 }
 
-Widget moviewGridView2(BuildContext context,
-    type, ScrollController scrollController, Moview moview) {
-  return Expanded(
-    child: GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 2,
-        mainAxisExtent: MediaQuery.of(context).size.height / 3,
-      ),
-      physics: BouncingScrollPhysics(),
-      controller: scrollController,
-      shrinkWrap: true,
-      itemCount: moview.idList.length,
-      itemBuilder: (context, index) {
-        var genreResultModel = moview;
-        return InkWell(
-          splashColor: Color(0xFF36367C),
-          borderRadius: BorderRadius.circular(5),
-          onTap: () {
-            moview.tvShowName = null;
-            moview.movieName = null;
-            moview.getTvShowDetailsIsLoading = true;
-            moview.getMovieDetailsIsLoading = true;
-            if (type.runtimeType == String
-                ? type == 'tv'
-                : type[index] == 'tv') {
-              animationTransition(
-                context,
-                TVShowDetails(
-                  id: genreResultModel.idList[index],
-                  tvShowName: genreResultModel.titleList[index],
-                  tvShowPosterUrl: genreResultModel.posterPathList[index],
-                ),
-              );
-            } else if (type.runtimeType == String
-                ? type == 'movie'
-                : type[index] == 'movie') {
-              animationTransition(
-                context,
-                MovieDetails(
-                  id: genreResultModel.idList[index],
-                  movieName: genreResultModel.titleList[index],
-                  moviePosterUrl: genreResultModel.posterPathList[index],
-                ),
-              );
-            }
-          },
-          child: MoviewCard(
-            id: genreResultModel.idList[index],
-            imageUrl: genreResultModel.posterPathList[index],
-            title: genreResultModel.titleList[index],
-            rating: genreResultModel.voteAverageList[index].runtimeType == String
-                ? genreResultModel.voteAverageList[index]
-                : genreResultModel.voteAverageList[index].toString(),
-          ),
-        );
-      },
-    ),
-  );
-}
+// Widget moviewGridView2(BuildContext context,
+//     type, ScrollController scrollController, Moview moview) {
+//   return Expanded(
+//     child: GridView.builder(
+//       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+//         crossAxisCount: 2,
+//         mainAxisSpacing: 10,
+//         crossAxisSpacing: 2,
+//         mainAxisExtent: MediaQuery.of(context).size.height / 3,
+//       ),
+//       physics: BouncingScrollPhysics(),
+//       controller: scrollController,
+//       shrinkWrap: true,
+//       itemCount: moview.idList.length,
+//       itemBuilder: (context, index) {
+//         var genreResultModel = moview;
+//         return InkWell(
+//           splashColor: Color(0xFF36367C),
+//           borderRadius: BorderRadius.circular(5),
+//           onTap: () {
+//             moview.tvShowName = null;
+//             moview.movieName = null;
+//             moview.getTvShowDetailsIsLoading = true;
+//             moview.getMovieDetailsIsLoading = true;
+//             if (type.runtimeType == String
+//                 ? type == 'tv'
+//                 : type[index] == 'tv') {
+//               animationTransition(
+//                 context,
+//                 TVShowDetails(
+//                   id: genreResultModel.idList[index],
+//                   tvShowName: genreResultModel.titleList[index],
+//                   tvShowPosterUrl: genreResultModel.posterPathList[index],
+//                 ),
+//               );
+//             } else if (type.runtimeType == String
+//                 ? type == 'movie'
+//                 : type[index] == 'movie') {
+//               animationTransition(
+//                 context,
+//                 MovieDetails(
+//                   id: genreResultModel.idList[index],
+//                   movieName: genreResultModel.titleList[index],
+//                   moviePosterUrl: genreResultModel.posterPathList[index],
+//                 ),
+//               );
+//             }
+//           },
+//           child: MoviewCard(
+//             id: genreResultModel.idList[index],
+//             imageUrl: genreResultModel.posterPathList[index],
+//             title: genreResultModel.titleList[index],
+//             rating: genreResultModel.voteAverageList[index].runtimeType == String
+//                 ? genreResultModel.voteAverageList[index]
+//                 : genreResultModel.voteAverageList[index].toString(),
+//           ),
+//         );
+//       },
+//     ),
+//   );
+// }
 
 Future<dynamic> animationTransition(
     BuildContext context, newPage) {

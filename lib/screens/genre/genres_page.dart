@@ -93,12 +93,12 @@ class _MovieGenresState extends State<MovieGenres>
             onPressed: () async {
               var data = await moview.getGenreResult('tv', 10759);
               print(
-                  "title: ${data.results[0].title}\n"
-                      "id: ${data.results[0].id}\n"
-                      "genre ids: ${data.results[0].genreIds}\n"
-                      "vote: ${data.results[0].voteAverage}\n"
-                      "total pages: ${data.totalPages}\n"
-                      "year: ${data.results[0].releaseDate.year}",
+                "title: ${data.results[0].title}\n"
+                "id: ${data.results[0].id}\n"
+                "genre ids: ${data.results[0].genreIds}\n"
+                "vote: ${data.results[0].voteAverage}\n"
+                "total pages: ${data.totalPages}\n"
+                "year: ${data.results[0].releaseDate}",
               );
             },
             child: Icon(Iconsax.import),
@@ -124,12 +124,6 @@ class _MovieGenresState extends State<MovieGenres>
                             title: Text(movieGenres.name),
                             leading: Icon(Icons.star_rounded),
                             onTap: () {
-                              moview.genreIdsList.clear();
-                              moview.idList.clear();
-                              moview.posterPathList.clear();
-                              moview.releaseDateList.clear();
-                              moview.titleList.clear();
-                              moview.voteAverageList.clear();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -137,7 +131,6 @@ class _MovieGenresState extends State<MovieGenres>
                                     type: 'movie',
                                     id: movieGenres.id,
                                     name: movieGenres.name,
-                                    pageNumber: 1,
                                   ),
                                 ),
                               );
@@ -216,12 +209,6 @@ class _TVShowGenresState extends State<TVShowGenres>
                             title: Text(tvShowGenres.name),
                             leading: Icon(Icons.star_rounded),
                             onTap: () {
-                              moview.genreIdsList.clear();
-                              moview.idList.clear();
-                              moview.posterPathList.clear();
-                              moview.releaseDateList.clear();
-                              moview.titleList.clear();
-                              moview.voteAverageList.clear();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -229,7 +216,6 @@ class _TVShowGenresState extends State<TVShowGenres>
                                     type: 'tv',
                                     id: tvShowGenres.id,
                                     name: tvShowGenres.name,
-                                    pageNumber: 1,
                                   ),
                                 ),
                               );

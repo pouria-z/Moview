@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:moview/key.dart';
 import 'package:http/http.dart';
 import 'package:moview/models/genre_result_model.dart';
+import 'package:moview/screens/genre/genre_details_page.dart';
 import 'package:moview/screens/home_page.dart';
 import 'package:moview/widgets.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
@@ -108,8 +109,7 @@ class Moview with ChangeNotifier {
   var typePersonCount = 0;
 
   ///Genre Result List
-  bool genreResultListIsLoadingMore = false;
-  var genreResultPage;
+
 
 
   ///favorite
@@ -147,10 +147,14 @@ class Moview with ChangeNotifier {
       );
     } on TimeoutException catch (e) {
       timedOut = true;
+      GenreDetails.refreshController.loadFailed();
+      GenreDetails.refreshController.refreshFailed();
       notifyListeners();
       throw e;
     } on SocketException catch (e) {
       timedOut = true;
+      GenreDetails.refreshController.loadFailed();
+      GenreDetails.refreshController.refreshFailed();
       notifyListeners();
       throw e;
     }
@@ -184,49 +188,9 @@ class Moview with ChangeNotifier {
     Response response = await sendRequest(url);
     Map<String, dynamic> jsonBody = jsonDecode(response.body);
     tvShowGenresModel = TvShowGenresModel.fromJson(jsonBody);
+    tvShowGenresModel.tvShowGenres.removeAt(12);
     return tvShowGenresModel;
   }
-
-  // Future getMovieGenreList() async {
-  //   timedOut = false;
-  //   genreMovieNameList.clear();
-  //   genreMovieIdList.clear();
-  //   var url = Uri.https(apiUrl, "/3/genre/movie/list",
-  //       {'api_key': '$apiKey', 'language': 'en-US'});
-  //   Response response = await sendRequest(url);
-  //   var json = jsonDecode(response.body);
-  //   for (var item in json['genres']) {
-  //     genreMediaId = item['id'];
-  //     genreMovieName = item['name'];
-  //     if (genreMovieName != "Documentary") {
-  //       genreMovieNameList.add(genreMovieName);
-  //       genreMovieIdList.add(genreMediaId);
-  //     }
-  //   }
-  //   genreMovieNameList.forEach((element) {
-  //     print("This is element: $element");
-  //   });
-  //   notifyListeners();
-  // }
-
-  // Future getTvShowGenreList() async {
-  //   timedOut = false;
-  //   genreTvShowNameList.clear();
-  //   genreTvShowIdList.clear();
-  //   var url = Uri.https(apiUrl, "/3/genre/tv/list",
-  //       {'api_key': '$apiKey', 'language': 'en-US'});
-  //   Response response = await sendRequest(url);
-  //   var json = jsonDecode(response.body);
-  //   for (var item in json['genres']) {
-  //     genreTvShowId = item['id'];
-  //     genreTvShowName = item['name'];
-  //     if (genreTvShowName != "Soap") {
-  //       genreTvShowNameList.add(genreTvShowName);
-  //       genreTvShowIdList.add(genreTvShowId);
-  //     }
-  //   }
-  //   notifyListeners();
-  // }
 
   Future getMovieDetails(int movieId) async {
     timedOut = false;
@@ -433,83 +397,23 @@ class Moview with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<GenreResultModel>? genreResultModel;
-  List genreIdsList = [];
-  List<int> idList = [];
-  List<String> posterPathList = [];
-  List<DateTime> releaseDateList = [];
-  List<String> titleList = [];
-  List<double> voteAverageList = [];
-  int? totalPages;
+  int genreResultPage = 0;
+  late int genreResultTotalPages;
   Future<GenreResultModel> getGenreResult(String mediaType, int genreMediaId) async {
     timedOut = false;
-    genreResultListIsLoadingMore = true;
     notifyListeners();
     GenreResultModel genreResultModel;
     var url = Uri.parse(
         '$_apiUrl/3/discover/$mediaType?api_key=$apiKey&language=en-US&sort_by=popularity.desc'
             '&include_adult=false&include_video=false&page=$genreResultPage&with_genres=$genreMediaId');
-    // var url = Uri.parse(
-    //     '$_apiUrl/3/discover/tv?api_key=$apiKey&language=en-US&sort_by=popularity.desc'
-    //         '&include_adult=false&include_video=false&page=1&with_genres=28');
     Response response = await sendRequest(url);
     print("request completed!");
     Map<String, dynamic> jsonBody = jsonDecode(response.body);
     genreResultModel = GenreResultModel.fromJson(jsonBody, mediaType);
-    totalPages = genreResultModel.totalPages;
-    for(int index = 0; index < 20; index++){
-      var results = genreResultModel.results[index];
-      print("counter: $index");
-      genreIdsList.add(results.genreIds);
-      idList.add(results.id);
-      posterPathList.add(results.posterPath);
-      releaseDateList.add(results.releaseDate);
-      titleList.add(results.title);
-      voteAverageList.add(results.voteAverage);
-    }
-    genreResultListIsLoadingMore = false;
+    genreResultTotalPages = genreResultModel.totalPages;
     notifyListeners();
     return genreResultModel;
   }
-
-  // Future getGenreResultList(String mediaType, int genreMediaId) async {
-  //   timedOut = false;
-  //   genreResultListIsLoadingMore = true;
-  //   getGenreResultListIsLoading = true;
-  //   var url = Uri.https(apiUrl, '/3/discover/$mediaType', {
-  //     'api_key': '$apiKey',
-  //     'language': 'en-US',
-  //     'sort_by': 'popularity.desc',
-  //     'include_adult': 'false',
-  //     'include_video': 'false',
-  //     'page': '$genreResultPage',
-  //     'with_genres': '$genreMediaId'
-  //   });
-  //   Response response = await sendRequest(url);
-  //   var json = jsonDecode(response.body);
-  //   genreResultTotalPages = json['total_pages'];
-  //   for (var item in json['results']) {
-  //     if (mediaType == 'tv') {
-  //       genreResultName = item['name'];
-  //       genreResultNameList.add(genreResultName);
-  //     } else if (mediaType == 'movie') {
-  //       genreResultName = item['title'];
-  //       genreResultNameList.add(genreResultName);
-  //     }
-  //     genreResultId = item['id'];
-  //     genreResultIdList.add(genreResultId);
-  //     genreResultPoster = item['poster_path'];
-  //     genreResultRate = item['vote_average'];
-  //     genreResultPosterList.add(genreResultPoster);
-  //     genreResultRateList.add(genreResultRate);
-  //     genreResultPosterUrl =
-  //         genreResultPoster != null ? imageUrl + genreResultPoster : "";
-  //     genreResultPosterUrlList.add(genreResultPosterUrl);
-  //   }
-  //   genreResultListIsLoadingMore = false;
-  //   getGenreResultListIsLoading = false;
-  //   notifyListeners();
-  // }
 
   ///Database
   Future setFavorite(int favoriteMediaId, String favoriteType) async {

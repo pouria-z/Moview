@@ -20,13 +20,6 @@ class GenreResultModel {
         totalPages: json["total_pages"],
         totalResults: json["total_results"],
       );
-
-  Map<String, dynamic> toJson() => {
-        "page": page,
-        "results": List<dynamic>.from(results.map((x) => x.toJson())),
-        "total_pages": totalPages,
-        "total_results": totalResults,
-      };
 }
 
 class Result {
@@ -42,7 +35,7 @@ class Result {
   List<int> genreIds;
   int id;
   String posterPath;
-  DateTime releaseDate;
+  String releaseDate;
   String title;
   double voteAverage;
 
@@ -51,18 +44,15 @@ class Result {
         genreIds: List<int>.from(json["genre_ids"].map((x) => x)),
         id: json["id"],
         posterPath: json["poster_path"] ?? "",
-        releaseDate: mediaType == "movie" ? DateTime.parse(json["release_date"]) : json["first_air_date"],
+        releaseDate: mediaType == "movie"
+            ? json["release_date"] == null || json["release_date"] == ""
+                ? "Unknown"
+                : json["release_date"].toString().replaceRange(4, 10, "")
+            : json["first_air_date"] == null || json["first_air_date"] == ""
+                ? "Unknown"
+                : json["first_air_date"].toString().replaceRange(4, 10, ""),
         title: mediaType == "movie" ? json["title"] : json["name"],
         voteAverage: json["vote_average"].toDouble(),
       );
 
-  Map<String, dynamic> toJson() => {
-        "genre_ids": List<dynamic>.from(genreIds.map((x) => x)),
-        "id": id,
-        "poster_path": posterPath,
-        "release_date":
-            "${releaseDate.year.toString().padLeft(4, '0')}-${releaseDate.month.toString().padLeft(2, '0')}-${releaseDate.day.toString().padLeft(2, '0')}",
-        "title": title,
-        "vote_average": voteAverage,
-      };
 }
