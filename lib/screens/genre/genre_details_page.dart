@@ -20,7 +20,7 @@ class GenreDetails extends StatefulWidget {
   }) : super(key: key);
 
   static final RefreshController refreshController =
-  RefreshController(initialRefresh: true);
+      RefreshController(initialRefresh: true);
 
   @override
   _GenreDetailsState createState() => _GenreDetailsState();
@@ -83,75 +83,19 @@ class _GenreDetailsState extends State<GenreDetails> {
                   : "TV Show | " + widget.name),
             ),
           ),
-          body:SmartRefresher(
-                  controller: GenreDetails.refreshController,
-                  enablePullUp: enablePullUp,
-                  onRefresh: () async {
-                    await getData(isRefresh: true);
-                    GenreDetails.refreshController.refreshCompleted();
-                  },
-                  onLoading: () async {
-                    await getData();
-                    GenreDetails.refreshController.loadComplete();
-                  },
-                  child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 2,
-                      mainAxisExtent: MediaQuery.of(context).size.height / 3,
-                    ),
-                    physics: BouncingScrollPhysics(),
-                    controller: _scrollController,
-                    shrinkWrap: true,
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      final genreResultModel = data[index];
-                      return InkWell(
-                        splashColor: Color(0xFF36367C),
-                        borderRadius: BorderRadius.circular(5),
-                        onTap: () {
-                          moview.tvShowName = null;
-                          moview.movieName = null;
-                          moview.getTvShowDetailsIsLoading = true;
-                          moview.getMovieDetailsIsLoading = true;
-                          if (widget.type.runtimeType == String
-                              ? widget.type == 'tv'
-                              : widget.type[index] == 'tv') {
-                            animationTransition(
-                              context,
-                              TVShowDetails(
-                                id: genreResultModel.id,
-                                tvShowName: genreResultModel.title,
-                                tvShowPosterUrl: genreResultModel.posterPath,
-                              ),
-                            );
-                          } else if (widget.type.runtimeType == String
-                              ? widget.type == 'movie'
-                              : widget.type[index] == 'movie') {
-                            animationTransition(
-                              context,
-                              MovieDetails(
-                                id: genreResultModel.id,
-                                movieName: genreResultModel.title,
-                                moviePosterUrl: genreResultModel.posterPath,
-                              ),
-                            );
-                          }
-                        },
-                        child: MoviewCard(
-                          id: genreResultModel.id,
-                          imageUrl: genreResultModel.posterPath,
-                          title: genreResultModel.title,
-                          rating:
-                              genreResultModel.voteAverage.runtimeType == String
-                                  ? genreResultModel.voteAverage
-                                  : genreResultModel.voteAverage.toString(),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+          body: SmartRefresher(
+            controller: GenreDetails.refreshController,
+            enablePullUp: enablePullUp,
+            onRefresh: () async {
+              await getData(isRefresh: true);
+              GenreDetails.refreshController.refreshCompleted();
+            },
+            onLoading: () async {
+              await getData();
+              GenreDetails.refreshController.loadComplete();
+            },
+            child: moviewGridView2(context, moview, _scrollController, data, widget.type),
+          ),
         );
       },
     );
