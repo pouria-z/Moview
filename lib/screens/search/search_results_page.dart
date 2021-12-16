@@ -64,6 +64,7 @@ class _SearchResultsPageState extends State<SearchResultsPage>
 ///Movies Tab
 class SearchMoviesResultsPage extends StatefulWidget {
   final String searchInput;
+  static final RefreshController refreshController = RefreshController();
 
   const SearchMoviesResultsPage({required this.searchInput});
 
@@ -75,7 +76,6 @@ class SearchMoviesResultsPage extends StatefulWidget {
 class _SearchMoviesResultsPageState extends State<SearchMoviesResultsPage>
     with AutomaticKeepAliveClientMixin {
   ScrollController _scrollController = ScrollController();
-  RefreshController _refreshController = RefreshController();
   List moviesData = List.generate(20, (index) => null);
 
   @override
@@ -91,7 +91,7 @@ class _SearchMoviesResultsPageState extends State<SearchMoviesResultsPage>
   Future loadMore() async {
     var moview = Provider.of<Moview>(context, listen: false);
     if (moview.searchMoviesPage >= moview.searchMoviesTotalPages) {
-      _refreshController.loadNoData();
+      SearchMoviesResultsPage.refreshController.loadNoData();
     } else {
       moview.searchMoviesPage++;
       final moviesResponse = await moview.getSearchMovies(widget.searchInput);
@@ -113,12 +113,12 @@ class _SearchMoviesResultsPageState extends State<SearchMoviesResultsPage>
       builder: (context, value, child) {
         return Scaffold(
           body: SmartRefresher(
-            controller: _refreshController,
+            controller: SearchMoviesResultsPage.refreshController,
             enablePullUp: true,
             enablePullDown: false,
             onLoading: () async {
               await loadMore();
-              _refreshController.loadComplete();
+              SearchMoviesResultsPage.refreshController.loadComplete();
             },
             child: FutureBuilder<SearchMoviesModel>(
               future: moview.searchMoviesModel,
@@ -158,6 +158,7 @@ class _SearchMoviesResultsPageState extends State<SearchMoviesResultsPage>
 ///TVShows Tab
 class SearchTvShowsResultsPage extends StatefulWidget {
   final String searchInput;
+  static final RefreshController refreshController = RefreshController();
 
   const SearchTvShowsResultsPage({required this.searchInput});
 
@@ -169,7 +170,6 @@ class SearchTvShowsResultsPage extends StatefulWidget {
 class _SearchTvShowsResultsPageState extends State<SearchTvShowsResultsPage>
     with AutomaticKeepAliveClientMixin {
   ScrollController _scrollController = ScrollController();
-  RefreshController _refreshController = RefreshController();
   List tvShowsData = List.generate(20, (index) => null);
 
   @override
@@ -185,7 +185,7 @@ class _SearchTvShowsResultsPageState extends State<SearchTvShowsResultsPage>
   Future loadMore() async {
     var moview = Provider.of<Moview>(context, listen: false);
     if (moview.searchTvShowsPage >= moview.searchTvShowsTotalPages) {
-      _refreshController.loadNoData();
+      SearchTvShowsResultsPage.refreshController.loadNoData();
     } else {
       moview.searchTvShowsPage++;
       final tvShowsResponse = await moview.getSearchTvShows(widget.searchInput);
@@ -207,12 +207,12 @@ class _SearchTvShowsResultsPageState extends State<SearchTvShowsResultsPage>
       builder: (context, value, child) {
         return Scaffold(
           body: SmartRefresher(
-            controller: _refreshController,
+            controller: SearchTvShowsResultsPage.refreshController,
             enablePullUp: true,
             enablePullDown: false,
             onLoading: () async {
               await loadMore();
-              _refreshController.loadComplete();
+              SearchTvShowsResultsPage.refreshController.loadComplete();
             },
             child: FutureBuilder<SearchTvShowsModel>(
               future: moview.searchTvShowsModel,

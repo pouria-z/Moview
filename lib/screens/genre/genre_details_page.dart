@@ -9,6 +9,8 @@ class GenreDetails extends StatefulWidget {
   final type;
   final id;
   final name;
+  static final RefreshController refreshController =
+      RefreshController(initialRefresh: true);
 
   const GenreDetails({
     Key? key,
@@ -16,9 +18,6 @@ class GenreDetails extends StatefulWidget {
     required this.id,
     required this.name,
   }) : super(key: key);
-
-  static final RefreshController refreshController =
-      RefreshController(initialRefresh: true);
 
   @override
   _GenreDetailsState createState() => _GenreDetailsState();

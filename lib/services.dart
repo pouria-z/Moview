@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -9,15 +8,17 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:moview/models/genre_result_model.dart';
 import 'package:moview/models/search_model.dart';
 import 'package:moview/models/genres_model.dart';
+import 'package:moview/models/trending.dart';
 import 'package:moview/screens/intro/login_page.dart';
 import 'package:moview/screens/genre/genre_details_page.dart';
+import 'package:moview/screens/search/search_results_page.dart';
 import 'package:moview/screens/home_page.dart';
 import 'package:moview/widgets.dart';
 
 class Moview with ChangeNotifier {
   String apiUrl = "api.themoviedb.org";
   String imageUrl = "https://image.tmdb.org/t/p/w500";
-  String _apiUrl = "https://api.themoviedb.org";
+  String _apiUrl = "https://api.themoviedb.org/3";
   bool timedOut = false;
   bool showBottom = true;
 
@@ -67,7 +68,6 @@ class Moview with ChangeNotifier {
   var tvShowLanguages;
   List tvShowLanguagesList = [];
   var tvShowTagLine;
-
 
   ///Search On Typing
   bool isSearchingOnType = false;
@@ -126,12 +126,16 @@ class Moview with ChangeNotifier {
       timedOut = true;
       GenreDetails.refreshController.loadFailed();
       GenreDetails.refreshController.refreshFailed();
+      SearchMoviesResultsPage.refreshController.loadFailed();
+      SearchTvShowsResultsPage.refreshController.loadFailed();
       notifyListeners();
       throw e;
     } on SocketException catch (e) {
       timedOut = true;
       GenreDetails.refreshController.loadFailed();
       GenreDetails.refreshController.refreshFailed();
+      SearchMoviesResultsPage.refreshController.loadFailed();
+      SearchTvShowsResultsPage.refreshController.loadFailed();
       notifyListeners();
       throw e;
     }
@@ -143,16 +147,16 @@ class Moview with ChangeNotifier {
   Future<MovieGenresModel> getMovieGenres() async {
     timedOut = false;
     notifyListeners();
-    MovieGenresModel movieGenresModel;
+    MovieGenresModel _movieGenresModel;
     var url =
-        Uri.parse('$_apiUrl/3/genre/movie/list?api_key=$apiKey&language=en-US');
-    Response response = await sendRequest(url);
+        Uri.parse('$_apiUrl/genre/movie/list?api_key=$apiKey&language=en-US');
+    Response _response = await sendRequest(url);
     print('request completed!');
-    Map<String, dynamic> jsonBody = jsonDecode(response.body);
-    movieGenresModel = MovieGenresModel.fromJson(jsonBody);
-    movieGenresModel.movieGenres.removeAt(5);
+    Map<String, dynamic> jsonBody = jsonDecode(_response.body);
+    _movieGenresModel = MovieGenresModel.fromJson(jsonBody);
+    _movieGenresModel.movieGenres.removeAt(5);
     notifyListeners();
-    return movieGenresModel;
+    return _movieGenresModel;
   }
 
   Future<TvShowGenresModel>? tvShowGenresModel;
@@ -160,15 +164,15 @@ class Moview with ChangeNotifier {
   Future<TvShowGenresModel> getTvShowGenres() async {
     timedOut = false;
     notifyListeners();
-    TvShowGenresModel tvShowGenresModel;
+    TvShowGenresModel _tvShowGenresModel;
     var url =
-        Uri.parse('$_apiUrl/3/genre/tv/list?api_key=$apiKey&language=en-US');
-    Response response = await sendRequest(url);
-    Map<String, dynamic> jsonBody = jsonDecode(response.body);
-    tvShowGenresModel = TvShowGenresModel.fromJson(jsonBody);
-    tvShowGenresModel.tvShowGenres.removeAt(12);
+        Uri.parse('$_apiUrl/genre/tv/list?api_key=$apiKey&language=en-US');
+    Response _response = await sendRequest(url);
+    Map<String, dynamic> jsonBody = jsonDecode(_response.body);
+    _tvShowGenresModel = TvShowGenresModel.fromJson(jsonBody);
+    _tvShowGenresModel.tvShowGenres.removeAt(12);
     notifyListeners();
-    return tvShowGenresModel;
+    return _tvShowGenresModel;
   }
 
   Future<SearchMoviesModel>? searchMoviesModel;
@@ -178,16 +182,15 @@ class Moview with ChangeNotifier {
   Future<SearchMoviesModel> getSearchMovies(String searchInput) async {
     timedOut = false;
     notifyListeners();
-    late SearchMoviesModel searchMoviesModel;
-    var url =
-        Uri.parse("$_apiUrl/3/search/movie?api_key=$apiKey&language=en-US&"
-            "page=$searchMoviesPage&query=$searchInput&include_adult=false");
-    Response response = await sendRequest(url);
-    Map<String, dynamic> jsonBody = jsonDecode(response.body);
-    searchMoviesModel = SearchMoviesModel.fromJson(jsonBody);
-    searchMoviesTotalPages = searchMoviesModel.totalPages;
+    late SearchMoviesModel _searchMoviesModel;
+    var url = Uri.parse("$_apiUrl/search/movie?api_key=$apiKey&language=en-US&"
+        "page=$searchMoviesPage&query=$searchInput&include_adult=false");
+    Response _response = await sendRequest(url);
+    Map<String, dynamic> jsonBody = jsonDecode(_response.body);
+    _searchMoviesModel = SearchMoviesModel.fromJson(jsonBody);
+    searchMoviesTotalPages = _searchMoviesModel.totalPages;
     notifyListeners();
-    return searchMoviesModel;
+    return _searchMoviesModel;
   }
 
   Future<SearchTvShowsModel>? searchTvShowsModel;
@@ -197,66 +200,44 @@ class Moview with ChangeNotifier {
   Future<SearchTvShowsModel> getSearchTvShows(String searchInput) async {
     timedOut = false;
     notifyListeners();
-    late SearchTvShowsModel searchTvShowsModel;
-    var url = Uri.parse("$_apiUrl/3/search/tv?api_key=$apiKey&language=en-US&"
+    late SearchTvShowsModel _searchTvShowsModel;
+    var url = Uri.parse("$_apiUrl/search/tv?api_key=$apiKey&language=en-US&"
         "page=$searchTvShowsPage&query=$searchInput&include_adult=false");
-    Response response = await sendRequest(url);
-    Map<String, dynamic> jsonBody = jsonDecode(response.body);
-    searchTvShowsModel = SearchTvShowsModel.fromJson(jsonBody);
-    searchTvShowsTotalPages = searchTvShowsModel.totalPages;
+    Response _response = await sendRequest(url);
+    Map<String, dynamic> jsonBody = jsonDecode(_response.body);
+    _searchTvShowsModel = SearchTvShowsModel.fromJson(jsonBody);
+    searchTvShowsTotalPages = _searchTvShowsModel.totalPages;
     notifyListeners();
-    return searchTvShowsModel;
+    return _searchTvShowsModel;
   }
 
-  //TODO: check api documents for original country code
+  Future<TrendingMoviesModel>? trendingMoviesModel;
 
-  // Future getSearchResults() async {
-  //   timedOut = false;
-  //   isLoadingMore = true;
-  //   isSearching = true;
-  //   var url = Uri.https(apiUrl, '/3/search/multi', {
-  //     'api_key': '$apiKey',
-  //     'language': 'en-US',
-  //     'page': '$searchPage',
-  //     'query': '$searchInput',
-  //     'include_adult': 'false'
-  //   });
-  //   Response response = await sendRequest(url);
-  //   var json = jsonDecode(response.body);
-  //   searchTotalPages = json['total_pages'];
-  //   searchTotalResults = json['total_results'];
-  //   for (var item in json['results']) {
-  //     count++;
-  //     searchMediaType = item['media_type'];
-  //     if (searchMediaType == 'tv' || searchMediaType == 'movie') {
-  //       searchMediaTypeList.add(searchMediaType);
-  //       searchPoster = item['poster_path'];
-  //       searchId = item['id'];
-  //       searchRate = item['vote_average'];
-  //       searchOverview = item['overview'];
-  //       if (searchMediaType == 'tv') {
-  //         searchName = item['name'];
-  //       } else if (searchMediaType == 'movie') {
-  //         searchName = item['title'];
-  //       }
-  //       searchNameList.add(searchName);
-  //       searchPosterList.add(searchPoster);
-  //       searchIdList.add(searchId);
-  //       searchRateList.add(searchRate);
-  //       searchOverviewList.add(searchOverview);
-  //       searchPosterUrl = searchPoster != null ? imageUrl + searchPoster : "";
-  //       searchPosterUrlList.add(searchPosterUrl);
-  //     } else if (searchMediaType == 'person') {
-  //       personCount++;
-  //       print('its person');
-  //     }
-  //   }
-  //   print('there are $personCount persons');
-  //   print('result is ${count - personCount}');
-  //   isLoadingMore = false;
-  //   isSearching = false;
-  //   notifyListeners();
-  // }
+  Future<TrendingMoviesModel> getTrendingMovies() async {
+    timedOut = false;
+    notifyListeners();
+    late TrendingMoviesModel _trendingMoviesModel;
+    var url = Uri.parse("$_apiUrl/trending/movie/week?api_key=$apiKey&page=1");
+    Response _response = await sendRequest(url);
+    Map<String, dynamic> jsonBody = jsonDecode(_response.body);
+    _trendingMoviesModel = TrendingMoviesModel.fromJson(jsonBody);
+    notifyListeners();
+    return _trendingMoviesModel;
+  }
+
+  Future<TrendingTvShowsModel>? trendingTvShowsModel;
+
+  Future<TrendingTvShowsModel> getTrendingTvShows() async {
+    timedOut = false;
+    notifyListeners();
+    late TrendingTvShowsModel _trendingTvShowsModel;
+    var url = Uri.parse("$_apiUrl/trending/tv/week?api_key=$apiKey&page=1");
+    Response _response = await sendRequest(url);
+    Map<String, dynamic> jsonBody = jsonDecode(_response.body);
+    _trendingTvShowsModel = TrendingTvShowsModel.fromJson(jsonBody);
+    notifyListeners();
+    return _trendingTvShowsModel;
+  }
 
   Future getSearchOnType() async {
     timedOut = false;
@@ -318,17 +299,17 @@ class Moview with ChangeNotifier {
       String mediaType, int genreMediaId) async {
     timedOut = false;
     notifyListeners();
-    GenreResultModel genreResultModel;
+    GenreResultModel _genreResultModel;
     var url = Uri.parse(
-        '$_apiUrl/3/discover/$mediaType?api_key=$apiKey&language=en-US&sort_by=popularity.desc'
+        '$_apiUrl/discover/$mediaType?api_key=$apiKey&language=en-US&sort_by=popularity.desc'
         '&include_adult=false&include_video=false&page=$genreResultPage&with_genres=$genreMediaId');
-    Response response = await sendRequest(url);
+    Response _response = await sendRequest(url);
     print("request completed!");
-    Map<String, dynamic> jsonBody = jsonDecode(response.body);
-    genreResultModel = GenreResultModel.fromJson(jsonBody, mediaType);
-    genreResultTotalPages = genreResultModel.totalPages;
+    Map<String, dynamic> jsonBody = jsonDecode(_response.body);
+    _genreResultModel = GenreResultModel.fromJson(jsonBody, mediaType);
+    genreResultTotalPages = _genreResultModel.totalPages;
     notifyListeners();
-    return genreResultModel;
+    return _genreResultModel;
   }
 
   Future getMovieDetails(int movieId) async {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moview/models/trending.dart';
 import 'package:moview/widgets.dart';
 import 'package:moview/services.dart';
 import 'package:provider/provider.dart';
@@ -69,11 +70,33 @@ class _SearchPageState extends State<SearchPage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SearchResultsPage(searchInput: _textEditingController.text,),
+                          builder: (context) => SearchResultsPage(
+                            searchInput: _textEditingController.text,
+                          ),
                         ));
                   },
                   child: Text("Search"),
                   color: Colors.blue,
+                ),
+                FutureBuilder<TrendingMoviesModel>(
+                  future: moview.getTrendingMovies(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Text("movies");
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ),
+                FutureBuilder<TrendingTvShowsModel>(
+                  future: moview.getTrendingTvShows(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Text("tv shows");
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  },
                 ),
               ],
             ),
@@ -83,39 +106,3 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 }
-
-// TextField(
-// textCapitalization: TextCapitalization.words,
-// textInputAction: TextInputAction.search,
-// onChanged: (value) async {
-// if (value.trim().length >= 3) {
-// setState(() {
-// moview.searchTypeInput =
-// _textEditingController.text.trim();
-// showSuggestions = true;
-// });
-// await moview.getSearchOnType();
-// } else {
-// setState(() {
-// moview.searchTypeNameList.clear();
-// moview.searchTypeRateList.clear();
-// showSuggestions = false;
-// });
-// }
-// },
-// controller: _textEditingController,
-// decoration: InputDecoration(
-// hintText: "Movie name, TV Show name...",
-// border: OutlineInputBorder(
-// borderRadius: BorderRadius.circular(20),
-// ),
-// suffixIcon: IconButton(
-// icon: Icon(Icons.clear),
-// onPressed: () {
-// setState(() {
-// _textEditingController.clear();
-// showSuggestions = false;
-// });
-// },
-// )),
-// ),
