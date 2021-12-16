@@ -54,5 +54,4 @@ class Result {
         title: mediaType == "movie" ? json["title"] : json["name"],
         voteAverage: json["vote_average"].toDouble(),
       );
-
 }

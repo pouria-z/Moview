@@ -1,16 +1,18 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:moview/key.dart';
 import 'package:http/http.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:moview/models/genre_result_model.dart';
+import 'package:moview/models/search_model.dart';
+import 'package:moview/models/genres_model.dart';
+import 'package:moview/screens/intro/login_page.dart';
 import 'package:moview/screens/genre/genre_details_page.dart';
 import 'package:moview/screens/home_page.dart';
 import 'package:moview/widgets.dart';
-import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
-import 'package:moview/screens/intro/login_page.dart';
-import 'package:moview/models/genres_model.dart';
 
 class Moview with ChangeNotifier {
   String apiUrl = "api.themoviedb.org";
@@ -110,8 +112,6 @@ class Moview with ChangeNotifier {
 
   ///Genre Result List
 
-
-
   ///favorite
   var objectId;
   var favoriteId;
@@ -174,6 +174,7 @@ class Moview with ChangeNotifier {
     Map<String, dynamic> jsonBody = jsonDecode(response.body);
     movieGenresModel = MovieGenresModel.fromJson(jsonBody);
     movieGenresModel.movieGenres.removeAt(5);
+    notifyListeners();
     return movieGenresModel;
   }
 
@@ -189,112 +190,49 @@ class Moview with ChangeNotifier {
     Map<String, dynamic> jsonBody = jsonDecode(response.body);
     tvShowGenresModel = TvShowGenresModel.fromJson(jsonBody);
     tvShowGenresModel.tvShowGenres.removeAt(12);
+    notifyListeners();
     return tvShowGenresModel;
   }
 
-  Future getMovieDetails(int movieId) async {
+  Future<SearchMoviesModel>? searchMoviesModel;
+  late int searchMoviesTotalPages;
+  int searchMoviesPage = 1;
+
+  Future<SearchMoviesModel> getSearchMovies(String searchInput) async {
     timedOut = false;
-    movieName = null;
-    movieCover = null;
-    moviePoster = null;
-    movieLanguagesList.clear();
-    movieCountryList.clear();
-    movieGenreList.clear();
-    getMovieDetailsIsLoading = true;
-    var url = Uri.https(apiUrl, '/3/movie/$movieId',
-        {'api_key': '$apiKey', 'language': 'en-US'});
-    Response response = await sendRequest(url);
-    var json = jsonDecode(response.body);
-    movieId = json['id'];
-    movieName = json['title'];
-    movieOverview = json['overview'];
-    movieCover = json['backdrop_path'];
-    moviePoster = json['poster_path'];
-    movieReleaseDate = json['release_date'];
-    movieRuntime = json['runtime'];
-    movieTagLine = json['tagline'];
-    for (var item in json['spoken_languages']) {
-      movieLanguages = item['english_name'];
-      movieLanguagesList.add(movieLanguages);
-    }
-    for (var item in json['production_countries']) {
-      movieCountry = item['name'];
-      movieCountryList.add(movieCountry);
-    }
-    for (var item in json['genres']) {
-      movieGenre = item['name'];
-      movieGenreList.add(movieGenre);
-    }
-    movieCoverUrl = imageUrl + movieCover;
-    moviePosterUrl = imageUrl + moviePoster;
-    getMovieDetailsIsLoading = false;
     notifyListeners();
+    late SearchMoviesModel searchMoviesModel;
+    var url =
+        Uri.parse("$_apiUrl/3/search/movie?api_key=$apiKey&language=en-US&"
+            "page=1&query=$searchInput&include_adult=false");
+    print(url);
+    Response response = await sendRequest(url);
+    Map<String, dynamic> jsonBody = jsonDecode(response.body);
+    searchMoviesModel = SearchMoviesModel.fromJson(jsonBody);
+    searchMoviesTotalPages = searchMoviesModel.totalPages;
+    notifyListeners();
+    return searchMoviesModel;
   }
 
-  Future getTvShowDetails(int tvShowId) async {
+  Future<SearchTvShowsModel>? searchTvShowsModel;
+  late int searchTvShowsTotalPages;
+  int searchTvShowsPage = 1;
+
+  Future<SearchTvShowsModel> getSearchTvShows(String searchInput) async {
     timedOut = false;
-    getTvShowDetailsIsLoading = true;
-    tvShowName = null;
-    tvShowCover = null;
-    tvShowPoster = null;
-    tvShowSeasonAirDateList.clear();
-    tvShowSeasonNameList.clear();
-    tvShowSeasonPosterList.clear();
-    tvShowCreatedByList.clear();
-    tvShowGenreList.clear();
-    tvShowLanguagesList.clear();
-    tvShowCountryList.clear();
-    var url = Uri.https(
-        apiUrl, '/3/tv/$tvShowId', {'api_key': '$apiKey', 'language': 'en-US'});
-    Response response = await sendRequest(url);
-    var json = jsonDecode(response.body);
-    tvShowId = json['id'];
-    tvShowName = json['name'];
-    tvShowOverview = json['overview'];
-    tvShowCover = json['backdrop_path'];
-    tvShowPoster = json['poster_path'];
-    tvShowTagLine = json['tagline'];
-    for (var i in json['episode_run_time']) {
-      tvShowRuntime = "";
-      tvShowRuntime = i;
-    }
-    tvShowFirstAir = json['first_air_date'];
-    tvShowLastAir = json['last_air_date'];
-    tvShowEpisodes = json['number_of_episodes'];
-    tvShowSeasons = json['number_of_seasons'];
-    for (var item in json['created_by']) {
-      tvShowCreatedBy = item['name'];
-      tvShowCreatedByList.add(tvShowCreatedBy);
-    }
-    for (var item in json['production_countries']) {
-      tvShowCountry = item['name'];
-      tvShowCountryList.add(tvShowCountry);
-    }
-    for (var item in json['seasons']) {
-      tvShowSeasonAirDate = item['air_date'];
-      tvShowSeasonName = item['name'];
-      tvShowSeasonPoster = item['poster_path'];
-      tvShowSeasonAirDateList.add(tvShowSeasonAirDate);
-      tvShowSeasonNameList.add(tvShowSeasonName);
-      tvShowSeasonPosterList.add(tvShowSeasonPoster);
-    }
-    for (var item in json['spoken_languages']) {
-      tvShowLanguages = item['name'];
-      tvShowLanguagesList.add(tvShowLanguages);
-    }
-    for (var item in json['genres']) {
-      tvShowGenre = item['name'];
-      tvShowGenreList.add(tvShowGenre);
-    }
-    if (tvShowCover != null) {
-      tvShowCoverUrl = imageUrl + tvShowCover;
-    }
-    if (tvShowPoster != null) {
-      tvShowPosterUrl = imageUrl + tvShowPoster;
-    }
-    getTvShowDetailsIsLoading = false;
     notifyListeners();
+    late SearchTvShowsModel searchTvShowsModel;
+    var url = Uri.parse("$_apiUrl/3/search/tv?api_key=$apiKey&language=en-US&"
+        "page=$searchTvShowsPage&query=$searchInput&include_adult=false");
+    Response response = await sendRequest(url);
+    Map<String, dynamic> jsonBody = jsonDecode(response.body);
+    searchTvShowsModel = SearchTvShowsModel.fromJson(jsonBody);
+    searchTvShowsTotalPages = searchTvShowsModel.totalPages;
+    notifyListeners();
+    return searchTvShowsModel;
   }
+
+  //TODO: check api documents for original country code
 
   Future getSearchResults() async {
     timedOut = false;
@@ -399,13 +337,15 @@ class Moview with ChangeNotifier {
 
   int genreResultPage = 0;
   late int genreResultTotalPages;
-  Future<GenreResultModel> getGenreResult(String mediaType, int genreMediaId) async {
+
+  Future<GenreResultModel> getGenreResult(
+      String mediaType, int genreMediaId) async {
     timedOut = false;
     notifyListeners();
     GenreResultModel genreResultModel;
     var url = Uri.parse(
         '$_apiUrl/3/discover/$mediaType?api_key=$apiKey&language=en-US&sort_by=popularity.desc'
-            '&include_adult=false&include_video=false&page=$genreResultPage&with_genres=$genreMediaId');
+        '&include_adult=false&include_video=false&page=$genreResultPage&with_genres=$genreMediaId');
     Response response = await sendRequest(url);
     print("request completed!");
     Map<String, dynamic> jsonBody = jsonDecode(response.body);
@@ -413,6 +353,110 @@ class Moview with ChangeNotifier {
     genreResultTotalPages = genreResultModel.totalPages;
     notifyListeners();
     return genreResultModel;
+  }
+
+  Future getMovieDetails(int movieId) async {
+    timedOut = false;
+    movieName = null;
+    movieCover = null;
+    moviePoster = null;
+    movieLanguagesList.clear();
+    movieCountryList.clear();
+    movieGenreList.clear();
+    getMovieDetailsIsLoading = true;
+    var url = Uri.https(apiUrl, '/3/movie/$movieId',
+        {'api_key': '$apiKey', 'language': 'en-US'});
+    Response response = await sendRequest(url);
+    var json = jsonDecode(response.body);
+    movieId = json['id'];
+    movieName = json['title'];
+    movieOverview = json['overview'];
+    movieCover = json['backdrop_path'];
+    moviePoster = json['poster_path'];
+    movieReleaseDate = json['release_date'];
+    movieRuntime = json['runtime'];
+    movieTagLine = json['tagline'];
+    for (var item in json['spoken_languages']) {
+      movieLanguages = item['english_name'];
+      movieLanguagesList.add(movieLanguages);
+    }
+    for (var item in json['production_countries']) {
+      movieCountry = item['name'];
+      movieCountryList.add(movieCountry);
+    }
+    for (var item in json['genres']) {
+      movieGenre = item['name'];
+      movieGenreList.add(movieGenre);
+    }
+    movieCoverUrl = imageUrl + movieCover;
+    moviePosterUrl = imageUrl + moviePoster;
+    getMovieDetailsIsLoading = false;
+    notifyListeners();
+  }
+
+  Future getTvShowDetails(int tvShowId) async {
+    timedOut = false;
+    getTvShowDetailsIsLoading = true;
+    tvShowName = null;
+    tvShowCover = null;
+    tvShowPoster = null;
+    tvShowSeasonAirDateList.clear();
+    tvShowSeasonNameList.clear();
+    tvShowSeasonPosterList.clear();
+    tvShowCreatedByList.clear();
+    tvShowGenreList.clear();
+    tvShowLanguagesList.clear();
+    tvShowCountryList.clear();
+    var url = Uri.https(
+        apiUrl, '/3/tv/$tvShowId', {'api_key': '$apiKey', 'language': 'en-US'});
+    Response response = await sendRequest(url);
+    var json = jsonDecode(response.body);
+    tvShowId = json['id'];
+    tvShowName = json['name'];
+    tvShowOverview = json['overview'];
+    tvShowCover = json['backdrop_path'];
+    tvShowPoster = json['poster_path'];
+    tvShowTagLine = json['tagline'];
+    for (var i in json['episode_run_time']) {
+      tvShowRuntime = "";
+      tvShowRuntime = i;
+    }
+    tvShowFirstAir = json['first_air_date'];
+    tvShowLastAir = json['last_air_date'];
+    tvShowEpisodes = json['number_of_episodes'];
+    tvShowSeasons = json['number_of_seasons'];
+    for (var item in json['created_by']) {
+      tvShowCreatedBy = item['name'];
+      tvShowCreatedByList.add(tvShowCreatedBy);
+    }
+    for (var item in json['production_countries']) {
+      tvShowCountry = item['name'];
+      tvShowCountryList.add(tvShowCountry);
+    }
+    for (var item in json['seasons']) {
+      tvShowSeasonAirDate = item['air_date'];
+      tvShowSeasonName = item['name'];
+      tvShowSeasonPoster = item['poster_path'];
+      tvShowSeasonAirDateList.add(tvShowSeasonAirDate);
+      tvShowSeasonNameList.add(tvShowSeasonName);
+      tvShowSeasonPosterList.add(tvShowSeasonPoster);
+    }
+    for (var item in json['spoken_languages']) {
+      tvShowLanguages = item['name'];
+      tvShowLanguagesList.add(tvShowLanguages);
+    }
+    for (var item in json['genres']) {
+      tvShowGenre = item['name'];
+      tvShowGenreList.add(tvShowGenre);
+    }
+    if (tvShowCover != null) {
+      tvShowCoverUrl = imageUrl + tvShowCover;
+    }
+    if (tvShowPoster != null) {
+      tvShowPosterUrl = imageUrl + tvShowPoster;
+    }
+    getTvShowDetailsIsLoading = false;
+    notifyListeners();
   }
 
   ///Database

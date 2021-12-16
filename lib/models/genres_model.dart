@@ -1,7 +1,3 @@
-import 'dart:convert';
-import 'package:http/http.dart';
-import 'package:moview/key.dart';
-
 class MovieGenresModel {
   MovieGenresModel({
     required this.movieGenres,
@@ -15,11 +11,6 @@ class MovieGenresModel {
           json["genres"].map((x) => MovieGenres.fromJson(x)),
         ),
       );
-
-
-  Map<String, dynamic> toJson() => {
-        "genres": List<dynamic>.from(movieGenres.map((x) => x.toJson())),
-      };
 }
 
 class MovieGenres {
@@ -35,11 +26,6 @@ class MovieGenres {
         id: json["id"],
         name: json["name"],
       );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "name": name,
-      };
 }
 
 class TvShowGenresModel {
@@ -54,10 +40,6 @@ class TvShowGenresModel {
         tvShowGenres: List<TvShowGenres>.from(
             json["genres"].map((x) => TvShowGenres.fromJson(x))),
       );
-
-  Map<String, dynamic> toJson() => {
-        "genres": List<dynamic>.from(tvShowGenres.map((x) => x.toJson())),
-      };
 }
 
 class TvShowGenres {
@@ -73,9 +55,4 @@ class TvShowGenres {
         id: json["id"],
         name: json["name"],
       );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "name": name,
-      };
 }

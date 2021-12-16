@@ -237,7 +237,8 @@ Widget moviewGridView(
             } else if (type.runtimeType == String
                 ? type == 'movie'
                 : type[index] == 'movie') {
-              animationTransition(context,
+              animationTransition(
+                context,
                 MovieDetails(
                   id: id[index],
                   movieName: name[index],
@@ -260,8 +261,13 @@ Widget moviewGridView(
   );
 }
 
-GridView moviewGridView2(BuildContext context, Moview moview,
-    ScrollController scrollController, List data, type) {
+GridView moviewGridView2(
+  BuildContext context,
+  Moview moview, {
+  required ScrollController scrollController,
+  required List data,
+  required String type,
+}) {
   return GridView.builder(
     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
       crossAxisCount: 2,
@@ -283,9 +289,7 @@ GridView moviewGridView2(BuildContext context, Moview moview,
           moview.movieName = null;
           moview.getTvShowDetailsIsLoading = true;
           moview.getMovieDetailsIsLoading = true;
-          if (type.runtimeType == String
-              ? type == 'tv'
-              : type[index] == 'tv') {
+          if (type.runtimeType == String ? type == 'tv' : type[index] == 'tv') {
             animationTransition(
               context,
               TVShowDetails(
@@ -320,8 +324,7 @@ GridView moviewGridView2(BuildContext context, Moview moview,
   );
 }
 
-Future<dynamic> animationTransition(
-    BuildContext context, newPage) {
+Future<dynamic> animationTransition(BuildContext context, newPage) {
   return Navigator.push(
     context,
     PageRouteBuilder(
