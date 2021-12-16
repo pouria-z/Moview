@@ -280,7 +280,7 @@ GridView moviewGridView2(
     shrinkWrap: true,
     itemCount: data.length,
     itemBuilder: (context, index) {
-      final genreResultModel = data[index];
+      final model = data[index];
       return InkWell(
         splashColor: Color(0xFF36367C),
         borderRadius: BorderRadius.circular(5),
@@ -293,9 +293,9 @@ GridView moviewGridView2(
             animationTransition(
               context,
               TVShowDetails(
-                id: genreResultModel.id,
-                tvShowName: genreResultModel.title,
-                tvShowPosterUrl: genreResultModel.posterPath,
+                id: model.id,
+                tvShowName: model.title,
+                tvShowPosterUrl: model.posterPath,
               ),
             );
           } else if (type.runtimeType == String
@@ -304,20 +304,20 @@ GridView moviewGridView2(
             animationTransition(
               context,
               MovieDetails(
-                id: genreResultModel.id,
-                movieName: genreResultModel.title,
-                moviePosterUrl: genreResultModel.posterPath,
+                id: model.id,
+                movieName: model.title,
+                moviePosterUrl: model.posterPath,
               ),
             );
           }
         },
         child: MoviewCard(
-          id: genreResultModel.id,
-          imageUrl: genreResultModel.posterPath,
-          title: genreResultModel.title,
-          rating: genreResultModel.voteAverage.runtimeType == String
-              ? genreResultModel.voteAverage
-              : genreResultModel.voteAverage.toString(),
+          id: model.id,
+          imageUrl: model.posterPath,
+          title: model.title,
+          rating: model.voteAverage.runtimeType == String
+              ? model.voteAverage
+              : model.voteAverage.toString(),
         ),
       );
     },

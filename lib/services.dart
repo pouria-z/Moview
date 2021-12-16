@@ -68,29 +68,6 @@ class Moview with ChangeNotifier {
   List tvShowLanguagesList = [];
   var tvShowTagLine;
 
-  ///Search Result
-  bool isLoadingMore = false;
-  bool isSearching = false;
-  var searchInput;
-  var searchPage;
-  var searchTotalPages;
-  var searchTotalResults;
-  var searchName;
-  var searchPoster;
-  var searchPosterUrl;
-  var searchId;
-  var searchRate;
-  var searchOverview;
-  var searchMediaType;
-  List searchNameList = [];
-  List searchPosterList = [];
-  List searchIdList = [];
-  List searchRateList = [];
-  List searchOverviewList = [];
-  List searchMediaTypeList = [];
-  List searchPosterUrlList = [];
-  var count = 0;
-  var personCount = 0;
 
   ///Search On Typing
   bool isSearchingOnType = false;
@@ -204,8 +181,7 @@ class Moview with ChangeNotifier {
     late SearchMoviesModel searchMoviesModel;
     var url =
         Uri.parse("$_apiUrl/3/search/movie?api_key=$apiKey&language=en-US&"
-            "page=1&query=$searchInput&include_adult=false");
-    print(url);
+            "page=$searchMoviesPage&query=$searchInput&include_adult=false");
     Response response = await sendRequest(url);
     Map<String, dynamic> jsonBody = jsonDecode(response.body);
     searchMoviesModel = SearchMoviesModel.fromJson(jsonBody);
@@ -234,53 +210,53 @@ class Moview with ChangeNotifier {
 
   //TODO: check api documents for original country code
 
-  Future getSearchResults() async {
-    timedOut = false;
-    isLoadingMore = true;
-    isSearching = true;
-    var url = Uri.https(apiUrl, '/3/search/multi', {
-      'api_key': '$apiKey',
-      'language': 'en-US',
-      'page': '$searchPage',
-      'query': '$searchInput',
-      'include_adult': 'false'
-    });
-    Response response = await sendRequest(url);
-    var json = jsonDecode(response.body);
-    searchTotalPages = json['total_pages'];
-    searchTotalResults = json['total_results'];
-    for (var item in json['results']) {
-      count++;
-      searchMediaType = item['media_type'];
-      if (searchMediaType == 'tv' || searchMediaType == 'movie') {
-        searchMediaTypeList.add(searchMediaType);
-        searchPoster = item['poster_path'];
-        searchId = item['id'];
-        searchRate = item['vote_average'];
-        searchOverview = item['overview'];
-        if (searchMediaType == 'tv') {
-          searchName = item['name'];
-        } else if (searchMediaType == 'movie') {
-          searchName = item['title'];
-        }
-        searchNameList.add(searchName);
-        searchPosterList.add(searchPoster);
-        searchIdList.add(searchId);
-        searchRateList.add(searchRate);
-        searchOverviewList.add(searchOverview);
-        searchPosterUrl = searchPoster != null ? imageUrl + searchPoster : "";
-        searchPosterUrlList.add(searchPosterUrl);
-      } else if (searchMediaType == 'person') {
-        personCount++;
-        print('its person');
-      }
-    }
-    print('there are $personCount persons');
-    print('result is ${count - personCount}');
-    isLoadingMore = false;
-    isSearching = false;
-    notifyListeners();
-  }
+  // Future getSearchResults() async {
+  //   timedOut = false;
+  //   isLoadingMore = true;
+  //   isSearching = true;
+  //   var url = Uri.https(apiUrl, '/3/search/multi', {
+  //     'api_key': '$apiKey',
+  //     'language': 'en-US',
+  //     'page': '$searchPage',
+  //     'query': '$searchInput',
+  //     'include_adult': 'false'
+  //   });
+  //   Response response = await sendRequest(url);
+  //   var json = jsonDecode(response.body);
+  //   searchTotalPages = json['total_pages'];
+  //   searchTotalResults = json['total_results'];
+  //   for (var item in json['results']) {
+  //     count++;
+  //     searchMediaType = item['media_type'];
+  //     if (searchMediaType == 'tv' || searchMediaType == 'movie') {
+  //       searchMediaTypeList.add(searchMediaType);
+  //       searchPoster = item['poster_path'];
+  //       searchId = item['id'];
+  //       searchRate = item['vote_average'];
+  //       searchOverview = item['overview'];
+  //       if (searchMediaType == 'tv') {
+  //         searchName = item['name'];
+  //       } else if (searchMediaType == 'movie') {
+  //         searchName = item['title'];
+  //       }
+  //       searchNameList.add(searchName);
+  //       searchPosterList.add(searchPoster);
+  //       searchIdList.add(searchId);
+  //       searchRateList.add(searchRate);
+  //       searchOverviewList.add(searchOverview);
+  //       searchPosterUrl = searchPoster != null ? imageUrl + searchPoster : "";
+  //       searchPosterUrlList.add(searchPosterUrl);
+  //     } else if (searchMediaType == 'person') {
+  //       personCount++;
+  //       print('its person');
+  //     }
+  //   }
+  //   print('there are $personCount persons');
+  //   print('result is ${count - personCount}');
+  //   isLoadingMore = false;
+  //   isSearching = false;
+  //   notifyListeners();
+  // }
 
   Future getSearchOnType() async {
     timedOut = false;
@@ -672,13 +648,6 @@ class Moview with ChangeNotifier {
       tvShowSeasonAirDateList.clear();
       tvShowSeasonPosterList.clear();
       tvShowLanguagesList.clear();
-      searchNameList.clear();
-      searchPosterList.clear();
-      searchIdList.clear();
-      searchRateList.clear();
-      searchOverviewList.clear();
-      searchMediaTypeList.clear();
-      searchPosterUrlList.clear();
       dbMediaIdList.clear();
       dbMediaNameList.clear();
       dbYearList.clear();

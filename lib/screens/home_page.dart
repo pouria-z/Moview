@@ -5,7 +5,7 @@ import 'package:moview/screens/favorites_page.dart';
 import 'package:moview/screens/intro/login_page.dart';
 import 'package:moview/services.dart';
 import 'package:moview/screens/genre/genres_page.dart';
-import 'package:moview/screens/search_page.dart';
+import 'package:moview/screens/search/search_page.dart';
 import 'package:moview/screens/profile_page.dart';
 import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';

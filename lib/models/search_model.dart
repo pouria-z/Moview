@@ -7,22 +7,22 @@ class SearchMoviesModel {
   });
 
   int page;
-  List<SearchMovieResults> results;
+  List<SearchMoviesResultsModel> results;
   int totalPages;
   int totalResults;
 
   factory SearchMoviesModel.fromJson(Map<String, dynamic> json) =>
       SearchMoviesModel(
         page: json["page"],
-        results: List<SearchMovieResults>.from(
-            json["results"].map((x) => SearchMovieResults.fromJson(x))),
+        results: List<SearchMoviesResultsModel>.from(
+            json["results"].map((x) => SearchMoviesResultsModel.fromJson(x))),
         totalPages: json["total_pages"],
         totalResults: json["total_results"],
       );
 }
 
-class SearchMovieResults {
-  SearchMovieResults({
+class SearchMoviesResultsModel {
+  SearchMoviesResultsModel({
     required this.genreIds,
     required this.id,
     required this.posterPath,
@@ -38,8 +38,8 @@ class SearchMovieResults {
   String title;
   double voteAverage;
 
-  factory SearchMovieResults.fromJson(Map<String, dynamic> json) =>
-      SearchMovieResults(
+  factory SearchMoviesResultsModel.fromJson(Map<String, dynamic> json) =>
+      SearchMoviesResultsModel(
         genreIds: List<int>.from(json["genre_ids"].map((x) => x)),
         id: json["id"],
         posterPath: json["poster_path"] ?? "",
@@ -60,22 +60,22 @@ class SearchTvShowsModel {
   });
 
   int page;
-  List<SearchTvShowsResults> results;
+  List<SearchTvShowsResultsModel> results;
   int totalPages;
   int totalResults;
 
   factory SearchTvShowsModel.fromJson(Map<String, dynamic> json) =>
       SearchTvShowsModel(
         page: json["page"],
-        results: List<SearchTvShowsResults>.from(
-            json["results"].map((x) => SearchTvShowsResults.fromJson(x))),
+        results: List<SearchTvShowsResultsModel>.from(
+            json["results"].map((x) => SearchTvShowsResultsModel.fromJson(x))),
         totalPages: json["total_pages"],
         totalResults: json["total_results"],
       );
 }
 
-class SearchTvShowsResults {
-  SearchTvShowsResults({
+class SearchTvShowsResultsModel {
+  SearchTvShowsResultsModel({
     required this.genreIds,
     required this.id,
     required this.posterPath,
@@ -91,8 +91,8 @@ class SearchTvShowsResults {
   String title;
   double voteAverage;
 
-  factory SearchTvShowsResults.fromJson(Map<String, dynamic> json) =>
-      SearchTvShowsResults(
+  factory SearchTvShowsResultsModel.fromJson(Map<String, dynamic> json) =>
+      SearchTvShowsResultsModel(
         genreIds: List<int>.from(json["genre_ids"].map((x) => x)),
         id: json["id"],
         posterPath: json["poster_path"] ?? "",
