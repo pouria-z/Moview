@@ -31,7 +31,7 @@ class _MovieDetailsState extends State<MovieDetails> {
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
       await moview.setAndGetId(widget.id, 'movie');
       isFavorite = moview.isFave;
-      await moview.getMovieDetails(widget.id);
+      await moview.getMovieDetailsOld(widget.id);
     });
   }
 
@@ -75,7 +75,7 @@ class _MovieDetailsState extends State<MovieDetails> {
               ? TimeOutWidget(
                   onRefresh: () {
                     setState(() {
-                      moview.getMovieDetails(widget.id);
+                      moview.getMovieDetailsOld(widget.id);
                     });
                   },
                 )

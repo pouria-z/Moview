@@ -1,19 +1,21 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:moview/key.dart';
 import 'package:http/http.dart';
-import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+import 'package:moview/key.dart';
 import 'package:moview/models/genre_result_model.dart';
-import 'package:moview/models/search_model.dart';
 import 'package:moview/models/genres_model.dart';
-import 'package:moview/models/trending.dart';
-import 'package:moview/screens/intro/login_page.dart';
+import 'package:moview/models/movie_details_model.dart';
+import 'package:moview/models/search_model.dart';
+import 'package:moview/models/trending_model.dart';
 import 'package:moview/screens/genre/genre_details_page.dart';
-import 'package:moview/screens/search/search_results_page.dart';
 import 'package:moview/screens/home_page.dart';
+import 'package:moview/screens/intro/login_page.dart';
+import 'package:moview/screens/search/search_results_page.dart';
 import 'package:moview/widgets.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 class Moview with ChangeNotifier {
   String apiUrl = "api.themoviedb.org";
@@ -68,26 +70,6 @@ class Moview with ChangeNotifier {
   var tvShowLanguages;
   List tvShowLanguagesList = [];
   var tvShowTagLine;
-
-  ///Search On Typing
-  bool isSearchingOnType = false;
-  var searchTypeInput;
-  var searchTypeName;
-  var searchTypePoster;
-  var searchTypePosterUrl;
-  var searchTypeId;
-  var searchTypeRate;
-  var searchTypeMediaType;
-  List searchTypeNameList = [];
-  List searchTypePosterList = [];
-  List searchTypePosterUrlList = [];
-  List searchTypeIdList = [];
-  List searchTypeRateList = [];
-  List searchTypeMediaTypeList = [];
-  var typeCount = 0;
-  var typePersonCount = 0;
-
-  ///Genre Result List
 
   ///favorite
   var objectId;
@@ -180,8 +162,8 @@ class Moview with ChangeNotifier {
   int searchMoviesPage = 1;
 
   Future<SearchMoviesModel> getSearchMovies(String searchInput) async {
-    // timedOut = false;
-    // notifyListeners();
+    timedOut = false;
+    notifyListeners();
     late SearchMoviesModel _searchMoviesModel;
     print("Searching for $searchInput...");
     var url = Uri.parse("$_apiUrl/search/movie?api_key=$apiKey&language=en-US&"
@@ -240,59 +222,6 @@ class Moview with ChangeNotifier {
     return _trendingTvShowsModel;
   }
 
-  Future getSearchOnType() async {
-    timedOut = false;
-    isSearchingOnType = true;
-    searchTypeNameList.clear();
-    searchTypeRateList.clear();
-    searchTypePosterList.clear();
-    searchTypePosterUrlList.clear();
-    searchTypeIdList.clear();
-    searchTypeMediaTypeList.clear();
-    var url = Uri.https(apiUrl, '/3/search/multi', {
-      'api_key': '$apiKey',
-      'language': 'en-US',
-      'page': '1',
-      'query': '$searchTypeInput',
-      'include_adult': 'false'
-    });
-    Response response = await sendRequest(url);
-    var json = jsonDecode(response.body);
-    searchTypeNameList.clear();
-    searchTypeRateList.clear();
-    searchTypePosterList.clear();
-    searchTypePosterUrlList.clear();
-    searchTypeIdList.clear();
-    searchTypeMediaTypeList.clear();
-    for (var item in json['results']) {
-      typeCount++;
-      searchTypeMediaType = item['media_type'];
-      if (searchTypeMediaType == 'tv' || searchTypeMediaType == 'movie') {
-        searchTypeMediaTypeList.add(searchTypeMediaType);
-        searchTypePoster = item['poster_path'];
-        searchTypeId = item['id'];
-        searchTypeRate = item['vote_average'];
-        if (searchTypeMediaType == 'tv') {
-          searchTypeName = item['name'];
-        } else if (searchTypeMediaType == 'movie') {
-          searchTypeName = item['title'];
-        }
-        searchTypeNameList.add(searchTypeName);
-        searchTypePosterList.add(searchTypePoster);
-        searchTypeIdList.add(searchTypeId);
-        searchTypeRateList.add(searchTypeRate);
-        searchTypePosterUrl =
-            searchTypePoster != null ? imageUrl + searchTypePoster : "";
-        searchTypePosterUrlList.add(searchTypePosterUrl);
-      } else if (searchTypeMediaType == 'person') {
-        typePersonCount++;
-        print('its person');
-      }
-    }
-    isSearchingOnType = false;
-    notifyListeners();
-  }
-
   int genreResultPage = 0;
   late int genreResultTotalPages;
 
@@ -313,7 +242,20 @@ class Moview with ChangeNotifier {
     return _genreResultModel;
   }
 
-  Future getMovieDetails(int movieId) async {
+  Future<MovieDetailsModel> getMovieDetails(int movieId) async {
+    timedOut = false;
+    notifyListeners();
+    late MovieDetailsModel _movieDetailsModel;
+    var url =
+        Uri.parse("$_apiUrl//movie/$movieId?api_key=$apiKey&language=en-US");
+    Response _response = await sendRequest(url);
+    Map<String, dynamic> jsonBody = jsonDecode(_response.body);
+    _movieDetailsModel = MovieDetailsModel.fromJson(jsonBody);
+    notifyListeners();
+    return _movieDetailsModel;
+  }
+
+  Future getMovieDetailsOld(int movieId) async {
     timedOut = false;
     movieName = null;
     movieCover = null;

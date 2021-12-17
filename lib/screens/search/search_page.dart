@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moview/services.dart';
 import 'package:moview/screens/search/search_results_page.dart';
-import 'package:moview/screens/details/movie_details_page.dart';
-import 'package:moview/screens/details/tvshow_details_page.dart';
 import 'package:moview/models/search_model.dart';
 import 'package:moview/widgets.dart';
 import 'package:provider/provider.dart';

@@ -91,14 +91,13 @@ class _MovieGenresState extends State<MovieGenres>
         return Scaffold(
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
-              var data = await moview.getSearchTvShows('joey');
+              var data = await moview.getMovieDetails(27205);
               print(
-                "title: ${data.results[0].title}\n"
-                "id: ${data.results[0].id}\n"
-                "genre ids: ${data.results[0].genreIds}\n"
-                "vote: ${data.results[0].voteAverage}\n"
-                // "total pages: ${data.totalPages}\n"
-                "year: ${data.results[0].releaseDate}",
+                "title: ${data.title}\n"
+                "id: ${data.id}\n"
+                "genre ids: ${data.genres[0].name}\n"
+                "vote: ${data.voteAverage}\n"
+                "year: ${data.releaseDate}",
               );
             },
             child: Icon(Iconsax.import),

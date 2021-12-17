@@ -182,14 +182,16 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Hero(
                     tag: 'button',
-                    child: MoviewButton(
-                      title: "Login",
-                      onPressed: () {
-                        moview.login(context, loginUser, loginPassword);
-                      },
-                      isLoading: moview.loginIsLoading,
-                      enableCondition:
-                          loginUser.trim().isEmpty || loginPassword.isEmpty,
+                    child: Align(
+                      child: MoviewButton(
+                        title: "Login",
+                        onPressed: () {
+                          moview.login(context, loginUser, loginPassword);
+                        },
+                        isLoading: moview.loginIsLoading,
+                        enableCondition:
+                            loginUser.trim().isEmpty || loginPassword.isEmpty,
+                      ),
                     ),
                   ),
                   SizedBox(

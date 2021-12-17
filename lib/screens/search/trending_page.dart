@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:moview/models/trending.dart';
+import 'package:moview/models/trending_model.dart';
 import 'package:moview/screens/search/search_page.dart';
 import 'package:moview/widgets.dart';
 import 'package:moview/services.dart';
 import 'package:provider/provider.dart';
-import 'package:moview/screens/search/search_results_page.dart';
 
 class TrendingPage extends StatefulWidget {
   const TrendingPage({Key? key}) : super(key: key);
@@ -53,20 +52,6 @@ class _TrendingPageState extends State<TrendingPage> {
             child: Center(
               child: Column(
                 children: [
-                  // MaterialButton(
-                  //   onPressed: () async {
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (context) => SearchResultsPage(
-                  //           searchInput: _textEditingController.text,
-                  //         ),
-                  //       ),
-                  //     );
-                  //   },
-                  //   child: Text("Search"),
-                  //   color: Colors.blue,
-                  // ),
                   Text("Trending Movies This Week"),
                   FutureBuilder<TrendingMoviesModel>(
                     future: moview.trendingMoviesModel,
