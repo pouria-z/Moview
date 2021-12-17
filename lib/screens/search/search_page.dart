@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:moview/models/trending.dart';
-import 'package:moview/widgets.dart';
 import 'package:moview/services.dart';
-import 'package:provider/provider.dart';
 import 'package:moview/screens/search/search_results_page.dart';
+import 'package:moview/screens/details/movie_details_page.dart';
+import 'package:moview/screens/details/tvshow_details_page.dart';
+import 'package:moview/models/search_model.dart';
+import 'package:moview/widgets.dart';
+import 'package:provider/provider.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -14,95 +16,116 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   TextEditingController _textEditingController = TextEditingController();
-  bool showSuggestions = false;
 
   @override
   Widget build(BuildContext context) {
     var moview = Provider.of<Moview>(context, listen: false);
-    return Scaffold(
-      appBar: buildAppBar(context, "Search"),
-      body: Consumer<Moview>(
-        builder: (context, value, child) {
-          return Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                TextField(
-                  textCapitalization: TextCapitalization.words,
-                  textInputAction: TextInputAction.search,
-                  // onChanged: (value) async {
-                  //   if (value.trim().length >= 3) {
-                  //     setState(() {
-                  //       moview.searchTypeInput =
-                  //           _textEditingController.text.trim();
-                  //       showSuggestions = true;
-                  //     });
-                  //     await moview.getSearchOnType();
-                  //   } else {
-                  //     setState(() {
-                  //       moview.searchTypeNameList.clear();
-                  //       moview.searchTypeRateList.clear();
-                  //       showSuggestions = false;
-                  //     });
-                  //   }
-                  // },
-                  controller: _textEditingController,
-                  decoration: InputDecoration(
-                    hintText: "Movie name, TV Show name...",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.clear),
+    return Consumer<Moview>(
+      builder: (context, value, child) {
+        return Scaffold(
+          appBar: AppBar(
+            leading: BackButton(
+              onPressed: () {
+                FocusScope.of(context).unfocus();
+                Navigator.of(context).pop();
+              },
+            ),
+            actions: [
+              _textEditingController.text.isEmpty
+                  ? Container()
+                  : IconButton(
                       onPressed: () {
                         setState(() {
                           _textEditingController.clear();
-                          showSuggestions = false;
                         });
                       },
+                      icon: Icon(Icons.clear),
+                    ),
+            ],
+            title: TextField(
+              textCapitalization: TextCapitalization.words,
+              textInputAction: TextInputAction.search,
+              onChanged: (value) async {
+                setState(() {});
+                if (value.trim().length >= 3) {
+                  moview.searchMoviesModel = moview
+                      .getSearchMovies(_textEditingController.text.trim());
+                }
+              },
+              onSubmitted: (value) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SearchResultsPage(
+                        searchInput: _textEditingController.text),
+                  ),
+                );
+              },
+              autofocus: true,
+              controller: _textEditingController,
+              decoration: InputDecoration.collapsed(
+                hintText: "Movie name, TV Show name...",
+              ),
+            ),
+          ),
+          body: FutureBuilder<SearchMoviesModel>(
+            future: moview.searchMoviesModel,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (_textEditingController.text.length < 3) {
+                return Center(
+                  child: Text("type something"),
+                );
+              }
+              if (snapshot.hasError) {
+                return TimeOutWidget(onRefresh: () {
+                  setState(() {
+                    moview.searchMoviesModel =
+                        moview.getSearchMovies(_textEditingController.text);
+                  });
+                });
+              }
+              if (snapshot.data!.results.isEmpty) {
+                return Center(
+                  child: Text("nothing found :("),
+                );
+              }
+              return ListView(
+                physics: BouncingScrollPhysics(),
+                children: [
+                  suggestionCardGridView(
+                    context,
+                    data: snapshot.data!.results,
+                    type: 'movie',
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: MaterialButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SearchResultsPage(
+                                searchInput: _textEditingController.text),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        "see all results for movies and tv shows",
+                        style: TextStyle(color: Colors.white54),
+                      ),
                     ),
                   ),
-                ),
-                MaterialButton(
-                  onPressed: () async {
-                    // await moview.getSearchMovies(_textEditingController.text);
-                    // await moview.getSearchTvShows(_textEditingController.text);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SearchResultsPage(
-                            searchInput: _textEditingController.text,
-                          ),
-                        ));
-                  },
-                  child: Text("Search"),
-                  color: Colors.blue,
-                ),
-                FutureBuilder<TrendingMoviesModel>(
-                  future: moview.getTrendingMovies(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return Text("movies");
-                    } else {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                  },
-                ),
-                FutureBuilder<TrendingTvShowsModel>(
-                  future: moview.getTrendingTvShows(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return Text("tv shows");
-                    } else {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                  },
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+                ],
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
