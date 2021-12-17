@@ -180,9 +180,10 @@ class Moview with ChangeNotifier {
   int searchMoviesPage = 1;
 
   Future<SearchMoviesModel> getSearchMovies(String searchInput) async {
-    timedOut = false;
-    notifyListeners();
+    // timedOut = false;
+    // notifyListeners();
     late SearchMoviesModel _searchMoviesModel;
+    print("Searching for $searchInput...");
     var url = Uri.parse("$_apiUrl/search/movie?api_key=$apiKey&language=en-US&"
         "page=$searchMoviesPage&query=$searchInput&include_adult=false");
     Response _response = await sendRequest(url);

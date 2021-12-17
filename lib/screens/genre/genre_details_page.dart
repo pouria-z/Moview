@@ -94,6 +94,10 @@ class _GenreDetailsState extends State<GenreDetails> {
             child: moviewGridView2(
               context,
               moview,
+              height: MediaQuery.of(context).size.height / 3,
+              mainAxisExtent: MediaQuery.of(context).size.height / 3,
+              itemsInRow: 2,
+              scrollDirection: Axis.vertical,
               scrollController: _scrollController,
               data: data,
               type: widget.type,

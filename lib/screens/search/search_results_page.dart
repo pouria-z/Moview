@@ -138,6 +138,10 @@ class _SearchMoviesResultsPageState extends State<SearchMoviesResultsPage>
                   return moviewGridView2(
                     context,
                     moview,
+                    height: MediaQuery.of(context).size.height / 3,
+                    mainAxisExtent: MediaQuery.of(context).size.height / 3,
+                    itemsInRow: 2,
+                    scrollDirection: Axis.vertical,
                     scrollController: _scrollController,
                     data: moviesData,
                     type: 'movie',
@@ -232,6 +236,10 @@ class _SearchTvShowsResultsPageState extends State<SearchTvShowsResultsPage>
                   return moviewGridView2(
                     context,
                     moview,
+                    height: MediaQuery.of(context).size.height / 3,
+                    mainAxisExtent: MediaQuery.of(context).size.height / 3,
+                    itemsInRow: 2,
+                    scrollDirection: Axis.vertical,
                     scrollController: _scrollController,
                     data: tvShowsData,
                     type: 'tv',

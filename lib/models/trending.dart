@@ -79,7 +79,7 @@ class TrendingTvShowsResultModel {
     required this.voteAverage,
     required this.id,
     required this.posterPath,
-    required this.name,
+    required this.title,
   });
 
   DateTime firstAirDate;
@@ -87,7 +87,7 @@ class TrendingTvShowsResultModel {
   double voteAverage;
   int id;
   String posterPath;
-  String name;
+  String title;
 
   factory TrendingTvShowsResultModel.fromJson(Map<String, dynamic> json) =>
       TrendingTvShowsResultModel(
@@ -96,6 +96,6 @@ class TrendingTvShowsResultModel {
         voteAverage: json["vote_average"].toDouble(),
         id: json["id"],
         posterPath: json["poster_path"],
-        name: json["name"],
+        title: json["name"],
       );
 }

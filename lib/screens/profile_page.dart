@@ -35,7 +35,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     var moview = Provider.of<Moview>(context, listen: false);
     return Scaffold(
-      appBar: buildAppBar(context, "Profile"),
+      appBar: buildAppBar(context, title: "Profile", action: Container(),),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

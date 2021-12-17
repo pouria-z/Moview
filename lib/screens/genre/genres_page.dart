@@ -31,7 +31,7 @@ class _GenresPageState extends State<GenresPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context, "Genres"),
+      appBar: buildAppBar(context, title: "Genres", action: Container(),),
       body: Column(
         children: [
           Material(
