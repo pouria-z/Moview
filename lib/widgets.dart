@@ -238,8 +238,8 @@ Widget moviewGridView(
                 context,
                 TVShowDetails(
                   id: id[index],
-                  tvShowName: name[index],
-                  tvShowPosterUrl: poster[index],
+                  title: name[index],
+                  posterPath: poster[index],
                 ),
               );
             } else if (type.runtimeType == String
@@ -308,8 +308,8 @@ Widget moviewGridView2(
               context,
               TVShowDetails(
                 id: model.id,
-                tvShowName: model.title,
-                tvShowPosterUrl: model.posterPath,
+                title: model.title,
+                posterPath: model.posterPath,
               ),
             );
           } else if (type == 'movie') {
@@ -457,8 +457,8 @@ Widget suggestionCardGridView(context, {required List data, required String type
             FocusScope.of(context).unfocus();
             return TVShowDetails(
               id: model.id,
-              tvShowName: model.title,
-              tvShowPosterUrl: model.posterPath,
+              title: model.title,
+              posterPath: model.posterPath,
             );
           } else {
             FocusScope.of(context).unfocus();

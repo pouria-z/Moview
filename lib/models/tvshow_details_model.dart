@@ -129,17 +129,17 @@ class Season {
     required this.seasonNumber,
   });
 
-  DateTime airDate;
+  String airDate;
   int episodeCount;
   String name;
   String posterPath;
   int seasonNumber;
 
   factory Season.fromJson(Map<String, dynamic> json) => Season(
-        airDate: DateTime.parse(json["air_date"]),
-        episodeCount: json["episode_count"],
-        name: json["name"],
-        posterPath: json["poster_path"],
+        airDate: json["air_date"] ?? "",
+        episodeCount: json["episode_count"] ?? 0,
+        name: json["name"] ?? "",
+        posterPath: json["poster_path"] ?? "",
         seasonNumber: json["season_number"],
       );
 }
