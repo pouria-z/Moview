@@ -33,7 +33,7 @@ class _TVShowDetailsState extends State<TVShowDetails> {
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
       await moview.setAndGetId(widget.id, 'tv');
       isFavorite = moview.isFave;
-      await moview.getTvShowDetails(widget.id);
+      await moview.getTvShowDetailsOld(widget.id);
     });
   }
 
@@ -77,7 +77,7 @@ class _TVShowDetailsState extends State<TVShowDetails> {
               ? TimeOutWidget(
                   onRefresh: () {
                     setState(() {
-                      moview.getTvShowDetails(widget.id);
+                      moview.getTvShowDetailsOld(widget.id);
                     });
                   },
                 )

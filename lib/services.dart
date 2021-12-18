@@ -10,6 +10,7 @@ import 'package:moview/models/genres_model.dart';
 import 'package:moview/models/movie_details_model.dart';
 import 'package:moview/models/search_model.dart';
 import 'package:moview/models/trending_model.dart';
+import 'package:moview/models/tvshow_details_model.dart';
 import 'package:moview/screens/genre/genre_details_page.dart';
 import 'package:moview/screens/home_page.dart';
 import 'package:moview/screens/intro/login_page.dart';
@@ -247,12 +248,26 @@ class Moview with ChangeNotifier {
     notifyListeners();
     late MovieDetailsModel _movieDetailsModel;
     var url =
-        Uri.parse("$_apiUrl//movie/$movieId?api_key=$apiKey&language=en-US");
+        Uri.parse("$_apiUrl/movie/$movieId?api_key=$apiKey&language=en-US");
     Response _response = await sendRequest(url);
     Map<String, dynamic> jsonBody = jsonDecode(_response.body);
     _movieDetailsModel = MovieDetailsModel.fromJson(jsonBody);
     notifyListeners();
     return _movieDetailsModel;
+  }
+
+  Future<TvShowDetailsModel>? tvShowDetailsModel;
+
+  Future<TvShowDetailsModel> getTvShowDetails(int tvShowId) async {
+    timedOut = false;
+    notifyListeners();
+    late TvShowDetailsModel _tvShowDetailsModel;
+    var url = Uri.parse("$_apiUrl/tv/$tvShowId?api_key=$apiKey&languages=en-US");
+    Response _response = await sendRequest(url);
+    Map<String, dynamic> jsonBody = jsonDecode(_response.body);
+    _tvShowDetailsModel = TvShowDetailsModel.fromJson(jsonBody);
+    notifyListeners();
+    return _tvShowDetailsModel;
   }
 
   Future getMovieDetailsOld(int movieId) async {
@@ -294,7 +309,7 @@ class Moview with ChangeNotifier {
     notifyListeners();
   }
 
-  Future getTvShowDetails(int tvShowId) async {
+  Future getTvShowDetailsOld(int tvShowId) async {
     timedOut = false;
     getTvShowDetailsIsLoading = true;
     tvShowName = null;
