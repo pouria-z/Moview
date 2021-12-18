@@ -243,6 +243,8 @@ class Moview with ChangeNotifier {
     return _genreResultModel;
   }
 
+  Future<MovieDetailsModel>? movieDetailsModel;
+
   Future<MovieDetailsModel> getMovieDetails(int movieId) async {
     timedOut = false;
     notifyListeners();

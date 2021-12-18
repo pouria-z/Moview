@@ -249,8 +249,8 @@ Widget moviewGridView(
                 context,
                 MovieDetails(
                   id: id[index],
-                  movieName: name[index],
-                  moviePosterUrl: poster[index],
+                  title: name[index],
+                  posterPath: poster[index],
                 ),
               );
             }
@@ -303,7 +303,7 @@ Widget moviewGridView2(
           moview.movieName = null;
           moview.getTvShowDetailsIsLoading = true;
           moview.getMovieDetailsIsLoading = true;
-          if (type.runtimeType == String ? type == 'tv' : type[index] == 'tv') {
+          if (type == 'tv') {
             animationTransition(
               context,
               TVShowDetails(
@@ -312,15 +312,13 @@ Widget moviewGridView2(
                 tvShowPosterUrl: model.posterPath,
               ),
             );
-          } else if (type.runtimeType == String
-              ? type == 'movie'
-              : type[index] == 'movie') {
+          } else if (type == 'movie') {
             animationTransition(
               context,
               MovieDetails(
                 id: model.id,
-                movieName: model.title,
-                moviePosterUrl: model.posterPath,
+                title: model.title,
+                posterPath: model.posterPath,
               ),
             );
           }
@@ -466,8 +464,8 @@ Widget suggestionCardGridView(context, {required List data, required String type
             FocusScope.of(context).unfocus();
             return MovieDetails(
               id: model.id,
-              movieName: model.title,
-              moviePosterUrl: model.posterPath,
+              title: model.title,
+              posterPath: model.posterPath,
             );
           }
         },
