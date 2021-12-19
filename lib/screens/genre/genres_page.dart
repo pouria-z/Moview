@@ -91,13 +91,9 @@ class _MovieGenresState extends State<MovieGenres>
         return Scaffold(
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
-              var data = await moview.getTvShowDetails(1668);
+              final favorite = await moview.favoritesList();
               print(
-                "title: ${data.title}\n"
-                "id: ${data.id}\n"
-                "genre ids: ${data.genres[0].name}\n"
-                "vote: ${data.voteAverage}\n"
-                "year: ${data.networks[0].name}",
+                "total: ${favorite.results.length}"
               );
             },
             child: Icon(Iconsax.import),

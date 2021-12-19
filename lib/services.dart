@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:moview/key.dart';
+import 'package:moview/models/favorites_model.dart';
 import 'package:moview/models/genre_result_model.dart';
 import 'package:moview/models/genres_model.dart';
 import 'package:moview/models/movie_details_model.dart';
@@ -272,7 +273,7 @@ class Moview with ChangeNotifier {
       ..set('type', type)
       ..set('title', title)
       ..set('year', releaseDate)
-      ..set('mediaPoster', imageUrl + posterPath)
+      ..set('posterPath', imageUrl + posterPath)
       ..set('isFavorite', isFave)
       ..setACL(acl);
     final response = await data.save();
@@ -482,15 +483,11 @@ class Moview with ChangeNotifier {
   }
 
   ///Favorite Page
-  Future favoritesList() async {
-    timedOut = false;
-    favoriteListIsLoading = true;
-    favoriteNumbers = null;
-    dbMediaIdList.clear();
-    dbMediaNameList.clear();
-    dbYearList.clear();
-    dbFavoriteTypeList.clear();
-    dbMediaPosterList.clear();
+
+  Future<FavoritesModel>? favoritesModel;
+
+  Future<Favorites> favoritesList() async {
+    late Favorites _favorites = Favorites(results: []);
     QueryBuilder<ParseObject> queryBuilder =
         QueryBuilder<ParseObject>(ParseObject('favorites'));
     var i = await queryBuilder.count();
@@ -504,23 +501,21 @@ class Moview with ChangeNotifier {
       notifyListeners();
       throw e;
     }
-    var json = jsonDecode((dbResponse.results).toString());
-    // get all favorites from database
+    final json = jsonDecode((dbResponse.results).toString());
     if (json != null) {
       for (var item in json) {
-        dbMediaId = item['mediaId'];
-        dbMediaIdList.add(dbMediaId);
-        dbFavoriteType = item['mediaType'];
-        dbFavoriteTypeList.add(dbFavoriteType);
-        dbMediaName = item['mediaName'];
-        dbMediaNameList.add(dbMediaName);
-        dbYear = item['year'];
-        dbYearList.add(dbYear);
-        dbMediaPoster = item['mediaPoster'];
-        dbMediaPosterList.add(dbMediaPoster);
+        _favorites.results.add(
+          FavoritesModel(
+            id: item["id"],
+            type: item["type"],
+            title: item["title"],
+            year: item["year"],
+            posterPath: item["posterPath"],
+          ),
+        );
       }
     }
-    favoriteListIsLoading = false;
     notifyListeners();
+    return _favorites;
   }
 }
