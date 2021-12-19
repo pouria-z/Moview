@@ -28,7 +28,7 @@ class _MovieDetailsState extends State<MovieDetails> {
     var moview = Provider.of<Moview>(context, listen: false);
     Future.delayed(Duration.zero, () async {
       moview.movieDetailsModel = moview.getMovieDetails(widget.id);
-      await moview.setAndGetId(widget.id, 'movie');
+      await moview.idSetting(widget.id, 'movie');
       isFavorite = moview.isFave;
     });
   }
@@ -89,7 +89,8 @@ class _MovieDetailsState extends State<MovieDetails> {
                           Hero(
                             tag: widget.posterPath,
                             child: CachedNetworkImage(
-                              imageUrl: "https://image.tmdb.org/t/p/w500${widget.posterPath}",
+                              imageUrl:
+                                  "https://image.tmdb.org/t/p/w500${widget.posterPath}",
                               width: MediaQuery.of(context).size.width / 2,
                               height: MediaQuery.of(context).size.height / 3,
                               alignment: Alignment.center,
@@ -112,52 +113,6 @@ class _MovieDetailsState extends State<MovieDetails> {
                                     ),
                                   ),
                                 ),
-                                IconButton(
-                                    onPressed: () async {
-                                      setState(() {
-                                        isFavorite == null
-                                            ? isFavorite = true
-                                            : isFavorite = null;
-                                      });
-                                      await moview
-                                          .setAndGetId(widget.id, 'movie')
-                                          .timeout(Duration(seconds: 5),
-                                          onTimeout: () {
-                                            setState(() {
-                                              isFavorite == null
-                                                  ? isFavorite = true
-                                                  : isFavorite = null;
-                                              moview.isFave = isFavorite;
-                                            });
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                content:
-                                                Text('something went wrong!'),
-                                              ),
-                                            );
-                                          });
-                                      if (moview.isFave == null) {
-                                        setState(() {
-                                          moview.isFave = isFavorite;
-                                        });
-                                        await moview.setFavorite(
-                                            widget.id, 'movie');
-                                      } else if (moview.isFave == true) {
-                                        setState(() {
-                                          moview.isFave = isFavorite;
-                                        });
-                                        await moview.unsetFavorite();
-                                      }
-                                    },
-                                    icon: isFavorite == true
-                                        ? Icon(
-                                      Icons.favorite_rounded,
-                                      color: Colors.red,
-                                    )
-                                        : Icon(
-                                      Icons.favorite_border_rounded,
-                                    )),
                               ],
                             ),
                           )
@@ -178,7 +133,8 @@ class _MovieDetailsState extends State<MovieDetails> {
                   return Column(
                     children: [
                       CachedNetworkImage(
-                        imageUrl: "https://image.tmdb.org/t/p/w500${movie.backdropPath}",
+                        imageUrl:
+                            "https://image.tmdb.org/t/p/w500${movie.backdropPath}",
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height / 3.5,
                         fit: BoxFit.fill,
@@ -193,7 +149,8 @@ class _MovieDetailsState extends State<MovieDetails> {
                           Hero(
                             tag: widget.posterPath,
                             child: CachedNetworkImage(
-                              imageUrl: "https://image.tmdb.org/t/p/w500${widget.posterPath}",
+                              imageUrl:
+                                  "https://image.tmdb.org/t/p/w500${widget.posterPath}",
                               width: MediaQuery.of(context).size.width / 2,
                               height: MediaQuery.of(context).size.height / 3,
                               alignment: Alignment.center,
@@ -224,7 +181,7 @@ class _MovieDetailsState extends State<MovieDetails> {
                                             : isFavorite = null;
                                       });
                                       await moview
-                                          .setAndGetId(widget.id, 'movie')
+                                          .idSetting(widget.id, 'movie')
                                           .timeout(Duration(seconds: 5),
                                               onTimeout: () {
                                         setState(() {
@@ -246,7 +203,12 @@ class _MovieDetailsState extends State<MovieDetails> {
                                           moview.isFave = isFavorite;
                                         });
                                         await moview.setFavorite(
-                                            widget.id, 'movie');
+                                          id: widget.id,
+                                          type: 'movie',
+                                          title: widget.title,
+                                          releaseDate: movie.releaseDate,
+                                          posterPath: widget.posterPath,
+                                        );
                                       } else if (moview.isFave == true) {
                                         setState(() {
                                           moview.isFave = isFavorite;

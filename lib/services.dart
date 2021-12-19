@@ -25,60 +25,6 @@ class Moview with ChangeNotifier {
   bool timedOut = false;
   bool showBottom = true;
 
-  ///Movie Details
-  bool getMovieDetailsIsLoading = false;
-  var movieName;
-  var movieGenre;
-  List movieGenreList = [];
-  var movieOverview;
-  var movieCover;
-  var movieCoverUrl;
-  var moviePoster;
-  var moviePosterUrl;
-  var movieCountry;
-  List movieCountryList = [];
-  var movieReleaseDate;
-  var movieRuntime;
-  var movieLanguages;
-  List movieLanguagesList = [];
-  var movieTagLine;
-
-  ///TVShow Details
-  bool getTvShowDetailsIsLoading = false;
-  var tvShowName;
-  var tvShowGenre;
-  List tvShowGenreList = [];
-  var tvShowOverview;
-  var tvShowCover;
-  var tvShowCoverUrl;
-  var tvShowPoster;
-  var tvShowPosterUrl;
-  var tvShowRuntime;
-  var tvShowFirstAir;
-  var tvShowCreatedBy;
-  List tvShowCreatedByList = [];
-  var tvShowLastAir;
-  var tvShowEpisodes;
-  var tvShowSeasons;
-  var tvShowCountry;
-  List tvShowCountryList = [];
-  var tvShowSeasonName;
-  List tvShowSeasonNameList = [];
-  var tvShowSeasonAirDate;
-  List tvShowSeasonAirDateList = [];
-  var tvShowSeasonPoster;
-  List tvShowSeasonPosterList = [];
-  var tvShowLanguages;
-  List tvShowLanguagesList = [];
-  var tvShowTagLine;
-
-  ///favorite
-  var objectId;
-  var favoriteId;
-  var theId;
-  var theObject;
-  var isFave;
-
   ///Parse User
   var username;
   var email;
@@ -264,7 +210,8 @@ class Moview with ChangeNotifier {
     timedOut = false;
     notifyListeners();
     late TvShowDetailsModel _tvShowDetailsModel;
-    var url = Uri.parse("$_apiUrl/tv/$tvShowId?api_key=$apiKey&languages=en-US");
+    var url =
+        Uri.parse("$_apiUrl/tv/$tvShowId?api_key=$apiKey&languages=en-US");
     Response _response = await sendRequest(url);
     Map<String, dynamic> jsonBody = jsonDecode(_response.body);
     _tvShowDetailsModel = TvShowDetailsModel.fromJson(jsonBody);
@@ -272,112 +219,47 @@ class Moview with ChangeNotifier {
     return _tvShowDetailsModel;
   }
 
-  Future getMovieDetailsOld(int movieId) async {
-    timedOut = false;
-    movieName = null;
-    movieCover = null;
-    moviePoster = null;
-    movieLanguagesList.clear();
-    movieCountryList.clear();
-    movieGenreList.clear();
-    getMovieDetailsIsLoading = true;
-    var url = Uri.https(apiUrl, '/3/movie/$movieId',
-        {'api_key': '$apiKey', 'language': 'en-US'});
-    Response response = await sendRequest(url);
-    var json = jsonDecode(response.body);
-    movieId = json['id'];
-    movieName = json['title'];
-    movieOverview = json['overview'];
-    movieCover = json['backdrop_path'];
-    moviePoster = json['poster_path'];
-    movieReleaseDate = json['release_date'];
-    movieRuntime = json['runtime'];
-    movieTagLine = json['tagline'];
-    for (var item in json['spoken_languages']) {
-      movieLanguages = item['english_name'];
-      movieLanguagesList.add(movieLanguages);
-    }
-    for (var item in json['production_countries']) {
-      movieCountry = item['name'];
-      movieCountryList.add(movieCountry);
-    }
-    for (var item in json['genres']) {
-      movieGenre = item['name'];
-      movieGenreList.add(movieGenre);
-    }
-    movieCoverUrl = imageUrl + movieCover;
-    moviePosterUrl = imageUrl + moviePoster;
-    getMovieDetailsIsLoading = false;
-    notifyListeners();
-  }
-
-  Future getTvShowDetailsOld(int tvShowId) async {
-    timedOut = false;
-    getTvShowDetailsIsLoading = true;
-    tvShowName = null;
-    tvShowCover = null;
-    tvShowPoster = null;
-    tvShowSeasonAirDateList.clear();
-    tvShowSeasonNameList.clear();
-    tvShowSeasonPosterList.clear();
-    tvShowCreatedByList.clear();
-    tvShowGenreList.clear();
-    tvShowLanguagesList.clear();
-    tvShowCountryList.clear();
-    var url = Uri.https(
-        apiUrl, '/3/tv/$tvShowId', {'api_key': '$apiKey', 'language': 'en-US'});
-    Response response = await sendRequest(url);
-    var json = jsonDecode(response.body);
-    tvShowId = json['id'];
-    tvShowName = json['name'];
-    tvShowOverview = json['overview'];
-    tvShowCover = json['backdrop_path'];
-    tvShowPoster = json['poster_path'];
-    tvShowTagLine = json['tagline'];
-    for (var i in json['episode_run_time']) {
-      tvShowRuntime = "";
-      tvShowRuntime = i;
-    }
-    tvShowFirstAir = json['first_air_date'];
-    tvShowLastAir = json['last_air_date'];
-    tvShowEpisodes = json['number_of_episodes'];
-    tvShowSeasons = json['number_of_seasons'];
-    for (var item in json['created_by']) {
-      tvShowCreatedBy = item['name'];
-      tvShowCreatedByList.add(tvShowCreatedBy);
-    }
-    for (var item in json['production_countries']) {
-      tvShowCountry = item['name'];
-      tvShowCountryList.add(tvShowCountry);
-    }
-    for (var item in json['seasons']) {
-      tvShowSeasonAirDate = item['air_date'];
-      tvShowSeasonName = item['name'];
-      tvShowSeasonPoster = item['poster_path'];
-      tvShowSeasonAirDateList.add(tvShowSeasonAirDate);
-      tvShowSeasonNameList.add(tvShowSeasonName);
-      tvShowSeasonPosterList.add(tvShowSeasonPoster);
-    }
-    for (var item in json['spoken_languages']) {
-      tvShowLanguages = item['name'];
-      tvShowLanguagesList.add(tvShowLanguages);
-    }
-    for (var item in json['genres']) {
-      tvShowGenre = item['name'];
-      tvShowGenreList.add(tvShowGenre);
-    }
-    if (tvShowCover != null) {
-      tvShowCoverUrl = imageUrl + tvShowCover;
-    }
-    if (tvShowPoster != null) {
-      tvShowPosterUrl = imageUrl + tvShowPoster;
-    }
-    getTvShowDetailsIsLoading = false;
-    notifyListeners();
-  }
-
   ///Database
-  Future setFavorite(int favoriteMediaId, String favoriteType) async {
+
+  late int uniqueId;
+  var object;
+  var isFave;
+
+  Future idSetting(int id, String type) async {
+    isFave = null;
+    object = null;
+    // set id for media in database
+    String _url = "$_apiUrl/$type/$id?api_key=$apiKey&language=en-US";
+    ParseUser user = await ParseUser.currentUser();
+    final _userId = user.objectId;
+    var _uniqueId = _userId.toString() + type + id.toString() + _url;
+    uniqueId = _uniqueId.hashCode;
+    // find if the movie/tv is marked as favorite or not
+    QueryBuilder<ParseObject> query =
+        QueryBuilder<ParseObject>(ParseObject('favorites'))
+          ..whereEqualTo('uniqueId', uniqueId);
+    final response = await query.find();
+    if (response.isNotEmpty) {
+      object = response.single.objectId;
+      int dbUniqueId = response.single.get('uniqueId');
+      isFave = response.single.get('isFavorite');
+      print(
+          '$type is in favorite list.\nuniqueId is: $dbUniqueId,\tobjectId is: $object');
+    } else {
+      print("this $type is not user's favorite!");
+    }
+    notifyListeners();
+  }
+
+  late String objectId;
+
+  Future setFavorite({
+    required int id,
+    required String type,
+    required String title,
+    required String releaseDate,
+    required String posterPath,
+  }) async {
     // set security
     ParseUser user = await ParseUser.currentUser();
     final acl = ParseACL(owner: user);
@@ -385,60 +267,27 @@ class Moview with ChangeNotifier {
     acl.setPublicWriteAccess(allowed: false);
     // set movie/tv data to database
     final data = ParseObject('favorites')
-      ..set('mediaId', favoriteMediaId)
-      ..set('id', favoriteId)
-      ..set('mediaType', favoriteType)
-      ..set('mediaName', favoriteType == 'movie' ? movieName : tvShowName)
-      ..set('year', favoriteType == 'movie' ? movieReleaseDate : tvShowFirstAir)
-      ..set('mediaPoster',
-          favoriteType == 'movie' ? moviePosterUrl : tvShowPosterUrl)
+      ..set('id', id)
+      ..set('uniqueId', uniqueId)
+      ..set('type', type)
+      ..set('title', title)
+      ..set('year', releaseDate)
+      ..set('mediaPoster', imageUrl + posterPath)
       ..set('isFavorite', isFave)
       ..setACL(acl);
     final response = await data.save();
-    objectId = (response.results!.first as ParseObject).objectId;
-    print('$favoriteType with $objectId id saved successfully!');
-    notifyListeners();
-  }
-
-  Future setAndGetId(int favoriteMediaId, String favoriteType) async {
-    isFave = null;
-    theObject = null;
-    theId = null;
-    favoriteId = null;
-    // set id for media in database
-    var url = Uri.https(apiUrl, '/3/$favoriteType/$favoriteMediaId',
-        {'api_key': '$apiKey', 'language': 'en-US'});
-    ParseUser user = await ParseUser.currentUser();
-    var _userId = user.objectId;
-    var _id = _userId.toString() +
-        '$favoriteType' +
-        favoriteMediaId.toString() +
-        url.toString();
-    favoriteId = _id.hashCode;
-    // find if the movie/tv is marked as favorite or not
-    QueryBuilder<ParseObject> query =
-        QueryBuilder<ParseObject>(ParseObject('favorites'))
-          ..whereEqualTo('id', favoriteId);
-    final response = await query.find();
-    if (response.isNotEmpty) {
-      theObject = response.single.objectId;
-      theId = response.single.get('id');
-      isFave = response.single.get('isFavorite');
-      print(
-          '$favoriteType is in favorite list.\nid is: $theId,\tobjectId is: $theObject');
-    } else {
-      print("this $favoriteType is not user's favorite!");
-    }
+    objectId = (response.results!.first as ParseObject).objectId!;
+    print('$type with $objectId objectId saved successfully!');
     notifyListeners();
   }
 
   Future unsetFavorite() async {
     // delete complete row in database
     final data = ParseObject('favorites')
-      ..objectId = theObject
+      ..objectId = object
       ..delete();
     await data.save();
-    print('movie/tv with $theObject id deleted successfully.');
+    print('media with $object objectId deleted successfully.');
     notifyListeners();
   }
 
@@ -579,16 +428,6 @@ class Moview with ChangeNotifier {
     if (response.success) {
       showBottom = false;
       favoriteNumbers = null;
-      movieGenreList.clear();
-      movieCountryList.clear();
-      movieLanguagesList.clear();
-      tvShowGenreList.clear();
-      tvShowCreatedByList.clear();
-      tvShowCountryList.clear();
-      tvShowSeasonNameList.clear();
-      tvShowSeasonAirDateList.clear();
-      tvShowSeasonPosterList.clear();
-      tvShowLanguagesList.clear();
       dbMediaIdList.clear();
       dbMediaNameList.clear();
       dbYearList.clear();

@@ -1,15 +1,15 @@
+import 'package:animations/animations.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:moview/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:moview/screens/details/movie_details_page.dart';
 import 'package:moview/screens/details/tvshow_details_page.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:moview/services.dart';
 import 'package:provider/provider.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:animations/animations.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class TimeOutWidget extends StatelessWidget {
   final onRefresh;
@@ -227,10 +227,6 @@ Widget moviewGridView(
           splashColor: Color(0xFF36367C),
           borderRadius: BorderRadius.circular(5),
           onTap: () {
-            moview.tvShowName = null;
-            moview.movieName = null;
-            moview.getTvShowDetailsIsLoading = true;
-            moview.getMovieDetailsIsLoading = true;
             if (type.runtimeType == String
                 ? type == 'tv'
                 : type[index] == 'tv') {
@@ -299,10 +295,6 @@ Widget moviewGridView2(
         splashColor: Color(0xFF36367C),
         borderRadius: BorderRadius.circular(5),
         onTap: () {
-          moview.tvShowName = null;
-          moview.movieName = null;
-          moview.getTvShowDetailsIsLoading = true;
-          moview.getMovieDetailsIsLoading = true;
           if (type == 'tv') {
             animationTransition(
               context,
@@ -421,7 +413,8 @@ class MoviewSuggestionCard extends StatelessWidget {
 }
 
 // for search page
-Widget suggestionCardGridView(context, {required List data, required String type}) {
+Widget suggestionCardGridView(context,
+    {required List data, required String type}) {
   var moview = Provider.of<Moview>(context, listen: false);
   return GridView.builder(
     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -449,10 +442,6 @@ Widget suggestionCardGridView(context, {required List data, required String type
           );
         },
         openBuilder: (context, action) {
-          moview.tvShowName = null;
-          moview.movieName = null;
-          moview.getTvShowDetailsIsLoading = true;
-          moview.getMovieDetailsIsLoading = true;
           if (type == 'tv') {
             FocusScope.of(context).unfocus();
             return TVShowDetails(

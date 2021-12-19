@@ -30,7 +30,7 @@ class _TVShowDetailsState extends State<TVShowDetails> {
     var moview = Provider.of<Moview>(context, listen: false);
     Future.delayed(Duration.zero, () async {
       moview.tvShowDetailsModel = moview.getTvShowDetails(widget.id);
-      await moview.setAndGetId(widget.id, 'tv');
+      await moview.idSetting(widget.id, 'tv');
       isFavorite = moview.isFave;
     });
   }
@@ -115,50 +115,6 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                                   ),
                                 ),
                               ),
-                              IconButton(
-                                onPressed: () async {
-                                  setState(() {
-                                    isFavorite == null
-                                        ? isFavorite = true
-                                        : isFavorite = null;
-                                  });
-                                  await moview
-                                      .setAndGetId(widget.id, 'tv')
-                                      .timeout(Duration(seconds: 5),
-                                          onTimeout: () {
-                                    setState(() {
-                                      isFavorite == null
-                                          ? isFavorite = true
-                                          : isFavorite = null;
-                                      moview.isFave = isFavorite;
-                                    });
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('something went wrong!'),
-                                      ),
-                                    );
-                                  });
-                                  if (moview.isFave == null) {
-                                    setState(() {
-                                      moview.isFave = isFavorite;
-                                    });
-                                    await moview.setFavorite(widget.id, 'tv');
-                                  } else if (moview.isFave == true) {
-                                    setState(() {
-                                      moview.isFave = isFavorite;
-                                    });
-                                    await moview.unsetFavorite();
-                                  }
-                                },
-                                icon: isFavorite == true
-                                    ? Icon(
-                                        Icons.favorite_rounded,
-                                        color: Colors.red,
-                                      )
-                                    : Icon(
-                                        Icons.favorite_border_rounded,
-                                      ),
-                              ),
                             ],
                           ),
                         ),
@@ -170,20 +126,20 @@ class _TVShowDetailsState extends State<TVShowDetails> {
               if (snapshot.hasError) {
                 print(snapshot.stackTrace);
               }
-              final movie = snapshot.data!;
+              final tvShow = snapshot.data!;
               List spokenLanguages = [];
               List genres = [];
-              movie.spokenLanguages.forEach((element) {
+              tvShow.spokenLanguages.forEach((element) {
                 spokenLanguages.add(element.englishName);
               });
-              movie.genres.forEach((element) {
+              tvShow.genres.forEach((element) {
                 genres.add(element.name);
               });
               return Column(
                 children: [
                   CachedNetworkImage(
                     imageUrl:
-                        "https://image.tmdb.org/t/p/w500${movie.backdropPath}",
+                        "https://image.tmdb.org/t/p/w500${tvShow.backdropPath}",
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height / 3.5,
                     fit: BoxFit.fill,
@@ -230,7 +186,7 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                                       : isFavorite = null;
                                 });
                                 await moview
-                                    .setAndGetId(widget.id, 'tv')
+                                    .idSetting(widget.id, 'tv')
                                     .timeout(Duration(seconds: 5),
                                         onTimeout: () {
                                   setState(() {
@@ -249,7 +205,13 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                                   setState(() {
                                     moview.isFave = isFavorite;
                                   });
-                                  await moview.setFavorite(widget.id, 'tv');
+                                  await moview.setFavorite(
+                                    id: widget.id,
+                                    type: 'movie',
+                                    title: widget.title,
+                                    releaseDate: tvShow.firstAirDate,
+                                    posterPath: widget.posterPath,
+                                  );
                                 } else if (moview.isFave == true) {
                                   setState(() {
                                     moview.isFave = isFavorite;
@@ -271,7 +233,7 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                       ),
                     ],
                   ),
-                  Text(movie.tagline),
+                  Text(tvShow.tagline),
                   Text(spokenLanguages.join(", ")),
                   Text(genres.join(", ")),
                 ],
