@@ -1,10 +1,10 @@
-class Favorites {
-  Favorites({required this.results});
-  List<FavoritesModel> results;
+class FavoritesModel {
+  FavoritesModel({required this.results});
+  List<FavoritesResultsModel> results;
 }
 
-class FavoritesModel {
-  FavoritesModel({
+class FavoritesResultsModel {
+  FavoritesResultsModel({
     required this.id,
     required this.type,
     required this.title,

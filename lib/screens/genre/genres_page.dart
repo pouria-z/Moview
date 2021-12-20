@@ -91,7 +91,7 @@ class _MovieGenresState extends State<MovieGenres>
         return Scaffold(
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
-              final favorite = await moview.favoritesList();
+              final favorite = await moview.getFavorites();
               print(
                 "total: ${favorite.results.length}"
               );

@@ -486,8 +486,8 @@ class Moview with ChangeNotifier {
 
   Future<FavoritesModel>? favoritesModel;
 
-  Future<Favorites> favoritesList() async {
-    late Favorites _favorites = Favorites(results: []);
+  Future<FavoritesModel> getFavorites() async {
+    late FavoritesModel _favorites = FavoritesModel(results: []);
     QueryBuilder<ParseObject> queryBuilder =
         QueryBuilder<ParseObject>(ParseObject('favorites'));
     var i = await queryBuilder.count();
@@ -505,7 +505,7 @@ class Moview with ChangeNotifier {
     if (json != null) {
       for (var item in json) {
         _favorites.results.add(
-          FavoritesModel(
+          FavoritesResultsModel(
             id: item["id"],
             type: item["type"],
             title: item["title"],

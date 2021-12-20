@@ -207,65 +207,6 @@ class MoviewCard extends StatelessWidget {
   }
 }
 
-Widget moviewGridView(
-    context, scrollController, type, id, poster, name, rate, length) {
-  var moview = Provider.of<Moview>(context, listen: false);
-  return Expanded(
-    child: GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 2,
-        mainAxisExtent: MediaQuery.of(context).size.height / 3,
-      ),
-      physics: BouncingScrollPhysics(),
-      controller: scrollController,
-      shrinkWrap: true,
-      itemCount: length,
-      itemBuilder: (context, index) {
-        return InkWell(
-          splashColor: Color(0xFF36367C),
-          borderRadius: BorderRadius.circular(5),
-          onTap: () {
-            if (type.runtimeType == String
-                ? type == 'tv'
-                : type[index] == 'tv') {
-              animationTransition(
-                context,
-                TVShowDetails(
-                  id: id[index],
-                  title: name[index],
-                  posterPath: poster[index],
-                ),
-              );
-            } else if (type.runtimeType == String
-                ? type == 'movie'
-                : type[index] == 'movie') {
-              animationTransition(
-                context,
-                MovieDetails(
-                  id: id[index],
-                  title: name[index],
-                  posterPath: poster[index],
-                ),
-              );
-            }
-          },
-          child: MoviewCard(
-            height: MediaQuery.of(context).size.height / 3,
-            id: id[index],
-            imageUrl: poster[index],
-            title: name[index],
-            rating: rate[index].runtimeType == String
-                ? rate[index]
-                : rate[index].toDouble().toString(),
-          ),
-        );
-      },
-    ),
-  );
-}
-
 Widget moviewGridView2(
   BuildContext context,
   Moview moview, {

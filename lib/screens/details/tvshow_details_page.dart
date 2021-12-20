@@ -207,7 +207,7 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                                   });
                                   await moview.setFavorite(
                                     id: widget.id,
-                                    type: 'movie',
+                                    type: 'tv',
                                     title: widget.title,
                                     releaseDate: tvShow.firstAirDate,
                                     posterPath: widget.posterPath,
