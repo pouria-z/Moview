@@ -29,7 +29,11 @@ class _SignUpPageState extends State<SignUpPage> {
   void initState() {
     super.initState();
     recognizer.onTap = () {
-      animationNavigator(context, LoginPage());
+      animationNavigator(
+        context,
+        newPage: LoginPage(),
+        duration: 500,
+      );
     };
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(

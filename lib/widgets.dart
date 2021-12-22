@@ -132,9 +132,39 @@ class GenreListLoading extends StatelessWidget {
           );
         },
       ),
-      baseColor: Color(0xFF111423),
-      highlightColor: Color(0xFF2F3861),
+      baseColor: Color(0xFF2A3155),
+      highlightColor: Theme.of(context).scaffoldBackgroundColor,
       direction: ShimmerDirection.ltr,
+    );
+  }
+}
+
+class TrendingLoading extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Shimmer.fromColors(
+        baseColor: Color(0xFF2A3155),
+        highlightColor: Theme.of(context).scaffoldBackgroundColor,
+        direction: ShimmerDirection.ltr,
+        child: ListView.builder(
+          itemCount: 4,
+          physics: BouncingScrollPhysics(),
+          shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context, index) {
+            return Container(
+              height: MediaQuery.of(context).size.height / 3,
+              width: MediaQuery.of(context).size.width / 2,
+              margin: EdgeInsets.symmetric(horizontal: 5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(7),
+                color: Colors.white12,
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }
@@ -151,14 +181,13 @@ ListView moviewGenreList(AsyncSnapshot snapshot,
         child: InkWell(
           splashColor: Theme.of(context).colorScheme.primary,
           onTap: () {
-            Navigator.push(
+            animationNavigator(
               context,
-              MaterialPageRoute(
-                builder: (context) => GenreDetails(
-                  type: type,
-                  id: data[index].id,
-                  name: data[index].name,
-                ),
+              duration: 400,
+              newPage: GenreDetails(
+                type: type,
+                id: data[index].id,
+                name: data[index].name,
               ),
             );
           },
@@ -192,12 +221,13 @@ ListView moviewGenreList(AsyncSnapshot snapshot,
   );
 }
 
-Future<dynamic> animationNavigator(BuildContext context, newPage) {
+Future<dynamic> animationNavigator(BuildContext context,
+    {required Widget newPage, required int duration}) {
   return Navigator.push(
     context,
     PageRouteBuilder(
-      transitionDuration: Duration(milliseconds: 600),
-      reverseTransitionDuration: Duration(milliseconds: 500),
+      transitionDuration: Duration(milliseconds: duration),
+      reverseTransitionDuration: Duration(milliseconds: duration),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: animation,
@@ -241,7 +271,6 @@ class MoviewCard extends StatelessWidget {
           width: MediaQuery.of(context).size.width / 2,
           margin: EdgeInsets.symmetric(horizontal: 5),
           decoration: BoxDecoration(
-            // border: Border.all(color: Color(0xFFC99405), width: 0.5),
             borderRadius: BorderRadius.circular(7),
             gradient: LinearGradient(
               colors: [
@@ -296,25 +325,22 @@ class MoviewCard extends StatelessWidget {
                         child: AutoSizeText(
                           "$title ($year)",
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.raleway(
-                            fontSize: 16
-                          ),
+                          style: GoogleFonts.raleway(fontSize: 16),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ),
-
                     Text(
                       rating.toString(),
-                      style: GoogleFonts.balooBhaijaan(
-                        fontSize: 16
-                      ),
+                      style: GoogleFonts.balooBhaijaan(fontSize: 16),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 2,)
+              SizedBox(
+                height: 2,
+              )
             ],
           ),
         ),

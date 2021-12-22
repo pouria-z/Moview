@@ -2,13 +2,13 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:moview/screens/intro/reset_password_page.dart';
 import 'package:moview/screens/intro/signup_page.dart';
 import 'package:moview/services.dart';
 import 'package:moview/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -25,7 +25,11 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     recognizer.onTap = () {
-      animationNavigator(context, SignUpPage());
+      animationNavigator(
+        context,
+        newPage: SignUpPage(),
+        duration: 500,
+      );
     };
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(

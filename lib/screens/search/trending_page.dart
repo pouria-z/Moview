@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:moview/models/trending_model.dart';
 import 'package:moview/screens/search/search_page.dart';
-import 'package:moview/widgets.dart';
 import 'package:moview/services.dart';
+import 'package:moview/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class TrendingPage extends StatefulWidget {
   const TrendingPage({Key? key}) : super(key: key);
@@ -57,7 +58,7 @@ class _TrendingPageState extends State<TrendingPage> {
                     future: moview.trendingMoviesModel,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
+                        return TrendingLoading();
                       }
                       if (snapshot.hasError) {
                         print("*** error: ${snapshot.error.toString()}");
@@ -94,7 +95,7 @@ class _TrendingPageState extends State<TrendingPage> {
                     future: moview.trendingTvShowsModel,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
+                        return TrendingLoading();
                       }
                       if (snapshot.hasError) {
                         print("*** error: ${snapshot.error.toString()}");
