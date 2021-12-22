@@ -1,16 +1,16 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:moview/screens/favorites_page.dart';
-import 'package:moview/screens/intro/login_page.dart';
-import 'package:moview/services.dart';
 import 'package:moview/screens/genre/genres_page.dart';
-import 'package:moview/screens/search_page.dart';
+import 'package:moview/screens/intro/login_page.dart';
 import 'package:moview/screens/profile_page.dart';
-import 'package:provider/provider.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:moview/screens/search/trending_page.dart';
+import 'package:moview/services.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -22,9 +22,6 @@ class _HomePageState extends State<HomePage> {
   ConnectivityResult _connectivityResult = ConnectivityResult.wifi;
   late PersistentTabController _controller;
 
-
-  // FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-
   @override
   void initState() {
     super.initState();
@@ -35,22 +32,18 @@ class _HomePageState extends State<HomePage> {
         this._connectivityResult = result;
       });
     });
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(
+          systemNavigationBarColor: Theme.of(context).primaryColor,
+          statusBarColor: Theme.of(context).primaryColor,
+          systemNavigationBarDividerColor: Theme.of(context).primaryColor,
+        ),
+      );
+      await moview.getImages();
       moview.getUser();
       moview.hasUserLogged(context);
     });
-
-    ///here
-    // firebaseMessaging.getToken().then((value) {
-    //   print(value);
-    // });
-    // FirebaseMessaging.onMessage.listen((RemoteMessage event) {
-    //   print("message recieved");
-    //   print(event.notification!.body);
-    // });
-    // FirebaseMessaging.onMessageOpenedApp.listen((message) {
-    //   print('Message clicked!');
-    // });
   }
 
   @override
@@ -59,9 +52,11 @@ class _HomePageState extends State<HomePage> {
     return Consumer<Moview>(
       builder: (context, value, child) {
         return _connectivityResult == ConnectivityResult.none
-            ? Center(
-                child: Text(
-                    "No Network Connection. Please check your connection."),
+            ? Scaffold(
+                body: Center(
+                  child: Text(
+                      "No Network Connection. Please check your connection."),
+                ),
               )
             : moview.showBottom == true
                 ? PersistentTabView(
@@ -69,7 +64,7 @@ class _HomePageState extends State<HomePage> {
                     confineInSafeArea: true,
                     screens: [
                       GenresPage(),
-                      SearchPage(),
+                      TrendingPage(),
                       ProfilePage(
                         email: moview.email,
                         password: moview.password,
@@ -80,15 +75,19 @@ class _HomePageState extends State<HomePage> {
                     controller: _controller,
                     items: [
                       PersistentBottomNavBarItem(
-                        icon: Icon(Icons.grid_view),
-                        activeColorPrimary: Theme.of(context).accentColor,
-                        activeColorSecondary: Colors.white,
+                        icon: Icon(Iconsax.grid_2),
+                        activeColorPrimary:
+                            Theme.of(context).colorScheme.secondary,
+                        activeColorSecondary:
+                            Theme.of(context).colorScheme.secondary,
                         inactiveColorPrimary: Colors.grey,
                       ),
                       PersistentBottomNavBarItem(
-                        icon: Icon(Icons.search_rounded),
-                        activeColorPrimary: Theme.of(context).accentColor,
-                        activeColorSecondary: Colors.white,
+                        icon: Icon(Iconsax.search_normal),
+                        activeColorPrimary:
+                            Theme.of(context).colorScheme.secondary,
+                        activeColorSecondary:
+                            Theme.of(context).colorScheme.secondary,
                         inactiveColorPrimary: Colors.grey,
                       ),
                       PersistentBottomNavBarItem(
@@ -96,15 +95,19 @@ class _HomePageState extends State<HomePage> {
                           moview.hasUserLogged(context);
                           _controller.jumpToTab(2);
                         },
-                        icon: Icon(Icons.person),
-                        activeColorPrimary: Theme.of(context).accentColor,
-                        activeColorSecondary: Colors.white,
+                        icon: Icon(Iconsax.user),
+                        activeColorPrimary:
+                            Theme.of(context).colorScheme.secondary,
+                        activeColorSecondary:
+                            Theme.of(context).colorScheme.secondary,
                         inactiveColorPrimary: Colors.grey,
                       ),
                       PersistentBottomNavBarItem(
-                        icon: Icon(Icons.favorite_border_rounded),
-                        activeColorPrimary: Theme.of(context).accentColor,
-                        activeColorSecondary: Colors.white,
+                        icon: Icon(Iconsax.heart),
+                        activeColorPrimary:
+                            Theme.of(context).colorScheme.secondary,
+                        activeColorSecondary:
+                            Theme.of(context).colorScheme.secondary,
                         inactiveColorPrimary: Colors.grey,
                       ),
                     ],

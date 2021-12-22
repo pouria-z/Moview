@@ -1,19 +1,23 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moview/key.dart';
-import 'package:moview/screens/intro/login_page.dart';
 import 'package:moview/screens/home_page.dart';
+import 'package:moview/screens/intro/login_page.dart';
 import 'package:moview/services.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   final keyParseServerUrl = 'https://parseapi.back4app.com';
-  await Parse().initialize(keyApplicationId, keyParseServerUrl,
-      clientKey: keyClientKey, autoSendSessionId: true);
+  await Parse().initialize(
+    keyApplicationId,
+    keyParseServerUrl,
+    clientKey: keyClientKey,
+    autoSendSessionId: true,
+  );
 
   ParseResponse? parseResponse;
   Future isUserLoggedIn() async {
@@ -47,6 +51,10 @@ class MoviewApp extends StatelessWidget {
         theme: ThemeData.dark().copyWith(
           scaffoldBackgroundColor: Color(0xFF212745),
           primaryColor: Color(0xFF1C213B),
+          colorScheme: ColorScheme.dark().copyWith(
+            secondary: Colors.orange.shade700,
+            primary: Color(0xFF36367C),
+          ),
           textTheme: GoogleFonts.comfortaaTextTheme().copyWith(
             bodyText1: GoogleFonts.comfortaa(color: Colors.white),
             caption: GoogleFonts.comfortaa(color: Colors.white),

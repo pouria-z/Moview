@@ -1,19 +1,22 @@
+import 'package:animations/animations.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:moview/services.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:moview/models/images_model.dart';
 import 'package:moview/screens/details/movie_details_page.dart';
 import 'package:moview/screens/details/tvshow_details_page.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:moview/screens/genre/genre_details_page.dart';
+import 'package:moview/services.dart';
 import 'package:provider/provider.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:animations/animations.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class TimeOutWidget extends StatelessWidget {
-  final function;
+  final onRefresh;
 
-  const TimeOutWidget({Key? key, this.function}) : super(key: key);
+  const TimeOutWidget({Key? key, this.onRefresh}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +26,7 @@ class TimeOutWidget extends StatelessWidget {
         children: [
           Text("something went wrong. please try again!"),
           TextButton(
-              onPressed: function,
+              onPressed: onRefresh,
               child: Icon(
                 Icons.refresh,
                 color: Colors.grey,
@@ -74,7 +77,7 @@ class MoviewButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      width: isLoading ? 50 : MediaQuery.of(context).size.width,
+      width: isLoading ? 70 : MediaQuery.of(context).size.width,
       height: 40,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(isLoading ? 50 : 15),
@@ -107,6 +110,88 @@ class MoviewButton extends StatelessWidget {
   }
 }
 
+class GenreListLoading extends StatelessWidget {
+  const GenreListLoading({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      child: ListView.builder(
+        itemCount: 4,
+        physics: BouncingScrollPhysics(),
+        itemBuilder: (context, index) {
+          return Container(
+            height: MediaQuery.of(context).size.height / 4.5,
+            margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: Colors.white24,
+              borderRadius: BorderRadius.circular(15),
+            ),
+          );
+        },
+      ),
+      baseColor: Color(0xFF111423),
+      highlightColor: Color(0xFF2F3861),
+      direction: ShimmerDirection.ltr,
+    );
+  }
+}
+
+ListView moviewGenreList(AsyncSnapshot snapshot,
+    {required String type, required List data, required List images}) {
+  return ListView.builder(
+    shrinkWrap: true,
+    physics: BouncingScrollPhysics(),
+    itemCount: data.length,
+    itemBuilder: (context, index) {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 5),
+        child: InkWell(
+          splashColor: Theme.of(context).colorScheme.primary,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => GenreDetails(
+                  type: type,
+                  id: data[index].id,
+                  name: data[index].name,
+                ),
+              ),
+            );
+          },
+          borderRadius: BorderRadius.circular(15),
+          child: Container(
+            height: MediaQuery.of(context).size.height / 4.5,
+            margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+            decoration: BoxDecoration(
+              color: Colors.white54,
+              borderRadius: BorderRadius.circular(15),
+              image: DecorationImage(
+                image: CachedNetworkImageProvider(images[index]),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height / 36,
+                  width: MediaQuery.of(context).size.width,
+                  color: Colors.black54,
+                  child: Center(child: Text(data[index].name)),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
 Future<dynamic> animationNavigator(BuildContext context, newPage) {
   return Navigator.push(
     context,
@@ -127,148 +212,147 @@ Future<dynamic> animationNavigator(BuildContext context, newPage) {
 }
 
 class MoviewCard extends StatelessWidget {
-  final imageUrl;
-  final title;
-  final rating;
-  final id;
+  final String imageUrl;
+  final String title;
+  final double? rating;
+  final int id;
+  final double? height;
 
-  const MoviewCard({Key? key, this.imageUrl, this.title, this.rating, this.id})
-      : super(key: key);
+  const MoviewCard({
+    required this.height,
+    required this.imageUrl,
+    required this.title,
+    required this.rating,
+    required this.id,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      splashColor: Colors.red,
-      child: Card(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        elevation: 5,
-        shadowColor: Colors.black,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Hero(
-              tag: imageUrl,
-              child: CachedNetworkImage(
-                imageUrl: imageUrl,
-                progressIndicatorBuilder: (context, url, progress) {
-                  return Shimmer.fromColors(
-                    child: Container(
-                      height: MediaQuery.of(context).size.height / 4.1,
-                      width: MediaQuery.of(context).size.width / 3,
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                    ),
-                    baseColor: Theme.of(context).scaffoldBackgroundColor,
-                    highlightColor: Color(0xFF383838),
-                  );
-                },
-                errorWidget: (context, url, error) => Icon(Iconsax.danger5),
-                fadeInDuration: Duration(
-                  milliseconds: 500,
+    return Align(
+      child: Container(
+        height: height,
+        width: MediaQuery.of(context).size.width / 2,
+        child: Card(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          elevation: 5,
+          shadowColor: Colors.black,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Hero(
+                tag: imageUrl,
+                child: CachedNetworkImage(
+                  imageUrl: "https://image.tmdb.org/t/p/w500$imageUrl",
+                  progressIndicatorBuilder: (context, url, progress) {
+                    return Shimmer.fromColors(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height / 4.1,
+                        width: MediaQuery.of(context).size.width / 3,
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                      ),
+                      baseColor: Theme.of(context).scaffoldBackgroundColor,
+                      highlightColor: Color(0xFF383838),
+                    );
+                  },
+                  errorWidget: (context, url, error) => Icon(Iconsax.danger5),
+                  fadeInDuration: Duration(
+                    milliseconds: 500,
+                  ),
+                  height: MediaQuery.of(context).size.height / 4.1,
+                  width: MediaQuery.of(context).size.width / 3,
                 ),
-                height: MediaQuery.of(context).size.height / 4.1,
-                width: MediaQuery.of(context).size.width / 3,
               ),
-            ),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Hero(
-                    tag: id,
-                    child: Material(
-                      color: Colors.transparent,
-                      child: AutoSizeText(
-                        title,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 18),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Hero(
+                      tag: id,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: AutoSizeText(
+                          title,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 18),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
-                  ),
-                  Text(rating),
-                ],
-              ),
-            )
-          ],
+                    Text(rating.toString()),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-Widget moviewGridView(
-    context, scrollController, type, id, poster, name, rate, length) {
-  var moview = Provider.of<Moview>(context, listen: false);
-  return Expanded(
-    child: GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 2,
-        mainAxisExtent: MediaQuery.of(context).size.height / 3,
-      ),
-      physics: BouncingScrollPhysics(),
-      controller: scrollController,
-      shrinkWrap: true,
-      itemCount: length,
-      itemBuilder: (context, index) {
-        return InkWell(
-          splashColor: Color(0xFF36367C),
-          borderRadius: BorderRadius.circular(5),
-          onTap: () {
-            moview.tvShowName = null;
-            moview.movieName = null;
-            moview.getTvShowDetailsIsLoading = true;
-            moview.getMovieDetailsIsLoading = true;
-            if (type.runtimeType == String
-                ? type == 'tv'
-                : type[index] == 'tv') {
-              animationTransition(
-                context,
-                id,
-                index,
-                name,
-                poster,
-                TVShowDetails(
-                  id: id[index],
-                  tvShowName: name[index],
-                  tvShowPosterUrl: poster[index],
-                ),
-              );
-            } else if (type.runtimeType == String
-                ? type == 'movie'
-                : type[index] == 'movie') {
-              animationTransition(
-                context,
-                id,
-                index,
-                name,
-                poster,
-                MovieDetails(
-                  id: id[index],
-                  movieName: name[index],
-                  moviePosterUrl: poster[index],
-                ),
-              );
-            }
-          },
-          child: MoviewCard(
-            id: id[index],
-            imageUrl: poster[index],
-            title: name[index],
-            rating: rate[index].runtimeType == String
-                ? rate[index]
-                : rate[index].toDouble().toString(),
-          ),
-        );
-      },
+Widget moviewGridView2(
+  BuildContext context,
+  Moview moview, {
+  required double? height,
+  required double? mainAxisExtent,
+  required int itemsInRow,
+  required Axis scrollDirection,
+  required ScrollController scrollController,
+  required List data,
+  required String type,
+}) {
+  return GridView.builder(
+    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: itemsInRow,
+      mainAxisSpacing: 2,
+      crossAxisSpacing: 10,
+      mainAxisExtent: mainAxisExtent,
     ),
+    physics: BouncingScrollPhysics(),
+    scrollDirection: scrollDirection,
+    controller: scrollController,
+    shrinkWrap: true,
+    itemCount: data.length,
+    itemBuilder: (context, index) {
+      final model = data[index];
+      return InkWell(
+        splashColor: Color(0xFF36367C),
+        borderRadius: BorderRadius.circular(5),
+        onTap: () {
+          if (type == 'tv') {
+            animationTransition(
+              context,
+              TVShowDetails(
+                id: model.id,
+                title: model.title,
+                posterPath: model.posterPath,
+              ),
+            );
+          } else if (type == 'movie') {
+            animationTransition(
+              context,
+              MovieDetails(
+                id: model.id,
+                title: model.title,
+                posterPath: model.posterPath,
+              ),
+            );
+          }
+        },
+        child: MoviewCard(
+          height: height,
+          id: model.id,
+          imageUrl: model.posterPath,
+          title: model.title,
+          rating: model.voteAverage,
+        ),
+      );
+    },
   );
 }
 
-Future<dynamic> animationTransition(
-    BuildContext context, id, int index, name, poster, newPage) {
+Future<dynamic> animationTransition(BuildContext context, newPage) {
   return Navigator.push(
     context,
     PageRouteBuilder(
@@ -290,12 +374,12 @@ Future<dynamic> animationTransition(
 }
 
 class MoviewSuggestionCard extends StatelessWidget {
-  final imageUrl;
-  final title;
-  final rating;
+  final String imageUrl;
+  final String title;
+  final double? rating;
 
-  const MoviewSuggestionCard({Key? key, this.imageUrl, this.title, this.rating})
-      : super(key: key);
+  const MoviewSuggestionCard(
+      {required this.imageUrl, required this.title, required this.rating});
 
   @override
   Widget build(BuildContext context) {
@@ -309,7 +393,7 @@ class MoviewSuggestionCard extends StatelessWidget {
             width: MediaQuery.of(context).size.width / 25,
           ),
           CachedNetworkImage(
-            imageUrl: imageUrl,
+            imageUrl: "https://image.tmdb.org/t/p/w500$imageUrl",
             progressIndicatorBuilder: (context, url, progress) {
               return Shimmer.fromColors(
                 child: Container(
@@ -343,7 +427,7 @@ class MoviewSuggestionCard extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                Text(rating),
+                Text(rating.toString()),
               ],
             ),
           )
@@ -354,58 +438,54 @@ class MoviewSuggestionCard extends StatelessWidget {
 }
 
 // for search page
-Widget suggestionCardGridView(context) {
+Widget suggestionCardGridView(context,
+    {required List data, required String type}) {
   var moview = Provider.of<Moview>(context, listen: false);
-  return moview.searchTypeNameList.isNotEmpty
-      ? GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 1,
-            mainAxisExtent: MediaQuery.of(context).size.height / 6.5,
-          ),
-          shrinkWrap: true,
-          itemCount: moview.searchTypeNameList.length > 5
-              ? 5
-              : moview.searchTypeNameList.length,
-          itemBuilder: (context, index) {
-            return OpenContainer(
-              closedElevation: 0,
-              middleColor: Theme.of(context).scaffoldBackgroundColor,
-              closedColor: Theme.of(context).scaffoldBackgroundColor,
-              openColor: Theme.of(context).scaffoldBackgroundColor,
-              transitionDuration: Duration(milliseconds: 400),
-              transitionType: ContainerTransitionType.fade,
-              closedBuilder: (context, action) {
-                return MoviewSuggestionCard(
-                  title: moview.searchTypeNameList[index],
-                  imageUrl: moview.searchTypePosterUrlList[index],
-                  rating: moview.searchTypeRateList[index].toString(),
-                );
-              },
-              openBuilder: (context, action) {
-                moview.tvShowName = null;
-                moview.movieName = null;
-                moview.getTvShowDetailsIsLoading = true;
-                moview.getMovieDetailsIsLoading = true;
-                if (moview.searchTypeMediaTypeList[index] == 'tv') {
-                  FocusScope.of(context).unfocus();
-                  return TVShowDetails(
-                    tvShowName: moview.searchTypeNameList[index],
-                    tvShowPosterUrl: moview.searchTypePosterUrlList[index],
-                    id: moview.searchTypeIdList[index],
-                  );
-                } else {
-                  FocusScope.of(context).unfocus();
-                  return MovieDetails(
-                    id: moview.searchTypeIdList[index],
-                    movieName: moview.searchTypeNameList[index],
-                    moviePosterUrl: moview.searchTypePosterUrlList[index],
-                  );
-                }
-              },
+  return GridView.builder(
+    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 1,
+      mainAxisExtent: MediaQuery.of(context).size.height / 6.5,
+    ),
+    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+    shrinkWrap: true,
+    physics: PageScrollPhysics(),
+    itemCount: data.length,
+    itemBuilder: (context, index) {
+      final model = data[index];
+      return OpenContainer(
+        closedElevation: 0,
+        middleColor: Theme.of(context).scaffoldBackgroundColor,
+        closedColor: Theme.of(context).scaffoldBackgroundColor,
+        openColor: Theme.of(context).scaffoldBackgroundColor,
+        transitionDuration: Duration(milliseconds: 400),
+        transitionType: ContainerTransitionType.fade,
+        closedBuilder: (context, action) {
+          return MoviewSuggestionCard(
+            title: model.title,
+            imageUrl: model.posterPath,
+            rating: model.voteAverage,
+          );
+        },
+        openBuilder: (context, action) {
+          if (type == 'tv') {
+            FocusScope.of(context).unfocus();
+            return TVShowDetails(
+              id: model.id,
+              title: model.title,
+              posterPath: model.posterPath,
             );
-          },
-        )
-      : Text("Oops! Found Nothing :(");
+          } else {
+            FocusScope.of(context).unfocus();
+            return MovieDetails(
+              id: model.id,
+              title: model.title,
+              posterPath: model.posterPath,
+            );
+          }
+        },
+      );
+    },
+  );
 }
 
 ScaffoldFeatureController message(context, response) {
@@ -416,7 +496,8 @@ ScaffoldFeatureController message(context, response) {
   );
 }
 
-AppBar buildAppBar(BuildContext context, String title) {
+AppBar buildAppBar(BuildContext context,
+    {required String title, required Widget action}) {
   return AppBar(
     backgroundColor: Theme.of(context).primaryColor,
     leading: Row(
@@ -445,5 +526,8 @@ AppBar buildAppBar(BuildContext context, String title) {
     title: Text(title),
     centerTitle: true,
     elevation: 0,
+    actions: [
+      action,
+    ],
   );
 }

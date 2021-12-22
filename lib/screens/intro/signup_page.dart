@@ -1,13 +1,13 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:moview/screens/intro/login_page.dart';
 import 'package:moview/services.dart';
 import 'package:moview/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -93,9 +93,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       Text(
                         "\nA place where you can find your favorite movies and TV-Shows.",
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white70
-                        ),
+                        style: TextStyle(color: Colors.white70),
                       ),
                       SizedBox(
                         height: size.height / 15,
@@ -173,7 +171,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               }
                             },
                             autovalidateMode:
-                            AutovalidateMode.onUserInteraction,
+                                AutovalidateMode.onUserInteraction,
                             textInputAction: TextInputAction.next,
                             cursorColor: Colors.deepOrangeAccent,
                             cursorRadius: Radius.circular(1),
@@ -189,9 +187,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                   });
                                 },
                                 icon: Icon(
-                                  isHidden
-                                      ? Iconsax.eye_slash
-                                      : Iconsax.eye,
+                                  isHidden ? Iconsax.eye_slash : Iconsax.eye,
                                   color: isHidden
                                       ? Colors.orangeAccent
                                       : Colors.orange.shade700,
@@ -216,8 +212,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             return "Passwords don't match";
                           }
                         },
-                        autovalidateMode:
-                        AutovalidateMode.onUserInteraction,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         textInputAction: TextInputAction.done,
                         cursorColor: Colors.deepOrangeAccent,
                         cursorRadius: Radius.circular(1),
@@ -251,7 +246,11 @@ class _SignUpPageState extends State<SignUpPage> {
                           title: "Create Account",
                           onPressed: () {
                             moview.register(
-                                context, username, password, email);
+                              context,
+                              username: username,
+                              password: password,
+                              email: email,
+                            );
                           },
                           isLoading: moview.registerIsLoading,
                           enableCondition: username.trim().isEmpty ||

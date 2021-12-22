@@ -61,7 +61,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   MoviewButton(
                     title: "Send Email",
                     onPressed: () {
-                      moview.resetPassword(context);
+                      moview.resetPassword(context, emailAddress: resetEmail);
                     },
                     isLoading: moview.resetPasswordIsLoading,
                     enableCondition: resetEmail.trim().isEmpty,

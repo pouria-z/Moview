@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:moview/models/genre_result_model.dart';
 import 'package:moview/services.dart';
 import 'package:moview/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class GenreDetails extends StatefulWidget {
   final type;
   final id;
   final name;
-  final pageNumber;
+  static final RefreshController refreshController =
+      RefreshController(initialRefresh: true);
 
-  const GenreDetails(
-      {Key? key,
-      @required this.type,
-      @required this.id,
-      @required this.name,
-      @required this.pageNumber})
-      : super(key: key);
+  const GenreDetails({
+    Key? key,
+    required this.type,
+    required this.id,
+    required this.name,
+  }) : super(key: key);
 
   @override
   _GenreDetailsState createState() => _GenreDetailsState();
@@ -24,27 +26,32 @@ class GenreDetails extends StatefulWidget {
 class _GenreDetailsState extends State<GenreDetails> {
   ScrollController _scrollController = ScrollController();
 
-  @override
-  void initState() {
-    super.initState();
+  List<Result> data = [];
+  bool enablePullUp = false;
+
+  Future getData({bool isRefresh = false}) async {
     var moview = Provider.of<Moview>(context, listen: false);
-    print("genre id: ${widget.id}");
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
-      moview.genreResultPage = widget.pageNumber;
-      await moview.getGenreResultList(widget.type, widget.id);
-    });
-    _scrollController.addListener(() async {
-      print("scroller is moving");
-      if (_scrollController.position.pixels ==
-              _scrollController.position.maxScrollExtent &&
-          moview.genreResultPage <= moview.genreResultTotalPages) {
-        print("if condition is true");
-        moview.genreResultPage = moview.genreResultPage + 1;
-        setState(() {
-          moview.getGenreResultList(widget.type, widget.id);
-        });
+    if (isRefresh) {
+      moview.genreResultPage = 1;
+    } else {
+      if (moview.genreResultPage >= moview.genreResultTotalPages) {
+        GenreDetails.refreshController.loadNoData();
       }
-    });
+    }
+
+    final response = await moview.getGenreResult(widget.type, widget.id);
+
+    if (isRefresh) {
+      data = response.results;
+    } else {
+      data.addAll(response.results);
+    }
+    moview.genreResultPage++;
+    if (moview.genreResultPage > 1) {
+      setState(() {
+        enablePullUp = true;
+      });
+    }
   }
 
   @override
@@ -63,47 +70,39 @@ class _GenreDetailsState extends State<GenreDetails> {
             title: GestureDetector(
               onTap: () {
                 _scrollController.animateTo(
-                    _scrollController.position.minScrollExtent,
-                    duration: Duration(milliseconds: 900),
-                    curve: Curves.fastOutSlowIn);
+                  _scrollController.position.minScrollExtent,
+                  duration: Duration(milliseconds: 900),
+                  curve: Curves.fastOutSlowIn,
+                );
               },
               child: Text(widget.type == 'movie'
                   ? "Movie | " + widget.name
                   : "TV Show | " + widget.name),
             ),
           ),
-          body: moview.timeOutException == true
-              ? TimeOutWidget(
-                  function: () {
-                    setState(() {
-                      moview.getGenreResultList(widget.type, widget.id).whenComplete(() =>
-                          _scrollController.jumpTo(
-                              _scrollController.position.maxScrollExtent));
-                    });
-                  },
-                )
-              : moview.getGenreResultListIsLoading == true &&
-                      moview.genreResultNameList.isEmpty
-                  ? Center(child: CircularProgressIndicator())
-                  : Column(
-                      children: [
-                        moviewGridView(
-                          context,
-                          _scrollController,
-                          widget.type,
-                          moview.genreResultIdList,
-                          moview.genreResultPosterUrlList,
-                          moview.genreResultNameList,
-                          moview.genreResultRateList,
-                          moview.genreResultNameList.length,
-                        ),
-                        moview.genreResultListIsLoadingMore == false
-                            ? Container()
-                            : CircularProgressIndicator(
-                                strokeWidth: 1.2,
-                              ),
-                      ],
-                    ),
+          body: SmartRefresher(
+            controller: GenreDetails.refreshController,
+            enablePullUp: enablePullUp,
+            onRefresh: () async {
+              await getData(isRefresh: true);
+              GenreDetails.refreshController.refreshCompleted();
+            },
+            onLoading: () async {
+              await getData();
+              GenreDetails.refreshController.loadComplete();
+            },
+            child: moviewGridView2(
+              context,
+              moview,
+              height: MediaQuery.of(context).size.height / 3,
+              mainAxisExtent: MediaQuery.of(context).size.height / 3,
+              itemsInRow: 2,
+              scrollDirection: Axis.vertical,
+              scrollController: _scrollController,
+              data: data,
+              type: widget.type,
+            ),
+          ),
         );
       },
     );
