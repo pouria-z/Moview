@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:moview/models/genres_model.dart';
-import 'package:moview/widgets.dart';
-import 'package:moview/screens/genre/genre_details_page.dart';
+import 'package:moview/models/images_model.dart';
 import 'package:moview/services.dart';
+import 'package:moview/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:moview/models/genre_result_model.dart';
+import 'package:shimmer/shimmer.dart';
 
 class GenresPage extends StatefulWidget {
   @override
@@ -31,13 +30,20 @@ class _GenresPageState extends State<GenresPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context, title: "Genres", action: Container(),),
+      appBar: buildAppBar(
+        context,
+        title: "Genres",
+        action: Container(),
+      ),
       body: Column(
         children: [
           Material(
             color: Theme.of(context).primaryColor,
             child: TabBar(
               controller: _controller,
+              indicatorColor: Colors.orangeAccent,
+              labelColor: Colors.orangeAccent,
+              unselectedLabelColor: Colors.grey,
               tabs: [
                 Tab(
                   text: 'Movie',
@@ -77,7 +83,6 @@ class _MovieGenresState extends State<MovieGenres>
     super.initState();
     Future.delayed(Duration.zero, () async {
       var moview = Provider.of<Moview>(context, listen: false);
-      print("this future");
       moview.movieGenresModel = moview.getMovieGenres();
     });
   }
@@ -89,65 +94,29 @@ class _MovieGenresState extends State<MovieGenres>
     return Consumer<Moview>(
       builder: (context, value, child) {
         return Scaffold(
-          floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              final favorite = await moview.getFavorites();
-              print(
-                "total: ${favorite.results.length}"
-              );
-            },
-            child: Icon(Iconsax.import),
-          ),
-          body: moview.timedOut == true
-              ? TimeOutWidget(
+          body: FutureBuilder<MovieGenresModel>(
+            future: moview.movieGenresModel,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return moviewGenreList(
+                  snapshot,
+                  type: 'movie',
+                  data: snapshot.data!.movieGenres,
+                  images: moview.images,
+                );
+              } else if (snapshot.hasError) {
+                print("*** error: ${snapshot.error.toString()}");
+                TimeOutWidget(
                   onRefresh: () {
                     setState(() {
                       moview.movieGenresModel = moview.getMovieGenres();
                     });
                   },
-                )
-              : FutureBuilder<MovieGenresModel>(
-                  future: moview.movieGenresModel,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: snapshot.data!.movieGenres.length,
-                        itemBuilder: (context, index) {
-                          var movieGenres = snapshot.data!.movieGenres[index];
-                          return ListTile(
-                            title: Text(movieGenres.name),
-                            leading: Icon(Icons.star_rounded),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => GenreDetails(
-                                    type: 'movie',
-                                    id: movieGenres.id,
-                                    name: movieGenres.name,
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      );
-                    } else if (snapshot.hasError) {
-                      print("*** error: ${snapshot.error.toString()}");
-                      TimeOutWidget(
-                        onRefresh: () {
-                          setState(() {
-                            moview.movieGenresModel = moview.getMovieGenres();
-                          });
-                        },
-                      );
-                    }
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  },
-                ),
+                );
+              }
+              return GenreListLoading();
+            },
+          ),
         );
       },
     );
@@ -171,7 +140,6 @@ class _TVShowGenresState extends State<TVShowGenres>
     super.initState();
     Future.delayed(Duration.zero, () async {
       var moview = Provider.of<Moview>(context, listen: false);
-      print("this future");
       moview.tvShowGenresModel = moview.getTvShowGenres();
     });
   }
@@ -195,28 +163,11 @@ class _TVShowGenresState extends State<TVShowGenres>
                   future: moview.tvShowGenresModel,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: snapshot.data!.tvShowGenres.length,
-                        itemBuilder: (context, index) {
-                          var tvShowGenres = snapshot.data!.tvShowGenres[index];
-                          return ListTile(
-                            title: Text(tvShowGenres.name),
-                            leading: Icon(Icons.star_rounded),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => GenreDetails(
-                                    type: 'tv',
-                                    id: tvShowGenres.id,
-                                    name: tvShowGenres.name,
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        },
+                      return moviewGenreList(
+                        snapshot,
+                        type: "tv",
+                        data: snapshot.data!.tvShowGenres,
+                        images: moview.images,
                       );
                     } else if (snapshot.hasError) {
                       print("====== ${snapshot.error.toString()}");
@@ -228,9 +179,7 @@ class _TVShowGenresState extends State<TVShowGenres>
                         },
                       );
                     }
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return GenreListLoading();
                   },
                 ),
         );

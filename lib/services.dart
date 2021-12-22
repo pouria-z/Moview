@@ -8,6 +8,7 @@ import 'package:moview/key.dart';
 import 'package:moview/models/favorites_model.dart';
 import 'package:moview/models/genre_result_model.dart';
 import 'package:moview/models/genres_model.dart';
+import 'package:moview/models/images_model.dart';
 import 'package:moview/models/movie_details_model.dart';
 import 'package:moview/models/search_model.dart';
 import 'package:moview/models/trending_model.dart';
@@ -44,6 +45,21 @@ class Moview with ChangeNotifier {
   List dbYearList = [];
   List dbMediaPosterList = [];
   bool favoriteListIsLoading = false;
+
+  List images = [];
+
+  Future getImages() async {
+    QueryBuilder<ParseObject> queryBuilder =
+        QueryBuilder<ParseObject>(ParseObject('Images'));
+    final response = await queryBuilder.query();
+    final json = jsonDecode((response.results).toString());
+    if (json != null) {
+      for (var item in json) {
+        images.add(item["image"]["url"]);
+      }
+    }
+    notifyListeners();
+  }
 
   Future<Response> sendRequest(Uri url) async {
     print("starting to send request");
@@ -311,7 +327,7 @@ class Moview with ChangeNotifier {
   }
 
   Future<bool> hasUserLogged(context) async {
-    print('checking if its valid');
+    print('checking if user token is valid');
     ParseUser? currentUser = await ParseUser.currentUser() as ParseUser?;
     if (currentUser == null) {
       return false;
@@ -338,7 +354,10 @@ class Moview with ChangeNotifier {
 
   bool registerIsLoading = false;
 
-  Future<void> register(context, username, password, email) async {
+  Future<void> register(context,
+      {required String username,
+      required String password,
+      required String email}) async {
     print('signing up...');
     registerIsLoading = true;
     notifyListeners();
@@ -358,7 +377,32 @@ class Moview with ChangeNotifier {
       throw e;
     }
     if (response.success) {
-      print('user created successfully');
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              "Verify your email",
+              style: TextStyle(color: Colors.white),
+            ),
+            content: Text(
+                "An email containing a link to verify your email, was sent to $email."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LoginPage(),
+                    ),
+                  );
+                },
+                child: Text("Ok"),
+              ),
+            ],
+          );
+        },
+      );
     } else if (response.error!.code == -1) {
       print(response.error!.message);
       message(context, "Check your connection");
@@ -451,11 +495,11 @@ class Moview with ChangeNotifier {
 
   bool resetPasswordIsLoading = false;
 
-  Future<void> resetPassword(context) async {
+  Future<void> resetPassword(context, {required String emailAddress}) async {
     print('resetting password...');
     resetPasswordIsLoading = true;
     notifyListeners();
-    var user = ParseUser(null, null, email);
+    var user = ParseUser(null, null, emailAddress);
     late ParseResponse response;
     try {
       response =
@@ -472,10 +516,34 @@ class Moview with ChangeNotifier {
       throw e;
     }
     if (response.success) {
-      message(context,
-          'an email containing a link to reset your password, sent to $email.');
-      print('email sent to email address!');
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              "Check your email",
+              style: TextStyle(color: Colors.white),
+            ),
+            content: Text(
+                "An email containing a link to reset your password, was sent to $email."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LoginPage(),
+                    ),
+                  );
+                },
+                child: Text("Ok"),
+              ),
+            ],
+          );
+        },
+      );
     } else {
+      print(response.error);
       message(context, 'Cannot find a user with this email address.');
     }
     resetPasswordIsLoading = false;

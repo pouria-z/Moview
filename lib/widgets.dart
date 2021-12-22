@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:moview/models/images_model.dart';
 import 'package:moview/screens/details/movie_details_page.dart';
 import 'package:moview/screens/details/tvshow_details_page.dart';
+import 'package:moview/screens/genre/genre_details_page.dart';
 import 'package:moview/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -75,7 +77,7 @@ class MoviewButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      width: isLoading ? 50 : MediaQuery.of(context).size.width,
+      width: isLoading ? 70 : MediaQuery.of(context).size.width,
       height: 40,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(isLoading ? 50 : 15),
@@ -106,6 +108,88 @@ class MoviewButton extends StatelessWidget {
       ),
     );
   }
+}
+
+class GenreListLoading extends StatelessWidget {
+  const GenreListLoading({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      child: ListView.builder(
+        itemCount: 4,
+        physics: BouncingScrollPhysics(),
+        itemBuilder: (context, index) {
+          return Container(
+            height: MediaQuery.of(context).size.height / 4.5,
+            margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: Colors.white24,
+              borderRadius: BorderRadius.circular(15),
+            ),
+          );
+        },
+      ),
+      baseColor: Color(0xFF111423),
+      highlightColor: Color(0xFF2F3861),
+      direction: ShimmerDirection.ltr,
+    );
+  }
+}
+
+ListView moviewGenreList(AsyncSnapshot snapshot,
+    {required String type, required List data, required List images}) {
+  return ListView.builder(
+    shrinkWrap: true,
+    physics: BouncingScrollPhysics(),
+    itemCount: data.length,
+    itemBuilder: (context, index) {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 5),
+        child: InkWell(
+          splashColor: Theme.of(context).colorScheme.primary,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => GenreDetails(
+                  type: type,
+                  id: data[index].id,
+                  name: data[index].name,
+                ),
+              ),
+            );
+          },
+          borderRadius: BorderRadius.circular(15),
+          child: Container(
+            height: MediaQuery.of(context).size.height / 4.5,
+            margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+            decoration: BoxDecoration(
+              color: Colors.white54,
+              borderRadius: BorderRadius.circular(15),
+              image: DecorationImage(
+                image: CachedNetworkImageProvider(images[index]),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height / 36,
+                  width: MediaQuery.of(context).size.width,
+                  color: Colors.black54,
+                  child: Center(child: Text(data[index].name)),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }
 
 Future<dynamic> animationNavigator(BuildContext context, newPage) {

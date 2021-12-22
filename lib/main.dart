@@ -16,18 +16,8 @@ void main() async {
     keyApplicationId,
     keyParseServerUrl,
     clientKey: keyClientKey,
-    liveQueryUrl: serverUrl,
     autoSendSessionId: true,
   );
-
-  QueryBuilder<ParseObject> queryBuilder =
-      QueryBuilder<ParseObject>(ParseObject('favorites'));
-  final Subscription subscription =
-      await LiveQuery().client.subscribe(queryBuilder);
-  subscription.on(LiveQueryEvent.delete, (value) async {
-    print("=====heyyyyyyyyyy");
-    await Moview().unsetFavorite();
-  });
 
   ParseResponse? parseResponse;
   Future isUserLoggedIn() async {
@@ -61,6 +51,10 @@ class MoviewApp extends StatelessWidget {
         theme: ThemeData.dark().copyWith(
           scaffoldBackgroundColor: Color(0xFF212745),
           primaryColor: Color(0xFF1C213B),
+          colorScheme: ColorScheme.dark().copyWith(
+            secondary: Colors.orange.shade700,
+            primary: Color(0xFF36367C),
+          ),
           textTheme: GoogleFonts.comfortaaTextTheme().copyWith(
             bodyText1: GoogleFonts.comfortaa(color: Colors.white),
             caption: GoogleFonts.comfortaa(color: Colors.white),

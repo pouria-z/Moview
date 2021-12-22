@@ -49,7 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             TextButton(
               onPressed: () {
-                moview.resetPassword(context);
+                moview.resetPassword(context, emailAddress: widget.email);
               },
               child: Text("reset password"),
             ),
