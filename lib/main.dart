@@ -49,7 +49,7 @@ class MoviewApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData.dark().copyWith(
-          scaffoldBackgroundColor: Color(0xFF212745),
+          scaffoldBackgroundColor: Color(0xFF161B2D),
           primaryColor: Color(0xFF1C213B),
           colorScheme: ColorScheme.dark().copyWith(
             secondary: Colors.orange.shade700,

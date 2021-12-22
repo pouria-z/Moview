@@ -34,7 +34,7 @@ class TrendingMoviesResultModel {
   List<int> genreIds;
   String posterPath;
   double voteAverage;
-  DateTime releaseDate;
+  String releaseDate;
   String title;
   int id;
 
@@ -43,7 +43,7 @@ class TrendingMoviesResultModel {
         genreIds: List<int>.from(json["genre_ids"].map((x) => x)),
         posterPath: json["poster_path"],
         voteAverage: json["vote_average"].toDouble(),
-        releaseDate: DateTime.parse(json["release_date"]),
+        releaseDate: json["release_date"],
         title: json["title"],
         id: json["id"],
       );
@@ -74,7 +74,7 @@ class TrendingTvShowsModel {
 
 class TrendingTvShowsResultModel {
   TrendingTvShowsResultModel({
-    required this.firstAirDate,
+    required this.releaseDate,
     required this.genreIds,
     required this.voteAverage,
     required this.id,
@@ -82,7 +82,7 @@ class TrendingTvShowsResultModel {
     required this.title,
   });
 
-  DateTime firstAirDate;
+  String releaseDate;
   List<int> genreIds;
   double voteAverage;
   int id;
@@ -91,7 +91,7 @@ class TrendingTvShowsResultModel {
 
   factory TrendingTvShowsResultModel.fromJson(Map<String, dynamic> json) =>
       TrendingTvShowsResultModel(
-        firstAirDate: DateTime.parse(json["first_air_date"]),
+        releaseDate: json["first_air_date"],
         genreIds: List<int>.from(json["genre_ids"].map((x) => x)),
         voteAverage: json["vote_average"].toDouble(),
         id: json["id"],

@@ -72,7 +72,7 @@ class _TrendingPageState extends State<TrendingPage> {
                       }
                       var trendingMovie = snapshot.data!.results;
                       return Expanded(
-                        child: moviewGridView2(
+                        child: moviewGridView(
                           context,
                           moview,
                           height: MediaQuery.of(context).size.height / 3,
@@ -109,7 +109,7 @@ class _TrendingPageState extends State<TrendingPage> {
                       }
                       var trendingTvShow = snapshot.data!.results;
                       return Expanded(
-                        child: moviewGridView2(
+                        child: moviewGridView(
                           context,
                           moview,
                           height: MediaQuery.of(context).size.height / 3,

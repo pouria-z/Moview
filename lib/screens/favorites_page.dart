@@ -108,6 +108,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                         imageUrl: favorite.posterPath,
                         title: favorite.title,
                         rating: 8.0,
+                        year: favorite.year,
                       ),
                     );
                   },

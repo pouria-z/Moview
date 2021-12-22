@@ -67,6 +67,7 @@ class _GenreDetailsState extends State<GenreDetails> {
       builder: (context, value, child) {
         return Scaffold(
           appBar: AppBar(
+            backgroundColor: Theme.of(context).primaryColor,
             title: GestureDetector(
               onTap: () {
                 _scrollController.animateTo(
@@ -77,7 +78,8 @@ class _GenreDetailsState extends State<GenreDetails> {
               },
               child: Text(widget.type == 'movie'
                   ? "Movie | " + widget.name
-                  : "TV Show | " + widget.name),
+                  : "TV Show | " + widget.name,
+              ),
             ),
           ),
           body: SmartRefresher(
@@ -91,16 +93,19 @@ class _GenreDetailsState extends State<GenreDetails> {
               await getData();
               GenreDetails.refreshController.loadComplete();
             },
-            child: moviewGridView2(
-              context,
-              moview,
-              height: MediaQuery.of(context).size.height / 3,
-              mainAxisExtent: MediaQuery.of(context).size.height / 3,
-              itemsInRow: 2,
-              scrollDirection: Axis.vertical,
-              scrollController: _scrollController,
-              data: data,
-              type: widget.type,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5),
+              child: moviewGridView(
+                context,
+                moview,
+                height: MediaQuery.of(context).size.height / 3,
+                mainAxisExtent: MediaQuery.of(context).size.height / 2.8,
+                itemsInRow: 2,
+                scrollDirection: Axis.vertical,
+                scrollController: _scrollController,
+                data: data,
+                type: widget.type,
+              ),
             ),
           ),
         );

@@ -288,7 +288,7 @@ class Moview with ChangeNotifier {
       ..set('uniqueId', uniqueId)
       ..set('type', type)
       ..set('title', title)
-      ..set('year', releaseDate)
+      ..set('releaseDate', releaseDate)
       ..set('posterPath', imageUrl + posterPath)
       ..set('isFavorite', isFave)
       ..setACL(acl);

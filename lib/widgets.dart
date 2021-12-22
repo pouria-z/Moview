@@ -4,8 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:moview/models/images_model.dart';
 import 'package:moview/screens/details/movie_details_page.dart';
 import 'package:moview/screens/details/tvshow_details_page.dart';
 import 'package:moview/screens/genre/genre_details_page.dart';
@@ -217,6 +217,7 @@ class MoviewCard extends StatelessWidget {
   final double? rating;
   final int id;
   final double? height;
+  final String year;
 
   const MoviewCard({
     required this.height,
@@ -224,42 +225,64 @@ class MoviewCard extends StatelessWidget {
     required this.title,
     required this.rating,
     required this.id,
+    required this.year,
   });
 
   @override
   Widget build(BuildContext context) {
     return Align(
-      child: Container(
-        height: height,
-        width: MediaQuery.of(context).size.width / 2,
-        child: Card(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          elevation: 5,
-          shadowColor: Colors.black,
+      child: PhysicalModel(
+        color: Colors.transparent,
+        elevation: 10,
+        borderRadius: BorderRadius.circular(10),
+        shadowColor: Colors.black,
+        child: Container(
+          height: height,
+          width: MediaQuery.of(context).size.width / 2,
+          margin: EdgeInsets.symmetric(horizontal: 5),
+          decoration: BoxDecoration(
+            // border: Border.all(color: Color(0xFFC99405), width: 0.5),
+            borderRadius: BorderRadius.circular(7),
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF2A3155),
+                Color(0xFF1F2339),
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              SizedBox(
+                height: 10,
+              ),
               Hero(
                 tag: imageUrl,
-                child: CachedNetworkImage(
-                  imageUrl: "https://image.tmdb.org/t/p/w500$imageUrl",
-                  progressIndicatorBuilder: (context, url, progress) {
-                    return Shimmer.fromColors(
-                      child: Container(
-                        height: MediaQuery.of(context).size.height / 4.1,
-                        width: MediaQuery.of(context).size.width / 3,
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                      ),
-                      baseColor: Theme.of(context).scaffoldBackgroundColor,
-                      highlightColor: Color(0xFF383838),
-                    );
-                  },
-                  errorWidget: (context, url, error) => Icon(Iconsax.danger5),
-                  fadeInDuration: Duration(
-                    milliseconds: 500,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(7),
+                  child: CachedNetworkImage(
+                    imageUrl: "https://image.tmdb.org/t/p/w500$imageUrl",
+                    fit: BoxFit.cover,
+                    progressIndicatorBuilder: (context, url, progress) {
+                      return Shimmer.fromColors(
+                        child: Container(
+                          height: MediaQuery.of(context).size.height / 4.1,
+                          width: MediaQuery.of(context).size.width / 3,
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                        ),
+                        baseColor: Theme.of(context).scaffoldBackgroundColor,
+                        highlightColor: Theme.of(context).primaryColor,
+                      );
+                    },
+                    errorWidget: (context, url, error) => Icon(Iconsax.danger5),
+                    fadeInDuration: Duration(
+                      milliseconds: 500,
+                    ),
+                    height: MediaQuery.of(context).size.height / 4.1,
+                    width: MediaQuery.of(context).size.width / 3,
                   ),
-                  height: MediaQuery.of(context).size.height / 4.1,
-                  width: MediaQuery.of(context).size.width / 3,
                 ),
               ),
               Expanded(
@@ -271,18 +294,27 @@ class MoviewCard extends StatelessWidget {
                       child: Material(
                         color: Colors.transparent,
                         child: AutoSizeText(
-                          title,
+                          "$title ($year)",
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 18),
+                          style: GoogleFonts.raleway(
+                            fontSize: 16
+                          ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ),
-                    Text(rating.toString()),
+
+                    Text(
+                      rating.toString(),
+                      style: GoogleFonts.balooBhaijaan(
+                        fontSize: 16
+                      ),
+                    ),
                   ],
                 ),
-              )
+              ),
+              SizedBox(height: 2,)
             ],
           ),
         ),
@@ -291,7 +323,7 @@ class MoviewCard extends StatelessWidget {
   }
 }
 
-Widget moviewGridView2(
+Widget moviewGridView(
   BuildContext context,
   Moview moview, {
   required double? height,
@@ -318,7 +350,7 @@ Widget moviewGridView2(
       final model = data[index];
       return InkWell(
         splashColor: Color(0xFF36367C),
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: BorderRadius.circular(7),
         onTap: () {
           if (type == 'tv') {
             animationTransition(
@@ -346,6 +378,7 @@ Widget moviewGridView2(
           imageUrl: model.posterPath,
           title: model.title,
           rating: model.voteAverage,
+          year: model.releaseDate,
         ),
       );
     },

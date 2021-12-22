@@ -135,7 +135,7 @@ class _SearchMoviesResultsPageState extends State<SearchMoviesResultsPage>
                   );
                 } else {
                   moviesData = snapshot.data!.results;
-                  return moviewGridView2(
+                  return moviewGridView(
                     context,
                     moview,
                     height: MediaQuery.of(context).size.height / 3,
@@ -233,7 +233,7 @@ class _SearchTvShowsResultsPageState extends State<SearchTvShowsResultsPage>
                   );
                 } else {
                   tvShowsData = snapshot.data!.results;
-                  return moviewGridView2(
+                  return moviewGridView(
                     context,
                     moview,
                     height: MediaQuery.of(context).size.height / 3,
