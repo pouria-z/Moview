@@ -367,7 +367,7 @@ Widget moviewGridView(
       crossAxisSpacing: 10,
       mainAxisExtent: mainAxisExtent,
     ),
-    physics: BouncingScrollPhysics(),
+    physics: ScrollPhysics(parent: BouncingScrollPhysics()),
     scrollDirection: scrollDirection,
     controller: scrollController,
     shrinkWrap: true,

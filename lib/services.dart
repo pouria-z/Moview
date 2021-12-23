@@ -50,7 +50,7 @@ class Moview with ChangeNotifier {
 
   Future getImages() async {
     QueryBuilder<ParseObject> queryBuilder =
-        QueryBuilder<ParseObject>(ParseObject('Images'));
+        QueryBuilder<ParseObject>(ParseObject('MoviesImages'));
     final response = await queryBuilder.query();
     final json = jsonDecode((response.results).toString());
     if (json != null) {
@@ -117,6 +117,8 @@ class Moview with ChangeNotifier {
     Map<String, dynamic> jsonBody = jsonDecode(_response.body);
     _tvShowGenresModel = TvShowGenresModel.fromJson(jsonBody);
     _tvShowGenresModel.tvShowGenres.removeAt(12);
+    _tvShowGenresModel.tvShowGenres.removeAt(10);
+    _tvShowGenresModel.tvShowGenres.removeAt(9);
     notifyListeners();
     return _tvShowGenresModel;
   }

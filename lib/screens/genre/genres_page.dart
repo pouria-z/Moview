@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:moview/models/genres_model.dart';
-import 'package:moview/models/images_model.dart';
 import 'package:moview/services.dart';
 import 'package:moview/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
 
 class GenresPage extends StatefulWidget {
   @override
@@ -106,7 +104,7 @@ class _MovieGenresState extends State<MovieGenres>
                 );
               } else if (snapshot.hasError) {
                 print("*** error: ${snapshot.error.toString()}");
-                TimeOutWidget(
+                return TimeOutWidget(
                   onRefresh: () {
                     setState(() {
                       moview.movieGenresModel = moview.getMovieGenres();
@@ -171,7 +169,7 @@ class _TVShowGenresState extends State<TVShowGenres>
                       );
                     } else if (snapshot.hasError) {
                       print("====== ${snapshot.error.toString()}");
-                      TimeOutWidget(
+                      return TimeOutWidget(
                         onRefresh: () {
                           setState(() {
                             moview.tvShowGenresModel = moview.getTvShowGenres();
