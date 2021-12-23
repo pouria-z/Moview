@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:moview/services.dart';
-import 'package:moview/screens/search/search_results_page.dart';
 import 'package:moview/models/search_model.dart';
+import 'package:moview/screens/search/search_results_page.dart';
+import 'package:moview/services.dart';
 import 'package:moview/widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +22,7 @@ class _SearchPageState extends State<SearchPage> {
       builder: (context, value, child) {
         return Scaffold(
           appBar: AppBar(
+            backgroundColor: Theme.of(context).primaryColor,
             leading: BackButton(
               onPressed: () {
                 FocusScope.of(context).unfocus();
@@ -38,6 +39,7 @@ class _SearchPageState extends State<SearchPage> {
                         });
                       },
                       icon: Icon(Icons.clear),
+                      tooltip: "Clear",
                     ),
             ],
             title: TextField(
@@ -51,13 +53,18 @@ class _SearchPageState extends State<SearchPage> {
                 }
               },
               onSubmitted: (value) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SearchResultsPage(
-                        searchInput: _textEditingController.text),
-                  ),
-                );
+                if (_textEditingController.text.isEmpty) {
+                  moviewSnackBar(context,
+                      response: "Please enter Movie/TV Show name");
+                } else {
+                  fadeNavigator(
+                    context,
+                    newPage: SearchResultsPage(
+                      searchInput: _textEditingController.text,
+                    ),
+                    duration: 500,
+                  );
+                }
               },
               autofocus: true,
               controller: _textEditingController,
@@ -76,7 +83,10 @@ class _SearchPageState extends State<SearchPage> {
               }
               if (_textEditingController.text.length < 3) {
                 return Center(
-                  child: Text("type something"),
+                  child: Text(
+                    "Type something",
+                    style: TextStyle(color: Colors.white54),
+                  ),
                 );
               }
               if (snapshot.hasError) {
@@ -89,33 +99,37 @@ class _SearchPageState extends State<SearchPage> {
               }
               if (snapshot.data!.results.isEmpty) {
                 return Center(
-                  child: Text("nothing found :("),
+                  child: Text(
+                    "Oops! Nothing found :(",
+                    style: TextStyle(color: Colors.white54),
+                  ),
                 );
               }
               return ListView(
                 physics: BouncingScrollPhysics(),
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
                 children: [
                   suggestionCardGridView(
                     context,
                     data: snapshot.data!.results,
                     type: 'movie',
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: MaterialButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SearchResultsPage(
-                                searchInput: _textEditingController.text),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        "see all results for movies and tv shows",
-                        style: TextStyle(color: Colors.white54),
-                      ),
+                  MaterialButton(
+                    onPressed: () {
+                      fadeNavigator(
+                        context,
+                        newPage: SearchResultsPage(
+                          searchInput: _textEditingController.text,
+                        ),
+                        duration: 500,
+                      );
+                    },
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    child: Text(
+                      "see all results for movies and tv shows",
+                      style: TextStyle(color: Colors.white54),
                     ),
                   ),
                 ],

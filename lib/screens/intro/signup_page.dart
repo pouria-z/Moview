@@ -29,7 +29,7 @@ class _SignUpPageState extends State<SignUpPage> {
   void initState() {
     super.initState();
     recognizer.onTap = () {
-      animationNavigator(
+      fadeNavigator(
         context,
         newPage: LoginPage(),
         duration: 500,

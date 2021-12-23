@@ -10,7 +10,6 @@ import 'package:moview/screens/details/movie_details_page.dart';
 import 'package:moview/screens/details/tvshow_details_page.dart';
 import 'package:moview/screens/genre/genre_details_page.dart';
 import 'package:moview/services.dart';
-import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class TimeOutWidget extends StatelessWidget {
@@ -181,7 +180,7 @@ ListView moviewGenreList(AsyncSnapshot snapshot,
         child: InkWell(
           splashColor: Theme.of(context).colorScheme.primary,
           onTap: () {
-            animationNavigator(
+            fadeNavigator(
               context,
               duration: 400,
               newPage: GenreDetails(
@@ -221,7 +220,7 @@ ListView moviewGenreList(AsyncSnapshot snapshot,
   );
 }
 
-Future<dynamic> animationNavigator(BuildContext context,
+fadeNavigator(BuildContext context,
     {required Widget newPage, required int duration}) {
   return Navigator.push(
     context,
@@ -231,6 +230,28 @@ Future<dynamic> animationNavigator(BuildContext context,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: animation,
+          child: child,
+        );
+      },
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return newPage;
+      },
+    ),
+  );
+}
+
+Future<dynamic> sharedAxisNavigator(BuildContext context,
+    {required Widget newPage, required int duration}) {
+  return Navigator.push(
+    context,
+    PageRouteBuilder(
+      transitionDuration: Duration(milliseconds: duration),
+      reverseTransitionDuration: Duration(milliseconds: duration),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return SharedAxisTransition(
+          animation: animation,
+          secondaryAnimation: secondaryAnimation,
+          transitionType: SharedAxisTransitionType.horizontal,
           child: child,
         );
       },
@@ -435,62 +456,94 @@ Future<dynamic> animationTransition(BuildContext context, newPage) {
 class MoviewSuggestionCard extends StatelessWidget {
   final String imageUrl;
   final String title;
+  final String year;
   final double? rating;
 
   const MoviewSuggestionCard(
-      {required this.imageUrl, required this.title, required this.rating});
+      {required this.imageUrl,
+      required this.title,
+      required this.rating,
+      required this.year});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      elevation: 5,
-      shadowColor: Colors.black,
-      child: Row(
-        children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width / 25,
-          ),
-          CachedNetworkImage(
-            imageUrl: "https://image.tmdb.org/t/p/w500$imageUrl",
-            progressIndicatorBuilder: (context, url, progress) {
-              return Shimmer.fromColors(
-                child: Container(
-                  height: MediaQuery.of(context).size.height / 7.5,
-                  width: MediaQuery.of(context).size.width / 5.5,
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                ),
-                baseColor: Theme.of(context).scaffoldBackgroundColor,
-                highlightColor: Color(0xFF383838),
-              );
-            },
-            errorWidget: (context, url, error) => Icon(Iconsax.danger5),
-            fadeInDuration: Duration(
-              milliseconds: 500,
-            ),
-            height: MediaQuery.of(context).size.height / 7.5,
-            width: MediaQuery.of(context).size.width / 5.5,
-          ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width / 15,
-          ),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AutoSizeText(
-                  title,
-                  textAlign: TextAlign.left,
-                  style: TextStyle(fontSize: 18),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(rating.toString()),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      child: PhysicalModel(
+        color: Colors.transparent,
+        elevation: 5,
+        borderRadius: BorderRadius.circular(25),
+        shadowColor: Colors.black,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(7),
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF2A3155),
+                Color(0xFF1F2339),
+                Color(0xFF1F2339),
               ],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
             ),
-          )
-        ],
+          ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 25,
+              ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(5),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 2),
+                  child: CachedNetworkImage(
+                    imageUrl: "https://image.tmdb.org/t/p/w500$imageUrl",
+                    fit: BoxFit.cover,
+                    progressIndicatorBuilder: (context, url, progress) {
+                      return Shimmer.fromColors(
+                        child: Container(
+                          height: MediaQuery.of(context).size.height / 7.5,
+                          width: MediaQuery.of(context).size.width / 5.5,
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                        ),
+                        baseColor: Theme.of(context).scaffoldBackgroundColor,
+                        highlightColor: Color(0xFF2A3155),
+                      );
+                    },
+                    errorWidget: (context, url, error) => Icon(Iconsax.danger5),
+                    fadeInDuration: Duration(
+                      milliseconds: 500,
+                    ),
+                    height: MediaQuery.of(context).size.height / 7.5,
+                    width: MediaQuery.of(context).size.width / 5.5,
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 15,
+              ),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AutoSizeText(
+                      "$title ($year)",
+                      textAlign: TextAlign.left,
+                      style: GoogleFonts.raleway(fontSize: 16),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      rating.toString(),
+                      style: GoogleFonts.balooBhaijaan(fontSize: 16),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -499,7 +552,6 @@ class MoviewSuggestionCard extends StatelessWidget {
 // for search page
 Widget suggestionCardGridView(context,
     {required List data, required String type}) {
-  var moview = Provider.of<Moview>(context, listen: false);
   return GridView.builder(
     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
       crossAxisCount: 1,
@@ -523,6 +575,7 @@ Widget suggestionCardGridView(context,
             title: model.title,
             imageUrl: model.posterPath,
             rating: model.voteAverage,
+            year: model.releaseDate,
           );
         },
         openBuilder: (context, action) {
@@ -547,10 +600,10 @@ Widget suggestionCardGridView(context,
   );
 }
 
-ScaffoldFeatureController message(context, response) {
+ScaffoldFeatureController moviewSnackBar(context, {required String response}) {
   return ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      content: Text(response.toString()),
+      content: Text(response),
     ),
   );
 }

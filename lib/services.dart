@@ -342,7 +342,7 @@ class Moview with ChangeNotifier {
       showBottom = false;
       //Invalid session. Logout
       await currentUser.logout();
-      message(context, 'something went wrong! please login again.');
+      moviewSnackBar(context, response: 'something went wrong! please login again.');
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -368,12 +368,12 @@ class Moview with ChangeNotifier {
     try {
       response = await user.signUp().timeout(Duration(seconds: 10));
     } on TimeoutException catch (e) {
-      message(context, 'something went wrong. please try again!');
+      moviewSnackBar(context, response: 'something went wrong. please try again!');
       registerIsLoading = false;
       notifyListeners();
       throw e;
     } on SocketException catch (e) {
-      message(context, 'something went wrong. please try again!');
+      moviewSnackBar(context, response: 'something went wrong. please try again!');
       registerIsLoading = false;
       notifyListeners();
       throw e;
@@ -407,10 +407,10 @@ class Moview with ChangeNotifier {
       );
     } else if (response.error!.code == -1) {
       print(response.error!.message);
-      message(context, "Check your connection");
+      moviewSnackBar(context, response: "Check your connection");
     } else {
       print(response.error!.message);
-      message(context, response.error!.message);
+      moviewSnackBar(context, response: response.error!.message.toString());
     }
     registerIsLoading = false;
     notifyListeners();
@@ -427,12 +427,12 @@ class Moview with ChangeNotifier {
     try {
       response = await user.login().timeout(Duration(seconds: 10));
     } on TimeoutException catch (e) {
-      message(context, 'something went wrong. please try again!');
+      moviewSnackBar(context, response: 'something went wrong. please try again!');
       loginIsLoading = false;
       notifyListeners();
       throw e;
     } on SocketException catch (e) {
-      message(context, 'something went wrong. please try again!');
+      moviewSnackBar(context, response: 'something went wrong. please try again!');
       loginIsLoading = false;
       notifyListeners();
       throw e;
@@ -447,10 +447,10 @@ class Moview with ChangeNotifier {
           ));
     } else if (response.error!.code == -1) {
       print(response.error!.message);
-      message(context, "Check your connection");
+      moviewSnackBar(context, response: "Check your connection");
     } else {
       print(response.error!.message);
-      message(context, response.error!.message);
+      moviewSnackBar(context, response: response.error!.message.toString());
     }
     loginIsLoading = false;
     notifyListeners();
@@ -466,10 +466,10 @@ class Moview with ChangeNotifier {
     try {
       response = await user.logout().timeout(Duration(seconds: 10));
     } on TimeoutException catch (e) {
-      message(context, 'something went wrong! please try again.');
+      moviewSnackBar(context, response: 'something went wrong! please try again.');
       throw e;
     } on SocketException catch (e) {
-      message(context, 'something went wrong! please try again.');
+      moviewSnackBar(context, response: 'something went wrong! please try again.');
       throw e;
     }
     if (response.success) {
@@ -487,10 +487,10 @@ class Moview with ChangeNotifier {
       );
     } else if (response.error!.code == -1) {
       print(response.error!.message);
-      message(context, "Check your connection");
+      moviewSnackBar(context, response: "Check your connection");
     } else {
       print(response.error!.message);
-      message(context, response.error!.message);
+      moviewSnackBar(context, response: response.error!.message.toString());
     }
     notifyListeners();
   }
@@ -507,12 +507,12 @@ class Moview with ChangeNotifier {
       response =
           await user.requestPasswordReset().timeout(Duration(seconds: 10));
     } on TimeoutException catch (e) {
-      message(context, 'something went wrong. please try again!');
+      moviewSnackBar(context, response: 'something went wrong. please try again!');
       resetPasswordIsLoading = false;
       notifyListeners();
       throw e;
     } on SocketException catch (e) {
-      message(context, 'something went wrong. please try again!');
+      moviewSnackBar(context, response: 'something went wrong. please try again!');
       resetPasswordIsLoading = false;
       notifyListeners();
       throw e;
@@ -546,7 +546,7 @@ class Moview with ChangeNotifier {
       );
     } else {
       print(response.error);
-      message(context, 'Cannot find a user with this email address.');
+      moviewSnackBar(context, response: 'Cannot find a user with this email address.');
     }
     resetPasswordIsLoading = false;
     notifyListeners();

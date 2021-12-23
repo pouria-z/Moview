@@ -41,11 +41,10 @@ class _TrendingPageState extends State<TrendingPage> {
             title: "Search",
             action: IconButton(
               onPressed: () {
-                Navigator.push(
+                sharedAxisNavigator(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => SearchPage(),
-                  ),
+                  newPage: SearchPage(),
+                  duration: 500,
                 );
               },
               icon: Icon(Iconsax.search_normal_1),

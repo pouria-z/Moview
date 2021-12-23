@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:moview/services.dart';
-import 'package:moview/screens/details/movie_details_page.dart';
-import 'package:moview/screens/details/tvshow_details_page.dart';
 import 'package:moview/models/search_model.dart';
+import 'package:moview/services.dart';
 import 'package:moview/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -33,9 +31,13 @@ class _SearchResultsPageState extends State<SearchResultsPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
         title: Text("Results for ${widget.searchInput}"),
         bottom: TabBar(
           controller: _tabController,
+          indicatorColor: Colors.orangeAccent,
+          labelColor: Colors.orangeAccent,
+          unselectedLabelColor: Colors.grey,
           tabs: [
             Tab(
               text: "Movies",
@@ -131,20 +133,25 @@ class _SearchMoviesResultsPageState extends State<SearchMoviesResultsPage>
                 if (snapshot.data!.results.isEmpty) {
                   return Center(
                     child: Text(
-                        "There is no result for ${widget.searchInput} in movies!"),
+                      "There is no result for ${widget.searchInput} in movies!",
+                      style: TextStyle(color: Colors.white54),
+                    ),
                   );
                 } else {
                   moviesData = snapshot.data!.results;
-                  return moviewGridView(
-                    context,
-                    moview,
-                    height: MediaQuery.of(context).size.height / 3,
-                    mainAxisExtent: MediaQuery.of(context).size.height / 3,
-                    itemsInRow: 2,
-                    scrollDirection: Axis.vertical,
-                    scrollController: _scrollController,
-                    data: moviesData,
-                    type: 'movie',
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5),
+                    child: moviewGridView(
+                      context,
+                      moview,
+                      height: MediaQuery.of(context).size.height / 3,
+                      mainAxisExtent: MediaQuery.of(context).size.height / 2.7,
+                      itemsInRow: 2,
+                      scrollDirection: Axis.vertical,
+                      scrollController: _scrollController,
+                      data: moviesData,
+                      type: 'movie',
+                    ),
                   );
                 }
               },
@@ -229,20 +236,25 @@ class _SearchTvShowsResultsPageState extends State<SearchTvShowsResultsPage>
                 if (snapshot.data!.results.isEmpty) {
                   return Center(
                     child: Text(
-                        "There is no result for ${widget.searchInput} in TV Shows!"),
+                      "There is no result for ${widget.searchInput} in TV Shows!",
+                      style: TextStyle(color: Colors.white54),
+                    ),
                   );
                 } else {
                   tvShowsData = snapshot.data!.results;
-                  return moviewGridView(
-                    context,
-                    moview,
-                    height: MediaQuery.of(context).size.height / 3,
-                    mainAxisExtent: MediaQuery.of(context).size.height / 3,
-                    itemsInRow: 2,
-                    scrollDirection: Axis.vertical,
-                    scrollController: _scrollController,
-                    data: tvShowsData,
-                    type: 'tv',
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5),
+                    child: moviewGridView(
+                      context,
+                      moview,
+                      height: MediaQuery.of(context).size.height / 3,
+                      mainAxisExtent: MediaQuery.of(context).size.height / 2.7,
+                      itemsInRow: 2,
+                      scrollDirection: Axis.vertical,
+                      scrollController: _scrollController,
+                      data: tvShowsData,
+                      type: 'tv',
+                    ),
                   );
                 }
               },
