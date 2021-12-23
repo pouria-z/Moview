@@ -50,10 +50,10 @@ class MoviewApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData.dark().copyWith(
           scaffoldBackgroundColor: Color(0xFF161B2D),
+          dialogBackgroundColor: Color(0xFF161B2D),
           primaryColor: Color(0xFF1C213B),
           colorScheme: ColorScheme.dark().copyWith(
             secondary: Colors.orange.shade700,
-            primary: Color(0xFF36367C),
           ),
           textTheme: GoogleFonts.comfortaaTextTheme().copyWith(
             bodyText1: GoogleFonts.comfortaa(color: Colors.white),

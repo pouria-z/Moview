@@ -5,7 +5,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:moview/screens/favorites_page.dart';
 import 'package:moview/screens/genre/genres_page.dart';
 import 'package:moview/screens/intro/login_page.dart';
-import 'package:moview/screens/profile_page.dart';
+import 'package:moview/screens/profile/profile_page.dart';
 import 'package:moview/screens/search/trending_page.dart';
 import 'package:moview/services.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';

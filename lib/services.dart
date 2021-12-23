@@ -28,9 +28,9 @@ class Moview with ChangeNotifier {
   bool showBottom = true;
 
   ///Parse User
-  var username;
-  var email;
-  var password;
+  String? username;
+  String? email;
+  String? password;
 
   ///Get Favorites
   var favoriteNumbers;
@@ -456,7 +456,11 @@ class Moview with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> logout(context) async {
+  bool logoutIsLoading = false;
+
+  Future logout(context) async {
+    logoutIsLoading = true;
+    notifyListeners();
     username = null;
     password = null;
     email = null;
@@ -467,18 +471,21 @@ class Moview with ChangeNotifier {
       response = await user.logout().timeout(Duration(seconds: 10));
     } on TimeoutException catch (e) {
       moviewSnackBar(context, response: 'something went wrong! please try again.');
+      logoutIsLoading = false;
+      notifyListeners();
       throw e;
     } on SocketException catch (e) {
       moviewSnackBar(context, response: 'something went wrong! please try again.');
+      logoutIsLoading = false;
+      notifyListeners();
       throw e;
     }
     if (response.success) {
       showBottom = false;
       favoriteNumbers = null;
-      dbMediaIdList.clear();
-      dbMediaNameList.clear();
-      dbYearList.clear();
       print('user logged out successfully');
+      logoutIsLoading = false;
+      notifyListeners();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

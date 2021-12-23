@@ -178,7 +178,7 @@ ListView moviewGenreList(AsyncSnapshot snapshot,
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 5),
         child: InkWell(
-          splashColor: Theme.of(context).colorScheme.primary,
+          splashColor: Color(0xFF36367C),
           onTap: () {
             fadeNavigator(
               context,
