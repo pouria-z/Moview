@@ -246,12 +246,10 @@ class Moview with ChangeNotifier {
   Future idSetting(int id, String type) async {
     isFave = null;
     object = null;
-    print("getting query...");
     QueryBuilder<ParseObject> query =
         QueryBuilder<ParseObject>(ParseObject('Favorites'))
           ..whereEqualTo("mediaId", id);
     final response = await query.find();
-    print("got the query");
     if (response.isNotEmpty) {
       object = response.single.objectId;
       isFave = true;
@@ -287,8 +285,6 @@ class Moview with ChangeNotifier {
       ..set('isFavorite', isFavorite)
       ..setACL(acl);
     final response = await data.save();
-    print(response.statusCode);
-    print(response.error);
     objectId = (response.results!.first as ParseObject).objectId!;
     print('$type with $objectId objectId saved successfully!');
     notifyListeners();

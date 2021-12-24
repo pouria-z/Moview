@@ -266,7 +266,6 @@ class MoviewCard extends StatelessWidget {
   final double? rating;
   final int id;
   final double? height;
-  final String year;
 
   const MoviewCard({
     required this.height,
@@ -274,7 +273,6 @@ class MoviewCard extends StatelessWidget {
     required this.title,
     required this.rating,
     required this.id,
-    required this.year,
   });
 
   @override
@@ -342,7 +340,7 @@ class MoviewCard extends StatelessWidget {
                       child: Material(
                         color: Colors.transparent,
                         child: AutoSizeText(
-                          "$title ($year)",
+                          title,
                           textAlign: TextAlign.center,
                           style: GoogleFonts.raleway(fontSize: 16),
                           maxLines: 2,
@@ -402,7 +400,7 @@ Widget moviewGridView(
               context,
               TVShowDetails(
                 id: model.id,
-                title: model.title,
+                title: "${model.title} (${model.releaseDate})",
                 posterPath: model.posterPath,
               ),
             );
@@ -411,7 +409,7 @@ Widget moviewGridView(
               context,
               MovieDetails(
                 id: model.id,
-                title: model.title,
+                title: "${model.title} (${model.releaseDate})",
                 posterPath: model.posterPath,
               ),
             );
@@ -421,9 +419,8 @@ Widget moviewGridView(
           height: height,
           id: model.id,
           imageUrl: model.posterPath,
-          title: model.title,
+          title: "${model.title} (${model.releaseDate})",
           rating: model.voteAverage,
-          year: model.releaseDate,
         ),
       );
     },
@@ -454,14 +451,12 @@ Future<dynamic> animationTransition(BuildContext context, newPage) {
 class MoviewSuggestionCard extends StatelessWidget {
   final String imageUrl;
   final String title;
-  final String year;
   final double? rating;
 
   const MoviewSuggestionCard(
       {required this.imageUrl,
       required this.title,
-      required this.rating,
-      required this.year});
+      required this.rating});
 
   @override
   Widget build(BuildContext context) {
@@ -526,7 +521,7 @@ class MoviewSuggestionCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AutoSizeText(
-                      "$title ($year)",
+                      title,
                       textAlign: TextAlign.left,
                       style: GoogleFonts.raleway(fontSize: 16),
                       maxLines: 2,
@@ -570,10 +565,9 @@ Widget suggestionCardGridView(context,
         transitionType: ContainerTransitionType.fade,
         closedBuilder: (context, action) {
           return MoviewSuggestionCard(
-            title: model.title,
+            title: "${model.title} (${model.releaseDate})",
             imageUrl: model.posterPath,
             rating: model.voteAverage,
-            year: model.releaseDate,
           );
         },
         openBuilder: (context, action) {
@@ -581,14 +575,14 @@ Widget suggestionCardGridView(context,
             FocusScope.of(context).unfocus();
             return TVShowDetails(
               id: model.id,
-              title: model.title,
+              title: "${model.title} (${model.releaseDate})",
               posterPath: model.posterPath,
             );
           } else {
             FocusScope.of(context).unfocus();
             return MovieDetails(
               id: model.id,
-              title: model.title,
+              title: "${model.title} (${model.releaseDate})",
               posterPath: model.posterPath,
             );
           }

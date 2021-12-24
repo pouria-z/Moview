@@ -3,7 +3,6 @@ class MovieDetailsModel {
     required this.backdropPath,
     required this.genres,
     required this.id,
-    required this.originalLanguage,
     required this.overview,
     required this.posterPath,
     required this.productionCountries,
@@ -16,28 +15,26 @@ class MovieDetailsModel {
     required this.voteCount,
   });
 
-  String backdropPath;
-  List<Genre> genres;
-  int id;
-  String originalLanguage;
-  String overview;
-  String posterPath;
+  String backdropPath; // used
+  List<Genre> genres; // used
+  int id; // used
+  String overview; // used
+  String posterPath; // used
   List<ProductionCountry> productionCountries;
-  String releaseDate;
+  String releaseDate; // used
   int runtime;
-  List<SpokenLanguage> spokenLanguages;
-  String tagline;
-  String title;
-  double voteAverage;
-  int voteCount;
+  List<SpokenLanguage> spokenLanguages; // used
+  String tagline; // used
+  String title; // used
+  double voteAverage; //used
+  int voteCount; //used
 
   factory MovieDetailsModel.fromJson(Map<String, dynamic> json) =>
       MovieDetailsModel(
         backdropPath: json["backdrop_path"] ?? "",
         genres: List<Genre>.from(json["genres"].map((x) => Genre.fromJson(x))),
         id: json["id"],
-        originalLanguage: json["original_language"],
-        overview: json["overview"],
+        overview: json["overview"] ?? "",
         posterPath: json["poster_path"] ?? "",
         productionCountries: List<ProductionCountry>.from(
             json["production_countries"]
@@ -48,8 +45,8 @@ class MovieDetailsModel {
             json["spoken_languages"].map((x) => SpokenLanguage.fromJson(x))),
         tagline: json["tagline"] ?? "",
         title: json["title"],
-        voteAverage: json["vote_average"].toDouble(),
-        voteCount: json["vote_count"],
+        voteAverage: json["vote_average"].toDouble() ?? 0.0,
+        voteCount: json["vote_count"] ?? 0,
       );
 }
 

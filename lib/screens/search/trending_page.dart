@@ -109,7 +109,7 @@ class _TrendingPageState extends State<TrendingPage> {
                                     context,
                                     MovieDetails(
                                       id: trendingMovie.id,
-                                      title: trendingMovie.title,
+                                      title: "${trendingMovie.title} (${trendingMovie.releaseDate})",
                                       posterPath: trendingMovie.posterPath,
                                     ),
                                   );
@@ -120,10 +120,9 @@ class _TrendingPageState extends State<TrendingPage> {
                                     height:
                                         MediaQuery.of(context).size.height / 3,
                                     imageUrl: trendingMovie.posterPath,
-                                    title: trendingMovie.title,
+                                    title: "${trendingMovie.title} (${trendingMovie.releaseDate})",
                                     rating: trendingMovie.voteAverage,
                                     id: trendingMovie.id,
-                                    year: trendingMovie.releaseDate,
                                   ),
                                 ),
                               );
@@ -185,7 +184,7 @@ class _TrendingPageState extends State<TrendingPage> {
                                     context,
                                     TVShowDetails(
                                       id: trendingTvShow.id,
-                                      title: trendingTvShow.title,
+                                      title: "${trendingTvShow.title} (${trendingTvShow.releaseDate})",
                                       posterPath: trendingTvShow.posterPath,
                                     ),
                                   );
@@ -196,10 +195,9 @@ class _TrendingPageState extends State<TrendingPage> {
                                     height:
                                         MediaQuery.of(context).size.height / 3,
                                     imageUrl: trendingTvShow.posterPath,
-                                    title: trendingTvShow.title,
+                                    title: "${trendingTvShow.title} (${trendingTvShow.releaseDate})",
                                     rating: trendingTvShow.voteAverage,
                                     id: trendingTvShow.id,
-                                    year: trendingTvShow.releaseDate,
                                   ),
                                 ),
                               );
