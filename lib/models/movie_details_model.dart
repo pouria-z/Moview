@@ -15,19 +15,19 @@ class MovieDetailsModel {
     required this.voteCount,
   });
 
-  String backdropPath; // used
-  List<Genre> genres; // used
-  int id; // used
-  String overview; // used
-  String posterPath; // used
+  String backdropPath;
+  List<Genre> genres;
+  int id;
+  String overview;
+  String posterPath;
   List<ProductionCountry> productionCountries;
-  String releaseDate; // used
+  String releaseDate;
   int runtime;
-  List<SpokenLanguage> spokenLanguages; // used
-  String tagline; // used
-  String title; // used
-  double voteAverage; //used
-  int voteCount; //used
+  List<SpokenLanguage> spokenLanguages;
+  String tagline;
+  String title;
+  double voteAverage;
+  int voteCount;
 
   factory MovieDetailsModel.fromJson(Map<String, dynamic> json) =>
       MovieDetailsModel(
