@@ -348,9 +348,19 @@ class MoviewCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Text(
-                      rating.toString(),
-                      style: GoogleFonts.balooBhaijaan(fontSize: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.star_rounded,
+                          color: Colors.amber,
+                          size: 18,
+                        ),
+                        Text(
+                          rating.toString(),
+                          style: GoogleFonts.balooBhaijaan(fontSize: 16),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -454,9 +464,7 @@ class MoviewSuggestionCard extends StatelessWidget {
   final double? rating;
 
   const MoviewSuggestionCard(
-      {required this.imageUrl,
-      required this.title,
-      required this.rating});
+      {required this.imageUrl, required this.title, required this.rating});
 
   @override
   Widget build(BuildContext context) {
@@ -527,9 +535,18 @@ class MoviewSuggestionCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    Text(
-                      rating.toString(),
-                      style: GoogleFonts.balooBhaijaan(fontSize: 16),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.star_rounded,
+                          color: Colors.amber,
+                          size: 16,
+                        ),
+                        Text(
+                          " ${rating.toString()}",
+                          style: GoogleFonts.balooBhaijaan(fontSize: 16),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -542,7 +559,6 @@ class MoviewSuggestionCard extends StatelessWidget {
   }
 }
 
-// for search page
 Widget suggestionCardGridView(context,
     {required List data, required String type}) {
   return GridView.builder(
@@ -590,6 +606,36 @@ Widget suggestionCardGridView(context,
       );
     },
   );
+}
+
+class MoviewRichText extends StatelessWidget {
+  const MoviewRichText({
+    required this.title,
+    required this.description,
+  });
+
+  final String title;
+  final String description;
+
+  @override
+  Widget build(BuildContext context) {
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: title,
+            style: GoogleFonts.merriweather(
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+          TextSpan(
+            text: description,
+            style: GoogleFonts.merriweather(),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 ScaffoldFeatureController moviewSnackBar(context, {required String response}) {

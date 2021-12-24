@@ -291,6 +291,7 @@ class _MovieDetailsState extends State<MovieDetails> {
                                             ),
                                             Text(
                                               "${movie.voteCount.toString()} people have voted",
+                                              textAlign: TextAlign.center,
                                               style: GoogleFonts.roboto(
                                                 color: Colors.white54,
                                                 fontSize: 10,
@@ -353,8 +354,6 @@ class _MovieDetailsState extends State<MovieDetails> {
                                                     id: widget.id,
                                                     type: 'movie',
                                                     title: widget.title,
-                                                    releaseDate:
-                                                        movie.releaseDate,
                                                     posterPath:
                                                         widget.posterPath,
                                                     isFavorite: isFavorite,
@@ -405,87 +404,28 @@ class _MovieDetailsState extends State<MovieDetails> {
                                   ),
                             movie.releaseDate == ""
                                 ? Container()
-                                : RichText(
-                                    text: TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: "Release Date: ",
-                                          style: GoogleFonts.merriweather(
-                                            color: theme.colorScheme.secondary,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: movie.releaseDate
-                                              .replaceRange(4, 5, "/")
-                                              .replaceRange(7, 8, "/"),
-                                          style: GoogleFonts.merriweather(),
-                                        ),
-                                      ],
-                                    ),
+                                : MoviewRichText(
+                                    title: "Release Date: ",
+                                    description: movie.releaseDate
+                                        .replaceRange(4, 5, "/")
+                                        .replaceRange(7, 8, "/"),
                                   ),
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: "Overview: ",
-                                    style: GoogleFonts.merriweather(
-                                      color: theme.colorScheme.secondary,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: movie.overview,
-                                    style: GoogleFonts.merriweather(),
-                                  ),
-                                ],
-                              ),
+                            MoviewRichText(
+                              title: "Overview: ",
+                              description: movie.overview,
                             ),
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: "\nSpoken Languages: ",
-                                    style: GoogleFonts.merriweather(
-                                      color: theme.colorScheme.secondary,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: spokenLanguages.join(", "),
-                                    style: GoogleFonts.merriweather(),
-                                  ),
-                                ],
-                              ),
+                            MoviewRichText(
+                              title: "\nSpoken Languages: ",
+                              description: spokenLanguages.join(", "),
                             ),
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: "Production Country: ",
-                                    style: GoogleFonts.merriweather(
-                                      color: theme.colorScheme.secondary,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: countries.join(", "),
-                                    style: GoogleFonts.merriweather(),
-                                  ),
-                                ],
-                              ),
+                            MoviewRichText(
+                              title: "Production Country: ",
+                              description: countries.join(", "),
                             ),
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: "Runtime: ",
-                                    style: GoogleFonts.merriweather(
-                                      color: theme.colorScheme.secondary,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: "${movie.runtime.toString()} minutes",
-                                    style: GoogleFonts.merriweather(),
-                                  ),
-                                ],
-                              ),
+                            MoviewRichText(
+                              title: "Episode Runtime: ",
+                              description:
+                                  "${movie.runtime.toString()} minutes",
                             ),
                           ],
                         ),

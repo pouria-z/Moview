@@ -266,7 +266,6 @@ class Moview with ChangeNotifier {
     required int id,
     required String type,
     required String title,
-    required String releaseDate,
     required String posterPath,
     required bool isFavorite,
   }) async {
@@ -280,7 +279,6 @@ class Moview with ChangeNotifier {
       ..set('mediaId', id)
       ..set('type', type)
       ..set('title', title)
-      ..set('releaseDate', releaseDate)
       ..set('posterPath', imageUrl + posterPath)
       ..set('isFavorite', isFavorite)
       ..setACL(acl);

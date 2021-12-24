@@ -6,7 +6,6 @@ class TvShowDetailsModel {
     required this.firstAirDate,
     required this.genres,
     required this.id,
-    required this.lastAirDate,
     required this.title,
     required this.networks,
     required this.numberOfEpisodes,
@@ -27,7 +26,6 @@ class TvShowDetailsModel {
   String firstAirDate;
   List<Genre> genres;
   int id;
-  String lastAirDate;
   String title;
   List<Network> networks;
   int numberOfEpisodes;
@@ -43,21 +41,20 @@ class TvShowDetailsModel {
 
   factory TvShowDetailsModel.fromJson(Map<String, dynamic> json) =>
       TvShowDetailsModel(
-        backdropPath: json["backdrop_path"],
+        backdropPath: json["backdrop_path"] ?? "",
         createdBy: List<CreatedBy>.from(
             json["created_by"].map((x) => CreatedBy.fromJson(x))),
         episodeRunTime: List<int>.from(json["episode_run_time"].map((x) => x)),
         firstAirDate: json["first_air_date"],
         genres: List<Genre>.from(json["genres"].map((x) => Genre.fromJson(x))),
         id: json["id"],
-        lastAirDate: json["last_air_date"],
         title: json["name"],
         networks: List<Network>.from(
             json["networks"].map((x) => Network.fromJson(x))),
-        numberOfEpisodes: json["number_of_episodes"],
-        numberOfSeasons: json["number_of_seasons"],
+        numberOfEpisodes: json["number_of_episodes"] ?? 0,
+        numberOfSeasons: json["number_of_seasons"] ?? 0,
         overview: json["overview"],
-        posterPath: json["poster_path"],
+        posterPath: json["poster_path"] ?? "",
         productionCountries: List<ProductionCountry>.from(
             json["production_countries"]
                 .map((x) => ProductionCountry.fromJson(x))),
@@ -65,9 +62,9 @@ class TvShowDetailsModel {
             List<Season>.from(json["seasons"].map((x) => Season.fromJson(x))),
         spokenLanguages: List<SpokenLanguage>.from(
             json["spoken_languages"].map((x) => SpokenLanguage.fromJson(x))),
-        tagline: json["tagline"],
-        voteAverage: json["vote_average"].toDouble(),
-        voteCount: json["vote_count"],
+        tagline: json["tagline"] ?? "",
+        voteAverage: json["vote_average"].toDouble() ?? 0.0,
+        voteCount: json["vote_count"] ?? 0,
       );
 }
 
