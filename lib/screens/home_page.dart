@@ -14,18 +14,18 @@ import 'package:provider/provider.dart';
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
+  static late PersistentTabController controller;
 }
 
 class _HomePageState extends State<HomePage> {
   Connectivity connectivity = Connectivity();
   ConnectivityResult _connectivityResult = ConnectivityResult.wifi;
-  late PersistentTabController _controller;
 
   @override
   void initState() {
     super.initState();
     var moview = Provider.of<Moview>(context, listen: false);
-    _controller = PersistentTabController(initialIndex: 0);
+    HomePage.controller = PersistentTabController(initialIndex: 0);
     connectivity.onConnectivityChanged.listen((result) {
       setState(() {
         this._connectivityResult = result;
@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       FavoritesPage(),
                     ],
-                    controller: _controller,
+                    controller: HomePage.controller,
                     items: [
                       PersistentBottomNavBarItem(
                         icon: Icon(Iconsax.grid_2),

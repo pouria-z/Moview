@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:moview/screens/home_page.dart';
 import 'package:moview/screens/profile/about_page.dart';
 import 'package:moview/services.dart';
 import 'package:moview/widgets.dart';
@@ -98,7 +99,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     title: Text("Favorites"),
                     trailing: Icon(Iconsax.arrow_right_34),
-                    onTap: () {},
+                    onTap: () {
+                      HomePage.controller.jumpToTab(3);
+                    },
                   ),
                   ListTile(
                     leading: Icon(
