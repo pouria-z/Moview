@@ -77,7 +77,7 @@ class _TrendingPageState extends State<TrendingPage> {
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return SizedBox(
-                          height: MediaQuery.of(context).size.height / 2.7,
+                          height: MediaQuery.of(context).size.height / 3,
                           child: TrendingLoading(),
                         );
                       }
@@ -152,7 +152,7 @@ class _TrendingPageState extends State<TrendingPage> {
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return SizedBox(
-                          height: MediaQuery.of(context).size.height / 2.7,
+                          height: MediaQuery.of(context).size.height / 3,
                           child: TrendingLoading(),
                         );
                       }
@@ -161,8 +161,8 @@ class _TrendingPageState extends State<TrendingPage> {
                         return TimeOutWidget(
                           onRefresh: () {
                             setState(() {
-                              moview.trendingMoviesModel =
-                                  moview.getTrendingMovies();
+                              moview.trendingTvShowsModel =
+                                  moview.getTrendingTvShows();
                             });
                           },
                         );

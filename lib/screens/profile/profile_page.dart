@@ -50,7 +50,6 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
               child: Column(
-                // mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IntrinsicHeight(
                     child: Row(
