@@ -78,6 +78,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     height: 50,
                   ),
                   ListTile(
+                    leading: Icon(
+                      Iconsax.message,
+                      color: Colors.white38,
+                    ),
                     title: Text("Email:"),
                     subtitle: Text(
                       widget.email.toString(),
@@ -89,21 +93,95 @@ class _ProfilePageState extends State<ProfilePage> {
                         Theme.of(context).colorScheme.secondary.withAlpha(60),
                   ),
                   ListTile(
+                    leading: Icon(
+                      Iconsax.heart,
+                      color: Colors.white38,
+                    ),
                     title: Text("Favorites"),
                     trailing: Icon(Iconsax.arrow_right_34),
                     onTap: () {},
                   ),
                   ListTile(
+                    leading: Icon(
+                      Iconsax.key,
+                      color: Colors.white38,
+                    ),
                     title: Text("Reset Your Password"),
                     trailing: Icon(Iconsax.arrow_right_34),
-                    onTap: () {},
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            title: Text(
+                              "Reset Password",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            content: Text(
+                              "We will send you a reset password link to your "
+                              "email address.\nAre you sure you want to do this?",
+                              style: GoogleFonts.roboto(color: Colors.white60),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  "Cancel",
+                                  style:
+                                      GoogleFonts.roboto(color: Colors.white60),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  await moview.resetPassword(
+                                    context,
+                                    emailAddress: widget.email.toString(),
+                                  );
+                                },
+                                child: Text(
+                                  "Send Reset Link",
+                                  style: GoogleFonts.roboto(color: Colors.red),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
                   ),
                   ListTile(
+                    leading: Icon(
+                      Iconsax.info_circle,
+                      color: Colors.white38,
+                    ),
+                    title: Text("About"),
+                    trailing: Icon(Iconsax.arrow_right_34),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                          builder: (context) => AboutPage(),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(
+                      Iconsax.logout_1,
+                      color: Colors.red.withAlpha(120),
+                    ),
                     title: Text(
                       "Logout",
                       style: TextStyle(color: Colors.red),
                     ),
-                    trailing: Icon(Iconsax.arrow_right_34),
+                    trailing: Icon(
+                      Iconsax.arrow_right_34,
+                      color: Colors.red,
+                    ),
                     onTap: () {
                       showDialog(
                         context: context,
@@ -144,54 +222,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         },
                       );
                     },
-                  ),
-                  ListTile(
-                    title: Text("About"),
-                    trailing: Icon(Iconsax.arrow_right_34),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        CupertinoPageRoute(
-                          builder: (context) => AboutPage(),
-                        ),
-                      );
-                    },
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return Theme(
-                            data: ThemeData.dark().copyWith(
-                              cardColor: Color(0xFF161B2D),
-                              colorScheme: ColorScheme.dark().copyWith(
-                                secondary: Colors.orange.shade700,
-                                surface: Color(0xFF1C213B),
-                              ),
-                            ),
-                            child: LicensePage(
-                              applicationVersion: "1.0.0",
-                              applicationName: "Moview",
-                              applicationLegalese:
-                                  "© Copyright 2021 Pouria Zeinalzadeh.",
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    icon: Icon(Icons.search),
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text("logout"),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      moview.resetPassword(context,
-                          emailAddress: widget.email.toString());
-                    },
-                    child: Text("reset password"),
                   ),
                 ],
               ),

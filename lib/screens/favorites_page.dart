@@ -20,6 +20,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
     super.initState();
     var moview = Provider.of<Moview>(context, listen: false);
     Future.delayed(Duration.zero, () async {
+      moview.hasUserLogged(context);
       moview.favoritesModel = moview.getFavorites();
     });
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {

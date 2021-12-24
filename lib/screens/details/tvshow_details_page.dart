@@ -29,6 +29,7 @@ class _TVShowDetailsState extends State<TVShowDetails> {
     print("tv show id: ${widget.id}");
     var moview = Provider.of<Moview>(context, listen: false);
     Future.delayed(Duration.zero, () async {
+      moview.hasUserLogged(context);
       moview.tvShowDetailsModel = moview.getTvShowDetails(widget.id);
       await moview.idSetting(widget.id, 'tv');
       isFavorite = moview.isFave;

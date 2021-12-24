@@ -25,6 +25,7 @@ class _TrendingPageState extends State<TrendingPage> {
     super.initState();
     var moview = Provider.of<Moview>(context, listen: false);
     Future.delayed(Duration.zero, () async {
+      moview.hasUserLogged(context);
       moview.trendingMoviesModel = moview.getTrendingMovies();
       moview.trendingTvShowsModel = moview.getTrendingTvShows();
     });

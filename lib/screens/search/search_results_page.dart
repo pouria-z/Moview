@@ -21,6 +21,7 @@ class _SearchResultsPageState extends State<SearchResultsPage>
   @override
   void initState() {
     super.initState();
+    Provider.of<Moview>(context).hasUserLogged(context);
     _tabController = TabController(
       length: 2,
       vsync: this,

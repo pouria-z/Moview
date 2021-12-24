@@ -32,6 +32,7 @@ class _GenreDetailsState extends State<GenreDetails> {
   Future getData({bool isRefresh = false}) async {
     var moview = Provider.of<Moview>(context, listen: false);
     if (isRefresh) {
+      moview.hasUserLogged(context);
       moview.genreResultPage = 1;
     } else {
       if (moview.genreResultPage >= moview.genreResultTotalPages) {
@@ -44,6 +45,7 @@ class _GenreDetailsState extends State<GenreDetails> {
     if (isRefresh) {
       data = response.results;
     } else {
+      moview.hasUserLogged(context);
       data.addAll(response.results);
     }
     moview.genreResultPage++;

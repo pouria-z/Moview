@@ -90,10 +90,6 @@ class _HomePageState extends State<HomePage> {
                         inactiveColorPrimary: Colors.grey,
                       ),
                       PersistentBottomNavBarItem(
-                        onPressed: (ctx) {
-                          moview.hasUserLogged(context);
-                          _controller.jumpToTab(2);
-                        },
                         icon: Icon(Iconsax.user),
                         activeColorPrimary:
                             Theme.of(context).colorScheme.secondary,
