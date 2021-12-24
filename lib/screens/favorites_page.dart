@@ -23,15 +23,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
       moview.hasUserLogged(context);
       moview.favoritesModel = moview.getFavorites();
     });
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      if (moview.favoriteListIsLoading == false) {
-        setState(() {
-          moview.getFavorites();
-        });
-      } else {
-        return null;
-      }
-    });
   }
 
   @override

@@ -8,7 +8,6 @@ import 'package:moview/key.dart';
 import 'package:moview/models/favorites_model.dart';
 import 'package:moview/models/genre_result_model.dart';
 import 'package:moview/models/genres_model.dart';
-import 'package:moview/models/images_model.dart';
 import 'package:moview/models/movie_details_model.dart';
 import 'package:moview/models/search_model.dart';
 import 'package:moview/models/trending_model.dart';
@@ -247,23 +246,16 @@ class Moview with ChangeNotifier {
   Future idSetting(int id, String type) async {
     isFave = null;
     object = null;
-    // set id for media in database
-    String _url = "$_apiUrl/$type/$id?api_key=$apiKey&language=en-US";
-    ParseUser user = await ParseUser.currentUser();
-    final _userId = user.objectId;
-    var _uniqueId = _userId.toString() + type + id.toString() + _url;
-    uniqueId = _uniqueId.hashCode;
-    // find if the movie/tv is marked as favorite or not
+    print("getting query...");
     QueryBuilder<ParseObject> query =
-        QueryBuilder<ParseObject>(ParseObject('favorites'))
-          ..whereEqualTo('uniqueId', uniqueId);
+        QueryBuilder<ParseObject>(ParseObject('Favorites'))
+          ..whereEqualTo("mediaId", id);
     final response = await query.find();
+    print("got the query");
     if (response.isNotEmpty) {
       object = response.single.objectId;
-      int dbUniqueId = response.single.get('uniqueId');
-      isFave = response.single.get('isFavorite');
-      print(
-          '$type is in favorite list.\nuniqueId is: $dbUniqueId,\tobjectId is: $object');
+      isFave = true;
+      print('$type is in favorite list.\tobjectId is: $object');
     } else {
       print("this $type is not user's favorite!");
     }
@@ -278,6 +270,7 @@ class Moview with ChangeNotifier {
     required String title,
     required String releaseDate,
     required String posterPath,
+    required bool isFavorite,
   }) async {
     // set security
     ParseUser user = await ParseUser.currentUser();
@@ -285,16 +278,17 @@ class Moview with ChangeNotifier {
     acl.setPublicReadAccess(allowed: false);
     acl.setPublicWriteAccess(allowed: false);
     // set movie/tv data to database
-    final data = ParseObject('favorites')
-      ..set('id', id)
-      ..set('uniqueId', uniqueId)
+    final data = ParseObject('Favorites')
+      ..set('mediaId', id)
       ..set('type', type)
       ..set('title', title)
       ..set('releaseDate', releaseDate)
       ..set('posterPath', imageUrl + posterPath)
-      ..set('isFavorite', isFave)
+      ..set('isFavorite', isFavorite)
       ..setACL(acl);
     final response = await data.save();
+    print(response.statusCode);
+    print(response.error);
     objectId = (response.results!.first as ParseObject).objectId!;
     print('$type with $objectId objectId saved successfully!');
     notifyListeners();
@@ -302,7 +296,7 @@ class Moview with ChangeNotifier {
 
   Future unsetFavorite() async {
     // delete complete row in database
-    final data = ParseObject('favorites')
+    final data = ParseObject('Favorites')
       ..objectId = object
       ..delete();
     await data.save();
@@ -342,7 +336,8 @@ class Moview with ChangeNotifier {
       showBottom = false;
       //Invalid session. Logout
       await currentUser.logout();
-      moviewSnackBar(context, response: 'something went wrong! please login again.');
+      moviewSnackBar(context,
+          response: 'something went wrong! please login again.');
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -368,12 +363,14 @@ class Moview with ChangeNotifier {
     try {
       response = await user.signUp().timeout(Duration(seconds: 10));
     } on TimeoutException catch (e) {
-      moviewSnackBar(context, response: 'something went wrong. please try again!');
+      moviewSnackBar(context,
+          response: 'something went wrong. please try again!');
       registerIsLoading = false;
       notifyListeners();
       throw e;
     } on SocketException catch (e) {
-      moviewSnackBar(context, response: 'something went wrong. please try again!');
+      moviewSnackBar(context,
+          response: 'something went wrong. please try again!');
       registerIsLoading = false;
       notifyListeners();
       throw e;
@@ -427,12 +424,14 @@ class Moview with ChangeNotifier {
     try {
       response = await user.login().timeout(Duration(seconds: 10));
     } on TimeoutException catch (e) {
-      moviewSnackBar(context, response: 'something went wrong. please try again!');
+      moviewSnackBar(context,
+          response: 'something went wrong. please try again!');
       loginIsLoading = false;
       notifyListeners();
       throw e;
     } on SocketException catch (e) {
-      moviewSnackBar(context, response: 'something went wrong. please try again!');
+      moviewSnackBar(context,
+          response: 'something went wrong. please try again!');
       loginIsLoading = false;
       notifyListeners();
       throw e;
@@ -461,21 +460,20 @@ class Moview with ChangeNotifier {
   Future logout(context) async {
     logoutIsLoading = true;
     notifyListeners();
-    username = null;
-    password = null;
-    email = null;
     print('logging out...');
     var user = ParseUser(username, password, email);
     late ParseResponse response;
     try {
       response = await user.logout().timeout(Duration(seconds: 10));
     } on TimeoutException catch (e) {
-      moviewSnackBar(context, response: 'something went wrong! please try again.');
+      moviewSnackBar(context,
+          response: 'something went wrong! please try again.');
       logoutIsLoading = false;
       notifyListeners();
       throw e;
     } on SocketException catch (e) {
-      moviewSnackBar(context, response: 'something went wrong! please try again.');
+      moviewSnackBar(context,
+          response: 'something went wrong! please try again.');
       logoutIsLoading = false;
       notifyListeners();
       throw e;
@@ -514,12 +512,14 @@ class Moview with ChangeNotifier {
       response =
           await user.requestPasswordReset().timeout(Duration(seconds: 10));
     } on TimeoutException catch (e) {
-      moviewSnackBar(context, response: 'something went wrong. please try again!');
+      moviewSnackBar(context,
+          response: 'something went wrong. please try again!');
       resetPasswordIsLoading = false;
       notifyListeners();
       throw e;
     } on SocketException catch (e) {
-      moviewSnackBar(context, response: 'something went wrong. please try again!');
+      moviewSnackBar(context,
+          response: 'something went wrong. please try again!');
       resetPasswordIsLoading = false;
       notifyListeners();
       throw e;
@@ -553,7 +553,8 @@ class Moview with ChangeNotifier {
       );
     } else {
       print(response.error);
-      moviewSnackBar(context, response: 'Cannot find a user with this email address.');
+      moviewSnackBar(context,
+          response: 'Cannot find a user with this email address.');
     }
     resetPasswordIsLoading = false;
     notifyListeners();

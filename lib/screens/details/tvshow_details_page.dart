@@ -188,20 +188,22 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                                 });
                                 await moview
                                     .idSetting(widget.id, 'tv')
-                                    .timeout(Duration(seconds: 5),
-                                        onTimeout: () {
-                                  setState(() {
-                                    isFavorite == null
-                                        ? isFavorite = true
-                                        : isFavorite = null;
-                                    moview.isFave = isFavorite;
-                                  });
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('something went wrong!'),
-                                    ),
-                                  );
-                                });
+                                    .timeout(Duration(seconds: 7),
+                                    onTimeout: () {
+                                      setState(() {
+                                        isFavorite == null
+                                            ? isFavorite = true
+                                            : isFavorite = null;
+                                        moview.isFave = isFavorite;
+                                      });
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content:
+                                          Text('something went wrong!'),
+                                        ),
+                                      );
+                                    });
                                 if (moview.isFave == null) {
                                   setState(() {
                                     moview.isFave = isFavorite;
@@ -212,6 +214,7 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                                     title: widget.title,
                                     releaseDate: tvShow.firstAirDate,
                                     posterPath: widget.posterPath,
+                                    isFavorite: isFavorite,
                                   );
                                 } else if (moview.isFave == true) {
                                   setState(() {

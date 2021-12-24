@@ -141,28 +141,26 @@ class GenreListLoading extends StatelessWidget {
 class TrendingLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Shimmer.fromColors(
-        baseColor: Color(0xFF2A3155),
-        highlightColor: Theme.of(context).scaffoldBackgroundColor,
-        direction: ShimmerDirection.ltr,
-        child: ListView.builder(
-          itemCount: 4,
-          physics: BouncingScrollPhysics(),
-          shrinkWrap: true,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) {
-            return Container(
-              height: MediaQuery.of(context).size.height / 3,
-              width: MediaQuery.of(context).size.width / 2,
-              margin: EdgeInsets.symmetric(horizontal: 5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(7),
-                color: Colors.white12,
-              ),
-            );
-          },
-        ),
+    return Shimmer.fromColors(
+      baseColor: Color(0xFF2A3155),
+      highlightColor: Theme.of(context).scaffoldBackgroundColor,
+      direction: ShimmerDirection.ltr,
+      child: ListView.builder(
+        itemCount: 4,
+        physics: BouncingScrollPhysics(),
+        shrinkWrap: true,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (context, index) {
+          return Container(
+            height: MediaQuery.of(context).size.height / 3,
+            width: MediaQuery.of(context).size.width / 2,
+            margin: EdgeInsets.symmetric(horizontal: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(7),
+              color: Colors.white12,
+            ),
+          );
+        },
       ),
     );
   }

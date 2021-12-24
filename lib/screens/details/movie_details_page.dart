@@ -183,7 +183,7 @@ class _MovieDetailsState extends State<MovieDetails> {
                                       });
                                       await moview
                                           .idSetting(widget.id, 'movie')
-                                          .timeout(Duration(seconds: 5),
+                                          .timeout(Duration(seconds: 7),
                                               onTimeout: () {
                                         setState(() {
                                           isFavorite == null
@@ -209,6 +209,7 @@ class _MovieDetailsState extends State<MovieDetails> {
                                           title: widget.title,
                                           releaseDate: movie.releaseDate,
                                           posterPath: widget.posterPath,
+                                          isFavorite: isFavorite,
                                         );
                                       } else if (moview.isFave == true) {
                                         setState(() {
