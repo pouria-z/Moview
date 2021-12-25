@@ -342,7 +342,7 @@ class MoviewCard extends StatelessWidget {
                         child: AutoSizeText(
                           title,
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.raleway(fontSize: 16),
+                          style: GoogleFonts.libreBaskerville(fontSize: 16),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -531,7 +531,7 @@ class MoviewSuggestionCard extends StatelessWidget {
                     AutoSizeText(
                       title,
                       textAlign: TextAlign.left,
-                      style: GoogleFonts.raleway(fontSize: 16),
+                      style: GoogleFonts.libreBaskerville(fontSize: 16),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),

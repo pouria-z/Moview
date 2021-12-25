@@ -100,7 +100,7 @@ class Network {
   String name;
 
   factory Network.fromJson(Map<String, dynamic> json) => Network(
-        name: json["name"],
+        name: json["name"] ?? "",
       );
 }
 
@@ -113,7 +113,7 @@ class ProductionCountry {
 
   factory ProductionCountry.fromJson(Map<String, dynamic> json) =>
       ProductionCountry(
-        name: json["name"],
+        name: json["name"] ?? "",
       );
 }
 

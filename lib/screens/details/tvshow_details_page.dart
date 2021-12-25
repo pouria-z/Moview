@@ -24,6 +24,7 @@ class TVShowDetails extends StatefulWidget {
 
 class _TVShowDetailsState extends State<TVShowDetails> {
   var isFavorite;
+  double height = 1;
 
   @override
   void initState() {
@@ -134,7 +135,9 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                                   color: Colors.transparent,
                                   child: Text(
                                     widget.title,
-                                    style: TextStyle(fontSize: 16),
+                                    style: GoogleFonts.libreBaskerville(
+                                      fontSize: 18,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -324,61 +327,82 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                                             ),
                                             textAlign: TextAlign.center,
                                           ),
-                                          IconButton(
-                                            splashRadius: 22,
-                                            onPressed: () async {
-                                              setState(() {
-                                                isFavorite == null
-                                                    ? isFavorite = true
-                                                    : isFavorite = null;
-                                              });
-                                              await moview
-                                                  .idSetting(widget.id, 'tv')
-                                                  .timeout(Duration(seconds: 7),
-                                                      onTimeout: () {
+                                          AnimatedScale(
+                                            scale: height,
+                                            duration:
+                                                Duration(milliseconds: 300),
+                                            child: IconButton(
+                                              splashRadius: 22,
+                                              onPressed: () async {
+                                                await Future.delayed(
+                                                    Duration(milliseconds: 10),
+                                                    () {
+                                                  setState(() {
+                                                    height = 3;
+                                                  });
+                                                });
+                                                Future.delayed(
+                                                    Duration(milliseconds: 20),
+                                                    () {
+                                                  setState(() {
+                                                    height = 1;
+                                                  });
+                                                });
                                                 setState(() {
                                                   isFavorite == null
                                                       ? isFavorite = true
                                                       : isFavorite = null;
-                                                  moview.isFave = isFavorite;
                                                 });
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                    content: Text(
-                                                        'something went wrong!'),
-                                                  ),
-                                                );
-                                              });
-                                              if (moview.isFave == null) {
-                                                setState(() {
-                                                  moview.isFave = isFavorite;
+                                                await moview
+                                                    .idSetting(widget.id, 'tv')
+                                                    .timeout(
+                                                        Duration(seconds: 7),
+                                                        onTimeout: () {
+                                                  setState(() {
+                                                    isFavorite == null
+                                                        ? isFavorite = true
+                                                        : isFavorite = null;
+                                                    moview.isFave = isFavorite;
+                                                  });
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                          'something went wrong!'),
+                                                    ),
+                                                  );
                                                 });
-                                                await moview.setFavorite(
-                                                  id: widget.id,
-                                                  type: 'tv',
-                                                  title: widget.title,
-                                                  posterPath: widget.posterPath,
-                                                  isFavorite: isFavorite,
-                                                );
-                                              } else if (moview.isFave ==
-                                                  true) {
-                                                setState(() {
-                                                  moview.isFave = isFavorite;
-                                                });
-                                                await moview.unsetFavorite();
-                                              }
-                                            },
-                                            icon: isFavorite == true
-                                                ? Icon(
-                                                    Iconsax.heart5,
-                                                    color: Colors.red,
-                                                  )
-                                                : Icon(
-                                                    Iconsax.heart,
-                                                    color: theme
-                                                        .colorScheme.secondary,
-                                                  ),
+                                                if (moview.isFave == null) {
+                                                  setState(() {
+                                                    moview.isFave = isFavorite;
+                                                  });
+                                                  await moview.setFavorite(
+                                                    id: widget.id,
+                                                    type: 'tv',
+                                                    title: widget.title,
+                                                    posterPath:
+                                                        widget.posterPath,
+                                                    isFavorite: isFavorite,
+                                                  );
+                                                } else if (moview.isFave ==
+                                                    true) {
+                                                  setState(() {
+                                                    moview.isFave = isFavorite;
+                                                  });
+                                                  await moview.unsetFavorite();
+                                                }
+                                              },
+                                              icon: isFavorite == true
+                                                  ? Icon(
+                                                      Iconsax.heart5,
+                                                      color: Colors.red,
+                                                    )
+                                                  : Icon(
+                                                      Iconsax.heart,
+                                                      color: theme.colorScheme
+                                                          .secondary,
+                                                    ),
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -429,7 +453,7 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                             title: "Network: ",
                             description: network.join(", "),
                           ),
-                          MoviewRichText(
+                          tvShow.productionCountries.isEmpty ? Container() : MoviewRichText(
                             title: "Production Country: ",
                             description: countries.join(", "),
                           ),
@@ -437,11 +461,13 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                             title: "Total Episodes: ",
                             description: tvShow.numberOfEpisodes.toString(),
                           ),
-                          MoviewRichText(
-                            title: "Episode Runtime: ",
-                            description:
-                                "${tvShow.episodeRunTime[0].toString()} minutes",
-                          ),
+                          tvShow.episodeRunTime.isEmpty
+                              ? Container()
+                              : MoviewRichText(
+                                  title: "Episode Runtime: ",
+                                  description:
+                                      "${tvShow.episodeRunTime[0].toString()} minutes",
+                                ),
                           Text(
                             "\nSeasons:",
                             style: GoogleFonts.merriweather(
@@ -563,7 +589,7 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                                                     fontSize: 12,
                                                   ),
                                                 ),
-                                                Text(
+                                                season.airDate == "" ? Container() : Text(
                                                   season.airDate
                                                       .replaceRange(4, 5, "/")
                                                       .replaceRange(7, 8, "/"),

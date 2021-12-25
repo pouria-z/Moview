@@ -23,6 +23,7 @@ class MovieDetails extends StatefulWidget {
 
 class _MovieDetailsState extends State<MovieDetails> {
   var isFavorite;
+  double height = 1;
 
   @override
   void initState() {
@@ -47,14 +48,22 @@ class _MovieDetailsState extends State<MovieDetails> {
             appBar: widget.title.characters.length < 30
                 ? AppBar(
                     backgroundColor: theme.primaryColor,
-                    title: Text(widget.title),
+                    title: Text(
+                      widget.title,
+                      style: GoogleFonts.josefinSans(
+                        fontSize: 22,
+                      ),
+                    ),
                   )
                 : AppBar(
                     backgroundColor: theme.primaryColor,
                     flexibleSpace: SafeArea(
                       child: Marquee(
                         text: widget.title,
-                        style: TextStyle(fontSize: 18, color: Colors.white),
+                        style: GoogleFonts.josefinSans(
+                          fontSize: 22,
+                          color: Colors.white
+                        ),
                         scrollAxis: Axis.horizontal,
                         blankSpace: MediaQuery.of(context).size.width / 2,
                         velocity: 100.0,
@@ -134,7 +143,9 @@ class _MovieDetailsState extends State<MovieDetails> {
                                     color: Colors.transparent,
                                     child: Text(
                                       widget.title,
-                                      style: TextStyle(fontSize: 16),
+                                      style: GoogleFonts.libreBaskerville(
+                                        fontSize: 18,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -318,64 +329,90 @@ class _MovieDetailsState extends State<MovieDetails> {
                                               ),
                                               textAlign: TextAlign.center,
                                             ),
-                                            IconButton(
-                                              splashRadius: 22,
-                                              onPressed: () async {
-                                                setState(() {
-                                                  isFavorite == null
-                                                      ? isFavorite = true
-                                                      : isFavorite = null;
-                                                });
-                                                await moview
-                                                    .idSetting(
-                                                        widget.id, 'movie')
-                                                    .timeout(
-                                                        Duration(seconds: 7),
-                                                        onTimeout: () {
+                                            AnimatedScale(
+                                              scale: height,
+                                              duration:
+                                                  Duration(milliseconds: 300),
+                                              child: IconButton(
+                                                splashRadius: 22,
+                                                onPressed: () async {
+                                                  await Future.delayed(
+                                                      Duration(
+                                                          milliseconds: 10),
+                                                      () {
+                                                    setState(() {
+                                                      height = 3;
+                                                    });
+                                                  });
+                                                  Future.delayed(
+                                                      Duration(
+                                                          milliseconds: 20),
+                                                      () {
+                                                    setState(() {
+                                                      height = 1;
+                                                    });
+                                                  });
                                                   setState(() {
                                                     isFavorite == null
                                                         ? isFavorite = true
                                                         : isFavorite = null;
-                                                    moview.isFave = isFavorite;
                                                   });
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                      content: Text(
-                                                          'something went wrong!'),
-                                                    ),
-                                                  );
-                                                });
-                                                if (moview.isFave == null) {
-                                                  setState(() {
-                                                    moview.isFave = isFavorite;
+                                                  await moview
+                                                      .idSetting(
+                                                          widget.id, 'movie')
+                                                      .timeout(
+                                                          Duration(seconds: 7),
+                                                          onTimeout: () {
+                                                    setState(() {
+                                                      isFavorite == null
+                                                          ? isFavorite = true
+                                                          : isFavorite = null;
+                                                      moview.isFave =
+                                                          isFavorite;
+                                                    });
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      SnackBar(
+                                                        content: Text(
+                                                            'something went wrong!'),
+                                                      ),
+                                                    );
                                                   });
-                                                  await moview.setFavorite(
-                                                    id: widget.id,
-                                                    type: 'movie',
-                                                    title: widget.title,
-                                                    posterPath:
-                                                        widget.posterPath,
-                                                    isFavorite: isFavorite,
-                                                  );
-                                                } else if (moview.isFave ==
-                                                    true) {
-                                                  setState(() {
-                                                    moview.isFave = isFavorite;
-                                                  });
-                                                  await moview.unsetFavorite();
-                                                }
-                                              },
-                                              icon: isFavorite == true
-                                                  ? Icon(
-                                                      Iconsax.heart5,
-                                                      color: Colors.red,
-                                                    )
-                                                  : Icon(
-                                                      Iconsax.heart,
-                                                      color: theme.colorScheme
-                                                          .secondary,
-                                                    ),
+                                                  if (moview.isFave == null) {
+                                                    setState(() {
+                                                      moview.isFave =
+                                                          isFavorite;
+                                                    });
+                                                    await moview.setFavorite(
+                                                      id: widget.id,
+                                                      type: 'movie',
+                                                      title: widget.title,
+                                                      posterPath:
+                                                          widget.posterPath,
+                                                      isFavorite: isFavorite,
+                                                    );
+                                                  } else if (moview.isFave ==
+                                                      true) {
+                                                    setState(() {
+                                                      moview.isFave =
+                                                          isFavorite;
+                                                    });
+                                                    await moview
+                                                        .unsetFavorite();
+                                                  }
+                                                },
+                                                icon: isFavorite == true
+                                                    ? Icon(
+                                                        Iconsax.heart5,
+                                                        color: Colors.red,
+                                                      )
+                                                    : Icon(
+                                                        Iconsax.heart,
+                                                        color: theme.colorScheme
+                                                            .secondary,
+                                                      ),
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -418,12 +455,14 @@ class _MovieDetailsState extends State<MovieDetails> {
                               title: "\nSpoken Languages: ",
                               description: spokenLanguages.join(", "),
                             ),
+                            movie.productionCountries.isEmpty
+                                ? Container()
+                                : MoviewRichText(
+                                    title: "Production Country: ",
+                                    description: countries.join(", "),
+                                  ),
                             MoviewRichText(
-                              title: "Production Country: ",
-                              description: countries.join(", "),
-                            ),
-                            MoviewRichText(
-                              title: "Episode Runtime: ",
+                              title: "Runtime: ",
                               description:
                                   "${movie.runtime.toString()} minutes",
                             ),
