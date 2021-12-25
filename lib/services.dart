@@ -559,12 +559,7 @@ class Moview with ChangeNotifier {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginPage(),
-                    ),
-                  );
+                  Navigator.pop(context);
                 },
                 child: Text("Ok"),
               ),

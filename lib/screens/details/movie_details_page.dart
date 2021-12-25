@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
@@ -314,6 +315,8 @@ class _MovieDetailsState extends State<MovieDetails> {
                                       ///add to favorites
                                       Expanded(
                                         child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
                                             Text(
                                               isFavorite == null
@@ -369,14 +372,9 @@ class _MovieDetailsState extends State<MovieDetails> {
                                                       moview.isFave =
                                                           isFavorite;
                                                     });
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                      SnackBar(
-                                                        content: Text(
-                                                            'something went wrong!'),
-                                                      ),
-                                                    );
+                                                    moviewSnackBar(context,
+                                                        response:
+                                                            'something went wrong!');
                                                   });
                                                   if (moview.isFave == null) {
                                                     setState(() {

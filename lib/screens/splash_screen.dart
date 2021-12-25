@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:moview/screens/home_page.dart';
 import 'package:moview/screens/intro/login_page.dart';
 import 'package:moview/services.dart';
@@ -11,8 +12,8 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   ParseResponse? parseResponse;
+
   Future isUserLoggedIn() async {
     ParseUser? currentUser = await ParseUser.currentUser() as ParseUser?;
     if (currentUser == null) {
@@ -20,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
     }
     //Checks whether the user's session token is valid
     parseResponse =
-    await ParseUser.getCurrentUserFromServer(currentUser.sessionToken!);
+        await ParseUser.getCurrentUserFromServer(currentUser.sessionToken!);
   }
 
   @override
@@ -41,7 +42,77 @@ class _SplashScreenState extends State<SplashScreen> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
             body: Center(
-              child: CircularProgressIndicator(),
+              child: Stack(
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "dancingScript",
+                          style: GoogleFonts.dancingScript(
+                            color: Colors.transparent,
+                          ),
+                        ),
+                        TextSpan(
+                          text: "greatVibes",
+                          style: GoogleFonts.greatVibes(
+                            color: Colors.transparent,
+                          ),
+                        ),
+                        TextSpan(
+                          text: "comfortaa",
+                          style: GoogleFonts.comfortaa(
+                            color: Colors.transparent,
+                          ),
+                        ),
+                        TextSpan(
+                          text: "robotoSlab",
+                          style: GoogleFonts.robotoSlab(
+                            color: Colors.transparent,
+                          ),
+                        ),
+                        TextSpan(
+                          text: "josefinSans",
+                          style: GoogleFonts.josefinSans(
+                            color: Colors.transparent,
+                          ),
+                        ),
+                        TextSpan(
+                          text: "libreBaskerville",
+                          style: GoogleFonts.libreBaskerville(
+                            color: Colors.transparent,
+                          ),
+                        ),
+                        TextSpan(
+                          text: "balooBhaijaan",
+                          style: GoogleFonts.balooBhaijaan(
+                            color: Colors.transparent,
+                          ),
+                        ),
+                        TextSpan(
+                          text: "merriweather",
+                          style: GoogleFonts.merriweather(
+                            color: Colors.transparent,
+                          ),
+                        ),
+                        TextSpan(
+                          text: "exo2",
+                          style: GoogleFonts.exo2(
+                            color: Colors.transparent,
+                          ),
+                        ),
+                        TextSpan(
+                          text: "ubuntu",
+                          style: GoogleFonts.ubuntu(
+                            color: Colors.transparent,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Center(child: CircularProgressIndicator()),
+                ],
+              ),
             ),
           );
         } else {

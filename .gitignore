@@ -46,3 +46,4 @@ app.*.map.json
 /android/app/release
 /lib/key.dart
 /android/app/google-services.json
+/android/app/moview.jks
