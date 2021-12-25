@@ -389,6 +389,7 @@ class _MovieDetailsState extends State<MovieDetails> {
                                                       title: widget.title,
                                                       posterPath:
                                                           widget.posterPath,
+                                                      rating: movie.voteAverage,
                                                       isFavorite: isFavorite,
                                                     );
                                                   } else if (moview.isFave ==

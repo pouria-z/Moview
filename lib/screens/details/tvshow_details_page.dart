@@ -382,6 +382,7 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                                                     title: widget.title,
                                                     posterPath:
                                                         widget.posterPath,
+                                                    rating: tvShow.voteAverage,
                                                     isFavorite: isFavorite,
                                                   );
                                                 } else if (moview.isFave ==

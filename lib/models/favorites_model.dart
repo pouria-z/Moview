@@ -8,13 +8,13 @@ class FavoritesResultsModel {
     required this.id,
     required this.type,
     required this.title,
-    required this.year,
     required this.posterPath,
+    required this.rating,
   });
 
   int id;
   String type;
   String title;
-  String year;
   String posterPath;
+  double rating;
 }

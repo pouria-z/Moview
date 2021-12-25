@@ -43,7 +43,6 @@ class Moview with ChangeNotifier {
   List dbMediaNameList = [];
   List dbYearList = [];
   List dbMediaPosterList = [];
-  bool favoriteListIsLoading = false;
 
   List moviesImages = [];
 
@@ -283,6 +282,7 @@ class Moview with ChangeNotifier {
     required String title,
     required String posterPath,
     required bool isFavorite,
+    required double rating,
   }) async {
     // set security
     ParseUser user = await ParseUser.currentUser();
@@ -295,6 +295,7 @@ class Moview with ChangeNotifier {
       ..set('type', type)
       ..set('title', title)
       ..set('posterPath', imageUrl + posterPath)
+      ..set("rating", rating)
       ..set('isFavorite', isFavorite)
       ..setACL(acl);
     final response = await data.save();
@@ -572,11 +573,14 @@ class Moview with ChangeNotifier {
   ///Favorite Page
 
   Future<FavoritesModel>? favoritesModel;
+  bool favoritesIsLoading = false;
 
   Future<FavoritesModel> getFavorites() async {
+    favoritesIsLoading = true;
+    notifyListeners();
     late FavoritesModel _favorites = FavoritesModel(results: []);
     QueryBuilder<ParseObject> queryBuilder =
-        QueryBuilder<ParseObject>(ParseObject('favorites'));
+        QueryBuilder<ParseObject>(ParseObject('Favorites'));
     var i = await queryBuilder.count();
     favoriteNumbers = i.count;
     print('total favorites: $favoriteNumbers');
@@ -593,15 +597,16 @@ class Moview with ChangeNotifier {
       for (var item in json) {
         _favorites.results.add(
           FavoritesResultsModel(
-            id: item["id"],
+            id: item["mediaId"],
             type: item["type"],
             title: item["title"],
-            year: item["year"],
             posterPath: item["posterPath"],
+            rating: item["rating"].toDouble(),
           ),
         );
       }
     }
+    favoritesIsLoading = false;
     notifyListeners();
     return _favorites;
   }
