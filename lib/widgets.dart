@@ -641,7 +641,10 @@ class MoviewRichText extends StatelessWidget {
 ScaffoldFeatureController moviewSnackBar(context, {required String response}) {
   return ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      content: Text(response),
+      content: Text(response, style: TextStyle(color: Colors.white),),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Theme.of(context).colorScheme.secondary,
+      dismissDirection: DismissDirection.horizontal,
     ),
   );
 }

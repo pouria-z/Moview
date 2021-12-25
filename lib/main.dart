@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:moview/key.dart';
 import 'package:moview/screens/home_page.dart';
 import 'package:moview/screens/intro/login_page.dart';
+import 'package:moview/screens/splash_screen.dart';
 import 'package:moview/services.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:provider/provider.dart';
@@ -47,6 +48,7 @@ class MoviewApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => Moview(),
       child: MaterialApp(
+        title: "Moview",
         debugShowCheckedModeBanner: false,
         theme: ThemeData.dark().copyWith(
           scaffoldBackgroundColor: Color(0xFF161B2D),
@@ -58,14 +60,12 @@ class MoviewApp extends StatelessWidget {
           textTheme: GoogleFonts.comfortaaTextTheme().copyWith(
             bodyText1: GoogleFonts.comfortaa(color: Colors.white),
             caption: GoogleFonts.comfortaa(color: Colors.white),
-            subtitle1: GoogleFonts.comfortaa(color: Colors.white),
+            subtitle1: GoogleFonts.roboto(color: Colors.white),
             subtitle2: GoogleFonts.comfortaa(color: Colors.white),
             bodyText2: GoogleFonts.comfortaa(color: Colors.white),
           ),
         ),
-        home: response?.success == null || !response!.success
-            ? LoginPage()
-            : HomePage(),
+        home: SplashScreen(),
       ),
     );
   }

@@ -74,6 +74,17 @@ class Moview with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool>? initialize;
+
+  Future<bool> initial() async {
+    await Future.delayed(Duration(seconds: 2), () async {
+      await getMoviesImages();
+      await getTvShowsImages();
+    });
+    notifyListeners();
+    return true;
+  }
+
   Future<Response> sendRequest(Uri url) async {
     print("starting to send request");
     late Response response;

@@ -50,7 +50,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
             ),
           ),
           body: moview.favoritesIsLoading
-              ? Center(child: CircularProgressIndicator())
+              ? Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 1.5,
+                  ),
+                )
               : _favorites.results.isEmpty
                   ? Center(
                       child: Text("Your favorite list is empty :("),
