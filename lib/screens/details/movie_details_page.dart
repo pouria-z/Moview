@@ -62,7 +62,7 @@ class _MovieDetailsState extends State<MovieDetails> {
                         text: widget.title,
                         style: GoogleFonts.josefinSans(
                           fontSize: 22,
-                          color: Colors.white
+                          color: Colors.white,
                         ),
                         scrollAxis: Axis.horizontal,
                         blankSpace: MediaQuery.of(context).size.width / 2,
@@ -283,8 +283,7 @@ class _MovieDetailsState extends State<MovieDetails> {
                                                   TextSpan(
                                                     text: movie.voteAverage
                                                         .toString(),
-                                                    style:
-                                                        GoogleFonts.montserrat(
+                                                    style: GoogleFonts.exo2(
                                                       fontSize: 28,
                                                       color: theme.colorScheme
                                                           .secondary,

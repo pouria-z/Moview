@@ -100,7 +100,7 @@ class _MovieGenresState extends State<MovieGenres>
                   snapshot,
                   type: 'movie',
                   data: snapshot.data!.movieGenres,
-                  images: moview.images,
+                  images: moview.moviesImages,
                 );
               } else if (snapshot.hasError) {
                 print("*** error: ${snapshot.error.toString()}");
@@ -165,7 +165,7 @@ class _TVShowGenresState extends State<TVShowGenres>
                         snapshot,
                         type: "tv",
                         data: snapshot.data!.tvShowGenres,
-                        images: moview.images,
+                        images: moview.tvShowsImages,
                       );
                     } else if (snapshot.hasError) {
                       print("====== ${snapshot.error.toString()}");

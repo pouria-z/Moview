@@ -45,16 +45,31 @@ class Moview with ChangeNotifier {
   List dbMediaPosterList = [];
   bool favoriteListIsLoading = false;
 
-  List images = [];
+  List moviesImages = [];
 
-  Future getImages() async {
+  Future getMoviesImages() async {
     QueryBuilder<ParseObject> queryBuilder =
         QueryBuilder<ParseObject>(ParseObject('MoviesImages'));
     final response = await queryBuilder.query();
     final json = jsonDecode((response.results).toString());
     if (json != null) {
       for (var item in json) {
-        images.add(item["image"]["url"]);
+        moviesImages.add(item["image"]["url"]);
+      }
+    }
+    notifyListeners();
+  }
+
+  List tvShowsImages = [];
+
+  Future getTvShowsImages() async {
+    QueryBuilder<ParseObject> queryBuilder =
+        QueryBuilder<ParseObject>(ParseObject('TVShowsImages'));
+    final response = await queryBuilder.query();
+    final json = jsonDecode((response.results).toString());
+    if (json != null) {
+      for (var item in json) {
+        tvShowsImages.add(item["image"]["url"]);
       }
     }
     notifyListeners();

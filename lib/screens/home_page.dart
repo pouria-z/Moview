@@ -39,7 +39,8 @@ class _HomePageState extends State<HomePage> {
           systemNavigationBarDividerColor: Theme.of(context).primaryColor,
         ),
       );
-      await moview.getImages();
+      await moview.getMoviesImages();
+      await moview.getTvShowsImages();
       moview.getUser();
       moview.hasUserLogged(context);
     });
