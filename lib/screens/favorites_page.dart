@@ -59,58 +59,72 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   ? Center(
                       child: Text("Your favorite list is empty :("),
                     )
-                  : Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 5),
-                      child: GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 2,
-                          crossAxisSpacing: 10,
-                          mainAxisExtent:
-                              MediaQuery.of(context).size.height / 2.9,
-                        ),
-                        physics: BouncingScrollPhysics(),
-                        scrollDirection: Axis.vertical,
-                        controller: _scrollController,
-                        shrinkWrap: true,
-                        itemCount: _favorites.results.length,
-                        itemBuilder: (context, index) {
-                          var favorite = _favorites.results[index];
-                          return InkWell(
-                            splashColor: Color(0xFF36367C),
-                            borderRadius: BorderRadius.circular(5),
-                            onTap: () {
-                              if (favorite.type == 'tv') {
-                                animationTransition(
-                                  context,
-                                  TVShowDetails(
-                                    id: favorite.id,
-                                    title: favorite.title,
-                                    posterPath: favorite.posterPath,
-                                  ),
-                                );
-                              } else if (favorite.type == 'movie') {
-                                animationTransition(
-                                  context,
-                                  MovieDetails(
-                                    id: favorite.id,
-                                    title: favorite.title,
-                                    posterPath: favorite.posterPath,
-                                  ),
-                                );
-                              }
-                            },
-                            child: MoviewCard(
-                              height: MediaQuery.of(context).size.height / 3,
-                              id: favorite.id,
-                              imageUrl: favorite.posterPath,
-                              title: favorite.title,
-                              rating: favorite.rating,
+                  : moview.timedOut
+                      ? TimeOutWidget(
+                          onRefresh: () async {
+                            setState(() {
+                              moview.favoritesIsLoading = true;
+                            });
+                            _favorites = await moview.getFavorites();
+                            setState(() {
+                              moview.favoritesIsLoading = false;
+                            });
+                          },
+                        )
+                      : Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 5),
+                          child: GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 2,
+                              crossAxisSpacing: 10,
+                              mainAxisExtent:
+                                  MediaQuery.of(context).size.height / 2.9,
                             ),
-                          );
-                        },
-                      ),
-                    ),
+                            physics: BouncingScrollPhysics(),
+                            scrollDirection: Axis.vertical,
+                            controller: _scrollController,
+                            shrinkWrap: true,
+                            itemCount: _favorites.results.length,
+                            itemBuilder: (context, index) {
+                              var favorite = _favorites.results[index];
+                              return InkWell(
+                                splashColor: Color(0xFF36367C),
+                                borderRadius: BorderRadius.circular(5),
+                                onTap: () {
+                                  if (favorite.type == 'tv') {
+                                    animationTransition(
+                                      context,
+                                      TVShowDetails(
+                                        id: favorite.id,
+                                        title: favorite.title,
+                                        posterPath: favorite.posterPath,
+                                      ),
+                                    );
+                                  } else if (favorite.type == 'movie') {
+                                    animationTransition(
+                                      context,
+                                      MovieDetails(
+                                        id: favorite.id,
+                                        title: favorite.title,
+                                        posterPath: favorite.posterPath,
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: MoviewCard(
+                                  height:
+                                      MediaQuery.of(context).size.height / 3,
+                                  id: favorite.id,
+                                  imageUrl: favorite.posterPath,
+                                  title: favorite.title,
+                                  rating: favorite.rating,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
         );
       },
     );
