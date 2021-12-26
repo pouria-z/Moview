@@ -61,9 +61,9 @@ class AboutDeveloper extends StatelessWidget {
               Text(
                 "\nHi my name is Pouria Zeinalzadeh and I'm the developer of Moview app and "
                 "have built this app from scratch.\n\nThe main reason I developed Moview "
-                    "is for my Final Bachelor Project. I'm ${DateTime.now().year - 1999} and I'm majoring in "
-                    "Computer Engineering at West Tehran Azad University and I will be graduated "
-                    "by the end of spring 2022.\n\nThe app is written with Flutter framework and Dart "
+                "is for my Final Bachelor Project. I'm ${DateTime.now().year - 1999} and I'm majoring in "
+                "Computer Engineering at West Tehran Azad University and I will be graduated "
+                "by the end of spring 2022.\n\nThe app is written with Flutter framework and Dart "
                 "programming language and for the backend service, I used Parse framework for authentication and database, "
                 "and The Movie Database (TMDB) for API service.",
                 style: GoogleFonts.roboto(),
@@ -120,7 +120,9 @@ class AboutDeveloper extends StatelessWidget {
                     Text(
                       "Assistant Professor: ",
                       style: GoogleFonts.roboto(
-                          color: Colors.white54, fontSize: 14),
+                        color: Colors.white54,
+                        fontSize: 14,
+                      ),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -130,9 +132,10 @@ class AboutDeveloper extends StatelessWidget {
                       child: Text(
                         "daneshjoo.p@wtiau.ac.ir",
                         style: GoogleFonts.roboto(
-                            color: Colors.blue,
-                            decoration: TextDecoration.underline,
-                            fontSize: 14),
+                          color: Colors.blue,
+                          decoration: TextDecoration.underline,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
                   ],
@@ -149,7 +152,9 @@ class AboutDeveloper extends StatelessWidget {
                     Text(
                       "Student: ",
                       style: GoogleFonts.roboto(
-                          color: Colors.white54, fontSize: 14),
+                        color: Colors.white54,
+                        fontSize: 14,
+                      ),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -159,9 +164,10 @@ class AboutDeveloper extends StatelessWidget {
                       child: Text(
                         "pouria.zeinalzadeh@gmail.com",
                         style: GoogleFonts.roboto(
-                            color: Colors.blue,
-                            decoration: TextDecoration.underline,
-                            fontSize: 14),
+                          color: Colors.blue,
+                          decoration: TextDecoration.underline,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
                   ],
@@ -177,7 +183,9 @@ class AboutDeveloper extends StatelessWidget {
                     Text(
                       "Website: ",
                       style: GoogleFonts.roboto(
-                          color: Colors.white54, fontSize: 14),
+                        color: Colors.white54,
+                        fontSize: 14,
+                      ),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -187,9 +195,10 @@ class AboutDeveloper extends StatelessWidget {
                       child: Text(
                         "pouriazeinalzadeh.web.app",
                         style: GoogleFonts.roboto(
-                            color: Colors.blue,
-                            decoration: TextDecoration.underline,
-                            fontSize: 14),
+                          color: Colors.blue,
+                          decoration: TextDecoration.underline,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
                   ],

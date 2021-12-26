@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:moview/models/favorites_model.dart';
+import 'package:moview/screens/details/movie_details_page.dart';
 import 'package:moview/screens/details/tvshow_details_page.dart';
 import 'package:moview/services.dart';
 import 'package:moview/widgets.dart';
 import 'package:provider/provider.dart';
-
-import 'details/movie_details_page.dart';
 
 class FavoritesPage extends StatefulWidget {
   @override
@@ -90,7 +89,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
                             itemBuilder: (context, index) {
                               var favorite = _favorites.results[index];
                               return InkWell(
-                                splashColor: Color(0xFF36367C),
+                                splashColor:
+                                    Theme.of(context).colorScheme.primary,
                                 borderRadius: BorderRadius.circular(5),
                                 onTap: () {
                                   if (favorite.type == 'tv') {

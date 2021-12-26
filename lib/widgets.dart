@@ -23,13 +23,14 @@ class TimeOutWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text("something went wrong. please try again!"),
+          Text("Something went wrong. Please try again!"),
           TextButton(
-              onPressed: onRefresh,
-              child: Icon(
-                Icons.refresh,
-                color: Colors.grey,
-              )),
+            onPressed: onRefresh,
+            child: Icon(
+              Icons.refresh,
+              color: Colors.grey,
+            ),
+          ),
         ],
       ),
     );
@@ -176,7 +177,7 @@ ListView moviewGenreList(AsyncSnapshot snapshot,
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 5),
         child: InkWell(
-          splashColor: Color(0xFF36367C),
+          splashColor: Theme.of(context).colorScheme.primary,
           onTap: () {
             fadeNavigator(
               context,
@@ -402,7 +403,7 @@ Widget moviewGridView(
     itemBuilder: (context, index) {
       final model = data[index];
       return InkWell(
-        splashColor: Color(0xFF36367C),
+        splashColor: Theme.of(context).colorScheme.primary,
         borderRadius: BorderRadius.circular(7),
         onTap: () {
           if (type == 'tv') {
@@ -641,7 +642,10 @@ class MoviewRichText extends StatelessWidget {
 ScaffoldFeatureController moviewSnackBar(context, {required String response}) {
   return ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      content: Text(response, style: TextStyle(color: Colors.white),),
+      content: Text(
+        response,
+        style: TextStyle(color: Colors.white),
+      ),
       behavior: SnackBarBehavior.floating,
       backgroundColor: Theme.of(context).colorScheme.secondary,
       dismissDirection: DismissDirection.horizontal,

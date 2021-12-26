@@ -74,7 +74,7 @@ class ProductionCountry {
 
   factory ProductionCountry.fromJson(Map<String, dynamic> json) =>
       ProductionCountry(
-        name: json["name"],
+        name: json["name"] ?? "",
       );
 }
 
@@ -86,6 +86,6 @@ class SpokenLanguage {
   String englishName;
 
   factory SpokenLanguage.fromJson(Map<String, dynamic> json) => SpokenLanguage(
-        englishName: json["english_name"],
+        englishName: json["english_name"] ?? "",
       );
 }

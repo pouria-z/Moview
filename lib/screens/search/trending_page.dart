@@ -17,7 +17,6 @@ class TrendingPage extends StatefulWidget {
 }
 
 class _TrendingPageState extends State<TrendingPage> {
-  ScrollController _scrollController = ScrollController();
   bool showSuggestions = false;
 
   @override
@@ -109,7 +108,8 @@ class _TrendingPageState extends State<TrendingPage> {
                                     context,
                                     MovieDetails(
                                       id: trendingMovie.id,
-                                      title: "${trendingMovie.title} (${trendingMovie.releaseDate})",
+                                      title:
+                                          "${trendingMovie.title} (${trendingMovie.releaseDate})",
                                       posterPath: trendingMovie.posterPath,
                                     ),
                                   );
@@ -120,7 +120,8 @@ class _TrendingPageState extends State<TrendingPage> {
                                     height:
                                         MediaQuery.of(context).size.height / 3,
                                     imageUrl: trendingMovie.posterPath,
-                                    title: "${trendingMovie.title} (${trendingMovie.releaseDate})",
+                                    title:
+                                        "${trendingMovie.title} (${trendingMovie.releaseDate})",
                                     rating: trendingMovie.voteAverage,
                                     id: trendingMovie.id,
                                   ),
@@ -184,7 +185,8 @@ class _TrendingPageState extends State<TrendingPage> {
                                     context,
                                     TVShowDetails(
                                       id: trendingTvShow.id,
-                                      title: "${trendingTvShow.title} (${trendingTvShow.releaseDate})",
+                                      title:
+                                          "${trendingTvShow.title} (${trendingTvShow.releaseDate})",
                                       posterPath: trendingTvShow.posterPath,
                                     ),
                                   );
@@ -195,7 +197,8 @@ class _TrendingPageState extends State<TrendingPage> {
                                     height:
                                         MediaQuery.of(context).size.height / 3,
                                     imageUrl: trendingTvShow.posterPath,
-                                    title: "${trendingTvShow.title} (${trendingTvShow.releaseDate})",
+                                    title:
+                                        "${trendingTvShow.title} (${trendingTvShow.releaseDate})",
                                     rating: trendingTvShow.voteAverage,
                                     id: trendingTvShow.id,
                                   ),

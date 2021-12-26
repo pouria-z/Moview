@@ -49,14 +49,22 @@ class _TVShowDetailsState extends State<TVShowDetails> {
           appBar: widget.title.characters.length < 30
               ? AppBar(
                   backgroundColor: theme.primaryColor,
-                  title: Text(widget.title),
+                  title: Text(
+                    widget.title,
+                    style: GoogleFonts.josefinSans(
+                      fontSize: 22,
+                    ),
+                  ),
                 )
               : AppBar(
                   backgroundColor: theme.primaryColor,
                   flexibleSpace: SafeArea(
                     child: Marquee(
                       text: widget.title,
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+                      style: GoogleFonts.josefinSans(
+                        fontSize: 22,
+                        color: Colors.white,
+                      ),
                       scrollAxis: Axis.horizontal,
                       blankSpace: MediaQuery.of(context).size.width / 2,
                       velocity: 100.0,
@@ -314,8 +322,10 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                                     ///add to favorites
                                     Expanded(
                                       child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
                                         children: [
                                           Text(
                                             isFavorite == null
@@ -452,10 +462,12 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                             title: "Network: ",
                             description: network.join(", "),
                           ),
-                          tvShow.productionCountries.isEmpty ? Container() : MoviewRichText(
-                            title: "Production Country: ",
-                            description: countries.join(", "),
-                          ),
+                          tvShow.productionCountries.isEmpty
+                              ? Container()
+                              : MoviewRichText(
+                                  title: "Production Country: ",
+                                  description: countries.join(", "),
+                                ),
                           MoviewRichText(
                             title: "Total Episodes: ",
                             description: tvShow.numberOfEpisodes.toString(),
@@ -477,7 +489,7 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                             height: MediaQuery.of(context).size.height / 3.7,
                             child: ListView.builder(
                               shrinkWrap: true,
-                              itemCount: tvShow.numberOfSeasons,
+                              itemCount: tvShow.seasons.length,
                               scrollDirection: Axis.horizontal,
                               physics: BouncingScrollPhysics(),
                               itemBuilder: (context, index) {
@@ -588,21 +600,25 @@ class _TVShowDetailsState extends State<TVShowDetails> {
                                                     fontSize: 12,
                                                   ),
                                                 ),
-                                                season.airDate == "" ? Container() : Text(
-                                                  season.airDate
-                                                      .replaceRange(4, 5, "/")
-                                                      .replaceRange(7, 8, "/"),
-                                                  style:
-                                                      GoogleFonts.balooBhaijaan(
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
+                                                season.airDate == ""
+                                                    ? Container()
+                                                    : Text(
+                                                        season.airDate
+                                                            .replaceRange(
+                                                                4, 5, "/")
+                                                            .replaceRange(
+                                                                7, 8, "/"),
+                                                        style: GoogleFonts
+                                                            .balooBhaijaan(
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
                                               ],
                                             ),
                                           ),
                                           SizedBox(
                                             height: 2,
-                                          )
+                                          ),
                                         ],
                                       ),
                                     ),

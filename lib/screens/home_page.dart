@@ -49,6 +49,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     var moview = Provider.of<Moview>(context, listen: false);
+    var theme = Theme.of(context);
     return Consumer<Moview>(
       builder: (context, value, child) {
         return _connectivityResult == ConnectivityResult.none
@@ -76,34 +77,26 @@ class _HomePageState extends State<HomePage> {
                     items: [
                       PersistentBottomNavBarItem(
                         icon: Icon(Iconsax.grid_2),
-                        activeColorPrimary:
-                            Theme.of(context).colorScheme.secondary,
-                        activeColorSecondary:
-                            Theme.of(context).colorScheme.secondary,
+                        activeColorPrimary: theme.colorScheme.secondary,
+                        activeColorSecondary: theme.colorScheme.secondary,
                         inactiveColorPrimary: Colors.grey,
                       ),
                       PersistentBottomNavBarItem(
                         icon: Icon(Iconsax.search_normal),
-                        activeColorPrimary:
-                            Theme.of(context).colorScheme.secondary,
-                        activeColorSecondary:
-                            Theme.of(context).colorScheme.secondary,
+                        activeColorPrimary: theme.colorScheme.secondary,
+                        activeColorSecondary: theme.colorScheme.secondary,
                         inactiveColorPrimary: Colors.grey,
                       ),
                       PersistentBottomNavBarItem(
                         icon: Icon(Iconsax.user),
-                        activeColorPrimary:
-                            Theme.of(context).colorScheme.secondary,
-                        activeColorSecondary:
-                            Theme.of(context).colorScheme.secondary,
+                        activeColorPrimary: theme.colorScheme.secondary,
+                        activeColorSecondary: theme.colorScheme.secondary,
                         inactiveColorPrimary: Colors.grey,
                       ),
                       PersistentBottomNavBarItem(
                         icon: Icon(Iconsax.heart),
-                        activeColorPrimary:
-                            Theme.of(context).colorScheme.secondary,
-                        activeColorSecondary:
-                            Theme.of(context).colorScheme.secondary,
+                        activeColorPrimary: theme.colorScheme.secondary,
+                        activeColorSecondary: theme.colorScheme.secondary,
                         inactiveColorPrimary: Colors.grey,
                       ),
                     ],
@@ -117,7 +110,7 @@ class _HomePageState extends State<HomePage> {
                       duration: Duration(milliseconds: 450),
                       curve: Curves.easeInOutQuart,
                     ),
-                    backgroundColor: Theme.of(context).primaryColor,
+                    backgroundColor: theme.primaryColor,
                     hideNavigationBarWhenKeyboardShows: true,
                     navBarStyle: NavBarStyle.style3,
                   )

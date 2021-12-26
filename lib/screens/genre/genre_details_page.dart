@@ -78,9 +78,10 @@ class _GenreDetailsState extends State<GenreDetails> {
                   curve: Curves.fastOutSlowIn,
                 );
               },
-              child: Text(widget.type == 'movie'
-                  ? "Movie | " + widget.name
-                  : "TV Show | " + widget.name,
+              child: Text(
+                widget.type == 'movie'
+                    ? "Movie | " + widget.name
+                    : "TV Show | " + widget.name,
               ),
             ),
           ),

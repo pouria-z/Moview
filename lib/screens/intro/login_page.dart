@@ -215,13 +215,6 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  // TextButton(
-                  //   onPressed: () async {
-                  //     var data = await APIManager().getGenres();
-                  //     print(data.genres[1].name);
-                  //   },
-                  //   child: Text("get genres"),
-                  // ),
                 ],
               ),
             ),

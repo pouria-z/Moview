@@ -44,6 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
             body: Center(
               child: Stack(
                 children: [
+                  // loading fonts
                   RichText(
                     text: TextSpan(
                       children: [
@@ -110,6 +111,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       ],
                     ),
                   ),
+                  // splash screen
                   Center(
                     child: Image.asset(
                       'assets/images/splash.png',

@@ -184,7 +184,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         builder: (context) {
                           return AlertDialog(
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                             title: Text(
                               "Logout",
                               style: TextStyle(color: Colors.white),

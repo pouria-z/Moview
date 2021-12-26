@@ -46,85 +46,172 @@ class _MovieDetailsState extends State<MovieDetails> {
     return Consumer<Moview>(
       builder: (context, value, child) {
         return Scaffold(
-            appBar: widget.title.characters.length < 30
-                ? AppBar(
-                    backgroundColor: theme.primaryColor,
-                    title: Text(
-                      widget.title,
-                      style: GoogleFonts.josefinSans(
-                        fontSize: 22,
-                      ),
-                    ),
-                  )
-                : AppBar(
-                    backgroundColor: theme.primaryColor,
-                    flexibleSpace: SafeArea(
-                      child: Marquee(
-                        text: widget.title,
-                        style: GoogleFonts.josefinSans(
-                          fontSize: 22,
-                          color: Colors.white,
-                        ),
-                        scrollAxis: Axis.horizontal,
-                        blankSpace: MediaQuery.of(context).size.width / 2,
-                        velocity: 100.0,
-                        pauseAfterRound: Duration(seconds: 1),
-                        showFadingOnlyWhenScrolling: false,
-                        fadingEdgeStartFraction: 0.3,
-                        fadingEdgeEndFraction: 0.5,
-                        numberOfRounds: 5,
-                        startPadding: 50.0,
-                        decelerationCurve: Curves.linearToEaseOut,
-                        textDirection: TextDirection.ltr,
-                      ),
+          appBar: widget.title.characters.length < 30
+              ? AppBar(
+                  backgroundColor: theme.primaryColor,
+                  title: Text(
+                    widget.title,
+                    style: GoogleFonts.josefinSans(
+                      fontSize: 22,
                     ),
                   ),
-            body: FutureBuilder<MovieDetailsModel>(
-              future: moview.movieDetailsModel,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return TimeOutWidget(
-                    onRefresh: () {
-                      setState(() {
-                        moview.movieDetailsModel =
-                            moview.getMovieDetails(widget.id);
-                      });
-                    },
-                  );
-                }
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Column(
-                    children: [
-                      Shimmer.fromColors(
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height / 3.5,
-                          alignment: Alignment.topCenter,
-                          color: theme.scaffoldBackgroundColor,
+                )
+              : AppBar(
+                  backgroundColor: theme.primaryColor,
+                  flexibleSpace: SafeArea(
+                    child: Marquee(
+                      text: widget.title,
+                      style: GoogleFonts.josefinSans(
+                        fontSize: 22,
+                        color: Colors.white,
+                      ),
+                      scrollAxis: Axis.horizontal,
+                      blankSpace: MediaQuery.of(context).size.width / 2,
+                      velocity: 100.0,
+                      pauseAfterRound: Duration(seconds: 1),
+                      showFadingOnlyWhenScrolling: false,
+                      fadingEdgeStartFraction: 0.3,
+                      fadingEdgeEndFraction: 0.5,
+                      numberOfRounds: 5,
+                      startPadding: 50.0,
+                      decelerationCurve: Curves.linearToEaseOut,
+                      textDirection: TextDirection.ltr,
+                    ),
+                  ),
+                ),
+          body: FutureBuilder<MovieDetailsModel>(
+            future: moview.movieDetailsModel,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return TimeOutWidget(
+                  onRefresh: () {
+                    setState(() {
+                      moview.movieDetailsModel =
+                          moview.getMovieDetails(widget.id);
+                    });
+                  },
+                );
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Column(
+                  children: [
+                    Shimmer.fromColors(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height / 3.5,
+                        alignment: Alignment.topCenter,
+                        color: theme.scaffoldBackgroundColor,
+                      ),
+                      baseColor: Color(0xFF2A3155),
+                      highlightColor: theme.scaffoldBackgroundColor,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 10,
                         ),
-                        baseColor: Color(0xFF2A3155),
-                        highlightColor: theme.scaffoldBackgroundColor,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
+                        Hero(
+                          tag: widget.posterPath,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(5),
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  "https://image.tmdb.org/t/p/w500${widget.posterPath}",
+                              width: MediaQuery.of(context).size.width / 2.5,
+                              height: MediaQuery.of(context).size.height / 3.7,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Hero(
+                                tag: widget.id,
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: Text(
+                                    widget.title,
+                                    style: GoogleFonts.libreBaskerville(
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                );
+              } else {
+                final movie = snapshot.data!;
+                List spokenLanguages = [];
+                List genres = [];
+                List countries = [];
+                movie.spokenLanguages.forEach((element) {
+                  spokenLanguages.add(element.englishName);
+                });
+                movie.genres.forEach((element) {
+                  genres.add(element.name);
+                });
+                movie.productionCountries.forEach((element) {
+                  countries.add(element.name);
+                });
+                return ListView(
+                  physics: BouncingScrollPhysics(),
+                  // crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ///cover
+                    CachedNetworkImage(
+                      imageUrl:
+                          "https://image.tmdb.org/t/p/original${movie.backdropPath}",
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height / 3.5,
+                      fit: BoxFit.cover,
+                      errorWidget: (context, url, error) =>
+                          Icon(Iconsax.danger5),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
-                            width: 10,
-                          ),
+                          ///poster
                           Hero(
                             tag: widget.posterPath,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(5),
-                              child: CachedNetworkImage(
-                                imageUrl:
-                                    "https://image.tmdb.org/t/p/w500${widget.posterPath}",
-                                width: MediaQuery.of(context).size.width / 2.5,
-                                height:
-                                    MediaQuery.of(context).size.height / 3.7,
-                                fit: BoxFit.cover,
+                            child: PhysicalModel(
+                              color: Colors.transparent,
+                              elevation: 15,
+                              borderRadius: BorderRadius.circular(10),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(5),
+                                child: CachedNetworkImage(
+                                  imageUrl:
+                                      "https://image.tmdb.org/t/p/w500${widget.posterPath}",
+                                  width:
+                                      MediaQuery.of(context).size.width / 2.5,
+                                  height:
+                                      MediaQuery.of(context).size.height / 3.7,
+                                  fit: BoxFit.cover,
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Iconsax.danger5),
+                                ),
                               ),
                             ),
                           ),
@@ -138,6 +225,8 @@ class _MovieDetailsState extends State<MovieDetails> {
                                 SizedBox(
                                   height: 10,
                                 ),
+
+                                ///title
                                 Hero(
                                   tag: widget.id,
                                   child: Material(
@@ -150,328 +239,233 @@ class _MovieDetailsState extends State<MovieDetails> {
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
-                  );
-                } else {
-                  final movie = snapshot.data!;
-                  List spokenLanguages = [];
-                  List genres = [];
-                  List countries = [];
-                  movie.spokenLanguages.forEach((element) {
-                    spokenLanguages.add(element.englishName);
-                  });
-                  movie.genres.forEach((element) {
-                    genres.add(element.name);
-                  });
-                  movie.productionCountries.forEach((element) {
-                    countries.add(element.name);
-                  });
-                  return ListView(
-                    physics: BouncingScrollPhysics(),
-                    // crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ///cover
-                      CachedNetworkImage(
-                        imageUrl:
-                            "https://image.tmdb.org/t/p/original${movie.backdropPath}",
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height / 3.5,
-                        fit: BoxFit.cover,
-                        errorWidget: (context, url, error) =>
-                            Icon(Iconsax.danger5),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ///poster
-                            Hero(
-                              tag: widget.posterPath,
-                              child: PhysicalModel(
-                                color: Colors.transparent,
-                                elevation: 15,
-                                borderRadius: BorderRadius.circular(10),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(5),
-                                  child: CachedNetworkImage(
-                                    imageUrl:
-                                        "https://image.tmdb.org/t/p/w500${widget.posterPath}",
-                                    width:
-                                        MediaQuery.of(context).size.width / 2.5,
-                                    height: MediaQuery.of(context).size.height /
-                                        3.7,
-                                    fit: BoxFit.cover,
-                                    errorWidget: (context, url, error) =>
-                                        Icon(Iconsax.danger5),
+                                SizedBox(
+                                  height: 30,
+                                ),
+
+                                ///genres
+                                Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: "Genres: ",
+                                        style: GoogleFonts.merriweather(
+                                          color: theme.colorScheme.secondary,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: genres.join(", "),
+                                        style: GoogleFonts.merriweather(),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Flexible(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    height: 10,
-                                  ),
 
-                                  ///title
-                                  Hero(
-                                    tag: widget.id,
-                                    child: Material(
-                                      color: Colors.transparent,
-                                      child: Text(
-                                        widget.title,
-                                        style: GoogleFonts.libreBaskerville(
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 30,
-                                  ),
-
-                                  ///genres
-                                  Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: "Genres: ",
-                                          style: GoogleFonts.merriweather(
-                                            color: theme.colorScheme.secondary,
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ///rating
+                                    Expanded(
+                                      child: Column(
+                                        children: [
+                                          Icon(
+                                            Icons.star_rounded,
+                                            color: Colors.amber,
+                                            size: 46,
                                           ),
-                                        ),
-                                        TextSpan(
-                                          text: genres.join(", "),
-                                          style: GoogleFonts.merriweather(),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      ///rating
-                                      Expanded(
-                                        child: Column(
-                                          children: [
-                                            Icon(
-                                              Icons.star_rounded,
-                                              color: Colors.amber,
-                                              size: 46,
-                                            ),
-                                            Text.rich(
-                                              TextSpan(
-                                                children: [
-                                                  TextSpan(
-                                                    text: movie.voteAverage
-                                                        .toString(),
-                                                    style: GoogleFonts.exo2(
-                                                      fontSize: 28,
-                                                      color: theme.colorScheme
-                                                          .secondary,
-                                                    ),
+                                          Text.rich(
+                                            TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: movie.voteAverage
+                                                      .toString(),
+                                                  style: GoogleFonts.exo2(
+                                                    fontSize: 28,
+                                                    color: theme
+                                                        .colorScheme.secondary,
                                                   ),
-                                                  TextSpan(
-                                                    text: "/10",
-                                                    style: GoogleFonts.roboto(
-                                                      color: Colors.white54,
-                                                      fontSize: 14,
-                                                    ),
+                                                ),
+                                                TextSpan(
+                                                  text: "/10",
+                                                  style: GoogleFonts.roboto(
+                                                    color: Colors.white54,
+                                                    fontSize: 14,
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
                                             ),
-                                            Text(
-                                              "${movie.voteCount.toString()} people have voted",
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.roboto(
-                                                color: Colors.white54,
-                                                fontSize: 10,
-                                              ),
+                                          ),
+                                          Text(
+                                            "${movie.voteCount.toString()} people have voted",
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.roboto(
+                                              color: Colors.white54,
+                                              fontSize: 10,
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
+                                    ),
 
-                                      ///add to favorites
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              isFavorite == null
-                                                  ? "Add to your favorites"
-                                                  : "Remove from your favorites",
-                                              style: GoogleFonts.ubuntu(
-                                                fontSize: 12,
-                                                color: isFavorite == null
-                                                    ? theme
-                                                        .colorScheme.secondary
-                                                    : Colors.red,
-                                              ),
-                                              textAlign: TextAlign.center,
+                                    ///add to favorites
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            isFavorite == null
+                                                ? "Add to your favorites"
+                                                : "Remove from your favorites",
+                                            style: GoogleFonts.ubuntu(
+                                              fontSize: 12,
+                                              color: isFavorite == null
+                                                  ? theme.colorScheme.secondary
+                                                  : Colors.red,
                                             ),
-                                            AnimatedScale(
-                                              scale: height,
-                                              duration:
-                                                  Duration(milliseconds: 300),
-                                              child: IconButton(
-                                                splashRadius: 22,
-                                                onPressed: () async {
-                                                  await Future.delayed(
-                                                      Duration(
-                                                          milliseconds: 10),
-                                                      () {
-                                                    setState(() {
-                                                      height = 3;
-                                                    });
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          AnimatedScale(
+                                            scale: height,
+                                            duration:
+                                                Duration(milliseconds: 300),
+                                            child: IconButton(
+                                              splashRadius: 22,
+                                              onPressed: () async {
+                                                await Future.delayed(
+                                                    Duration(milliseconds: 10),
+                                                    () {
+                                                  setState(() {
+                                                    height = 3;
                                                   });
-                                                  Future.delayed(
-                                                      Duration(
-                                                          milliseconds: 20),
-                                                      () {
-                                                    setState(() {
-                                                      height = 1;
-                                                    });
+                                                });
+                                                Future.delayed(
+                                                    Duration(milliseconds: 20),
+                                                    () {
+                                                  setState(() {
+                                                    height = 1;
                                                   });
+                                                });
+                                                setState(() {
+                                                  isFavorite == null
+                                                      ? isFavorite = true
+                                                      : isFavorite = null;
+                                                });
+                                                await moview
+                                                    .idSetting(
+                                                        widget.id, 'movie')
+                                                    .timeout(
+                                                        Duration(seconds: 7),
+                                                        onTimeout: () {
                                                   setState(() {
                                                     isFavorite == null
                                                         ? isFavorite = true
                                                         : isFavorite = null;
+                                                    moview.isFave = isFavorite;
                                                   });
-                                                  await moview
-                                                      .idSetting(
-                                                          widget.id, 'movie')
-                                                      .timeout(
-                                                          Duration(seconds: 7),
-                                                          onTimeout: () {
-                                                    setState(() {
-                                                      isFavorite == null
-                                                          ? isFavorite = true
-                                                          : isFavorite = null;
-                                                      moview.isFave =
-                                                          isFavorite;
-                                                    });
-                                                    moviewSnackBar(context,
-                                                        response:
-                                                            'something went wrong!');
+                                                  moviewSnackBar(context,
+                                                      response:
+                                                          'something went wrong!');
+                                                });
+                                                if (moview.isFave == null) {
+                                                  setState(() {
+                                                    moview.isFave = isFavorite;
                                                   });
-                                                  if (moview.isFave == null) {
-                                                    setState(() {
-                                                      moview.isFave =
-                                                          isFavorite;
-                                                    });
-                                                    await moview.setFavorite(
-                                                      id: widget.id,
-                                                      type: 'movie',
-                                                      title: widget.title,
-                                                      posterPath:
-                                                          widget.posterPath,
-                                                      rating: movie.voteAverage,
-                                                      isFavorite: isFavorite,
-                                                    );
-                                                  } else if (moview.isFave ==
-                                                      true) {
-                                                    setState(() {
-                                                      moview.isFave =
-                                                          isFavorite;
-                                                    });
-                                                    await moview
-                                                        .unsetFavorite();
-                                                  }
-                                                },
-                                                icon: isFavorite == true
-                                                    ? Icon(
-                                                        Iconsax.heart5,
-                                                        color: Colors.red,
-                                                      )
-                                                    : Icon(
-                                                        Iconsax.heart,
-                                                        color: theme.colorScheme
-                                                            .secondary,
-                                                      ),
-                                              ),
+                                                  await moview.setFavorite(
+                                                    id: widget.id,
+                                                    type: 'movie',
+                                                    title: widget.title,
+                                                    posterPath:
+                                                        widget.posterPath,
+                                                    rating: movie.voteAverage,
+                                                    isFavorite: isFavorite,
+                                                  );
+                                                } else if (moview.isFave ==
+                                                    true) {
+                                                  setState(() {
+                                                    moview.isFave = isFavorite;
+                                                  });
+                                                  await moview.unsetFavorite();
+                                                }
+                                              },
+                                              icon: isFavorite == true
+                                                  ? Icon(
+                                                      Iconsax.heart5,
+                                                      color: Colors.red,
+                                                    )
+                                                  : Icon(
+                                                      Iconsax.heart,
+                                                      color: theme.colorScheme
+                                                          .secondary,
+                                                    ),
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            movie.tagline == ""
-                                ? Container()
-                                : Text(
-                                    "${movie.tagline}\n",
-                                    style: GoogleFonts.dancingScript(
-                                      fontSize: 18,
                                     ),
-                                  ),
-                            movie.releaseDate == ""
-                                ? Container()
-                                : MoviewRichText(
-                                    title: "Release Date: ",
-                                    description: movie.releaseDate
-                                        .replaceRange(4, 5, "/")
-                                        .replaceRange(7, 8, "/"),
-                                  ),
-                            MoviewRichText(
-                              title: "Overview: ",
-                              description: movie.overview,
+                                  ],
+                                ),
+                              ],
                             ),
-                            MoviewRichText(
-                              title: "\nSpoken Languages: ",
-                              description: spokenLanguages.join(", "),
-                            ),
-                            movie.productionCountries.isEmpty
-                                ? Container()
-                                : MoviewRichText(
-                                    title: "Production Country: ",
-                                    description: countries.join(", "),
-                                  ),
-                            MoviewRichText(
-                              title: "Runtime: ",
-                              description:
-                                  "${movie.runtime.toString()} minutes",
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  );
-                }
-              },
-            ));
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          movie.tagline == ""
+                              ? Container()
+                              : Text(
+                                  "${movie.tagline}\n",
+                                  style: GoogleFonts.dancingScript(
+                                    fontSize: 18,
+                                  ),
+                                ),
+                          movie.releaseDate == ""
+                              ? Container()
+                              : MoviewRichText(
+                                  title: "Release Date: ",
+                                  description: movie.releaseDate
+                                      .replaceRange(4, 5, "/")
+                                      .replaceRange(7, 8, "/"),
+                                ),
+                          MoviewRichText(
+                            title: "Overview: ",
+                            description: movie.overview,
+                          ),
+                          MoviewRichText(
+                            title: "\nSpoken Languages: ",
+                            description: spokenLanguages.join(", "),
+                          ),
+                          movie.productionCountries.isEmpty
+                              ? Container()
+                              : MoviewRichText(
+                                  title: "Production Country: ",
+                                  description: countries.join(", "),
+                                ),
+                          MoviewRichText(
+                            title: "Runtime: ",
+                            description: "${movie.runtime.toString()} minutes",
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
+        );
       },
     );
   }

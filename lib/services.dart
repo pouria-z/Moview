@@ -21,29 +21,12 @@ import 'package:moview/widgets.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 class Moview with ChangeNotifier {
-  String apiUrl = "api.themoviedb.org";
   String imageUrl = "https://image.tmdb.org/t/p/w500";
   String _apiUrl = "https://api.themoviedb.org/3";
   bool timedOut = false;
   bool showBottom = true;
 
-  ///Parse User
-  String? username;
-  String? email;
-  String? password;
-
-  ///Get Favorites
-  var favoriteNumbers;
-  var dbMediaId;
-  var dbFavoriteType;
-  var dbMediaName;
-  var dbYear;
-  var dbMediaPoster;
-  List dbFavoriteTypeList = [];
-  List dbMediaIdList = [];
-  List dbMediaNameList = [];
-  List dbYearList = [];
-  List dbMediaPosterList = [];
+  // --------------------- initializing --------------------- //
 
   List moviesImages = [];
 
@@ -87,7 +70,7 @@ class Moview with ChangeNotifier {
   }
 
   Future<Response> sendRequest(Uri url) async {
-    print("starting to send request");
+    print("starting to send request...");
     late Response response;
     try {
       response = await get(url).timeout(
@@ -99,6 +82,7 @@ class Moview with ChangeNotifier {
       GenreDetails.refreshController.refreshFailed();
       SearchMoviesResultsPage.refreshController.loadFailed();
       SearchTvShowsResultsPage.refreshController.loadFailed();
+      print("request failed!");
       notifyListeners();
       throw e;
     } on SocketException catch (e) {
@@ -107,11 +91,15 @@ class Moview with ChangeNotifier {
       GenreDetails.refreshController.refreshFailed();
       SearchMoviesResultsPage.refreshController.loadFailed();
       SearchTvShowsResultsPage.refreshController.loadFailed();
+      print("request failed!");
       notifyListeners();
       throw e;
     }
+    print("request completed.");
     return response;
   }
+
+  // --------------------- api service --------------------- //
 
   Future<MovieGenresModel>? movieGenresModel;
 
@@ -122,7 +110,6 @@ class Moview with ChangeNotifier {
     var url =
         Uri.parse('$_apiUrl/genre/movie/list?api_key=$apiKey&language=en-US');
     Response _response = await sendRequest(url);
-    print('request completed!');
     Map<String, dynamic> jsonBody = jsonDecode(_response.body);
     _movieGenresModel = MovieGenresModel.fromJson(jsonBody);
     _movieGenresModel.movieGenres.removeAt(5);
@@ -156,7 +143,6 @@ class Moview with ChangeNotifier {
     timedOut = false;
     notifyListeners();
     late SearchMoviesModel _searchMoviesModel;
-    print("Searching for $searchInput...");
     var url = Uri.parse("$_apiUrl/search/movie?api_key=$apiKey&language=en-US&"
         "page=$searchMoviesPage&query=$searchInput&include_adult=false");
     Response _response = await sendRequest(url);
@@ -225,7 +211,6 @@ class Moview with ChangeNotifier {
         '$_apiUrl/discover/$mediaType?api_key=$apiKey&language=en-US&sort_by=popularity.desc'
         '&include_adult=false&include_video=false&page=$genreResultPage&with_genres=$genreMediaId');
     Response _response = await sendRequest(url);
-    print("request completed!");
     Map<String, dynamic> jsonBody = jsonDecode(_response.body);
     _genreResultModel = GenreResultModel.fromJson(jsonBody, mediaType);
     genreResultTotalPages = _genreResultModel.totalPages;
@@ -263,7 +248,7 @@ class Moview with ChangeNotifier {
     return _tvShowDetailsModel;
   }
 
-  ///Database
+  // --------------------- database --------------------- //
 
   late int uniqueId;
   var object;
@@ -326,7 +311,52 @@ class Moview with ChangeNotifier {
     notifyListeners();
   }
 
-  ///User
+  var favoriteNumbers;
+  Future<FavoritesModel>? favoritesModel;
+  bool favoritesIsLoading = false;
+
+  Future<FavoritesModel> getFavorites() async {
+    favoritesIsLoading = true;
+    notifyListeners();
+    late FavoritesModel _favorites = FavoritesModel(results: []);
+    QueryBuilder<ParseObject> queryBuilder =
+        QueryBuilder<ParseObject>(ParseObject('Favorites'));
+    var i = await queryBuilder.count();
+    favoriteNumbers = i.count;
+    print('total favorites: $favoriteNumbers');
+    late ParseResponse dbResponse;
+    try {
+      dbResponse = await queryBuilder.query();
+    } on SocketException catch (e) {
+      timedOut = true;
+      notifyListeners();
+      throw e;
+    }
+    final json = jsonDecode((dbResponse.results).toString());
+    if (json != null) {
+      for (var item in json) {
+        _favorites.results.add(
+          FavoritesResultsModel(
+            id: item["mediaId"],
+            type: item["type"],
+            title: item["title"],
+            posterPath: item["posterPath"],
+            rating: item["rating"].toDouble(),
+          ),
+        );
+      }
+    }
+    favoritesIsLoading = false;
+    notifyListeners();
+    return _favorites;
+  }
+
+  // --------------------- User service and authentication --------------------- //
+
+  String? username;
+  String? email;
+  String? password;
+
   Future getUser() async {
     timedOut = false;
     // get current user details
@@ -428,10 +458,8 @@ class Moview with ChangeNotifier {
         },
       );
     } else if (response.error!.code == -1) {
-      print(response.error!.message);
       moviewSnackBar(context, response: "Check your connection");
     } else {
-      print(response.error!.message);
       moviewSnackBar(context, response: response.error!.message.toString());
     }
     registerIsLoading = false;
@@ -463,17 +491,15 @@ class Moview with ChangeNotifier {
     }
     if (response.success) {
       showBottom = true;
-      print('user logged in successfully');
+      print('user logged in successfully.');
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => HomePage(),
           ));
     } else if (response.error!.code == -1) {
-      print(response.error!.message);
       moviewSnackBar(context, response: "Check your connection");
     } else {
-      print(response.error!.message);
       moviewSnackBar(context, response: response.error!.message.toString());
     }
     loginIsLoading = false;
@@ -506,7 +532,7 @@ class Moview with ChangeNotifier {
     if (response.success) {
       showBottom = false;
       favoriteNumbers = null;
-      print('user logged out successfully');
+      print('user logged out successfully.');
       logoutIsLoading = false;
       notifyListeners();
       Navigator.pushReplacement(
@@ -516,10 +542,8 @@ class Moview with ChangeNotifier {
         ),
       );
     } else if (response.error!.code == -1) {
-      print(response.error!.message);
       moviewSnackBar(context, response: "Check your connection");
     } else {
-      print(response.error!.message);
       moviewSnackBar(context, response: response.error!.message.toString());
     }
     notifyListeners();
@@ -575,52 +599,10 @@ class Moview with ChangeNotifier {
         },
       );
     } else {
-      print(response.error);
       moviewSnackBar(context,
           response: 'Cannot find a user with this email address.');
     }
     resetPasswordIsLoading = false;
     notifyListeners();
-  }
-
-  ///Favorite Page
-
-  Future<FavoritesModel>? favoritesModel;
-  bool favoritesIsLoading = false;
-
-  Future<FavoritesModel> getFavorites() async {
-    favoritesIsLoading = true;
-    notifyListeners();
-    late FavoritesModel _favorites = FavoritesModel(results: []);
-    QueryBuilder<ParseObject> queryBuilder =
-        QueryBuilder<ParseObject>(ParseObject('Favorites'));
-    var i = await queryBuilder.count();
-    favoriteNumbers = i.count;
-    print('total favorites: $favoriteNumbers');
-    late ParseResponse dbResponse;
-    try {
-      dbResponse = await queryBuilder.query();
-    } on SocketException catch (e) {
-      timedOut = true;
-      notifyListeners();
-      throw e;
-    }
-    final json = jsonDecode((dbResponse.results).toString());
-    if (json != null) {
-      for (var item in json) {
-        _favorites.results.add(
-          FavoritesResultsModel(
-            id: item["mediaId"],
-            type: item["type"],
-            title: item["title"],
-            posterPath: item["posterPath"],
-            rating: item["rating"].toDouble(),
-          ),
-        );
-      }
-    }
-    favoritesIsLoading = false;
-    notifyListeners();
-    return _favorites;
   }
 }
