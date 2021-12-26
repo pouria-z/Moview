@@ -49,7 +49,7 @@ In Profile tab you can see your username and email. You can request to reset you
 Lastly in the Favorite tab, there are all your favorite Movies and TV-Shows listed.
 
 As always the app is written in Flutter. The main purpose of developing Moview is for my Final Bachelor Project.\
-Backend service, database, authentcation: [Parse Framework](https://www.back4app.com/).\
+Backend service, database, authentication: [Parse Framework](https://www.back4app.com/).\
 API service: [The Movie Database (TMDB)](https://www.themoviedb.org/).
 
 ### Assistant Professor: 
