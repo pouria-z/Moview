@@ -70,31 +70,24 @@ class _LoginPageState extends State<LoginPage> {
                   Hero(
                     tag: 'logo',
                     child: SvgPicture.asset(
-                      'assets/images/logo.svg',
-                      height: size.height / 25,
+                      'assets/images/login.svg',
+                      height: MediaQuery.of(context).size.height / 4,
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
                   ),
                   Text(
                     "Welcome back!",
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.dancingScript(
-                      fontSize: 50,
-                      letterSpacing: 2,
+                    style: GoogleFonts.greatVibes(
+                      fontSize: 40,
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
                   ),
                   Text(
                     "You've been missed.",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: 16),
                   ),
                   SizedBox(
-                    height: size.height / 10,
+                    height: size.height / 15,
                   ),
                   Hero(
                     tag: 'username',

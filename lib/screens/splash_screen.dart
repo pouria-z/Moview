@@ -110,7 +110,12 @@ class _SplashScreenState extends State<SplashScreen> {
                       ],
                     ),
                   ),
-                  Center(child: CircularProgressIndicator()),
+                  Center(
+                    child: Image.asset(
+                      'assets/images/splash.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ],
               ),
             ),

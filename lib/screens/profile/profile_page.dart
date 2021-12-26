@@ -98,7 +98,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       color: Colors.white38,
                     ),
                     title: Text("Favorites"),
-                    trailing: Icon(Iconsax.arrow_right_34),
                     onTap: () {
                       HomePage.controller.jumpToTab(3);
                     },
@@ -109,14 +108,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       color: Colors.white38,
                     ),
                     title: Text("Reset Your Password"),
-                    trailing: Icon(Iconsax.arrow_right_34),
                     onTap: () {
                       showDialog(
                         context: context,
                         builder: (context) {
                           return AlertDialog(
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                             title: Text(
                               "Reset Password",
                               style: TextStyle(color: Colors.white),
@@ -161,7 +160,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       color: Colors.white38,
                     ),
                     title: Text("About"),
-                    trailing: Icon(Iconsax.arrow_right_34),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -179,10 +177,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     title: Text(
                       "Logout",
                       style: TextStyle(color: Colors.red),
-                    ),
-                    trailing: Icon(
-                      Iconsax.arrow_right_34,
-                      color: Colors.red,
                     ),
                     onTap: () {
                       showDialog(

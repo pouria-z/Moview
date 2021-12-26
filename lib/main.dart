@@ -1,9 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moview/key.dart';
-import 'package:moview/screens/home_page.dart';
-import 'package:moview/screens/intro/login_page.dart';
 import 'package:moview/screens/splash_screen.dart';
 import 'package:moview/services.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
@@ -20,29 +19,21 @@ void main() async {
     autoSendSessionId: true,
   );
 
-  ParseResponse? parseResponse;
-  Future isUserLoggedIn() async {
-    ParseUser? currentUser = await ParseUser.currentUser() as ParseUser?;
-    if (currentUser == null) {
-      return false;
-    }
-    //Checks whether the user's session token is valid
-    parseResponse =
-        await ParseUser.getCurrentUserFromServer(currentUser.sessionToken!);
-  }
-
-  await isUserLoggedIn();
-
-  runApp(
-    MoviewApp(response: parseResponse),
+  await SystemChrome.setPreferredOrientations(
+    [DeviceOrientation.portraitUp],
   );
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      systemNavigationBarColor: Color(0xFF161B2D),
+      systemNavigationBarDividerColor: Colors.transparent,
+      statusBarColor: Color(0xFF161B2D),
+    ),
+  );
+
+  runApp(MoviewApp());
 }
 
 class MoviewApp extends StatelessWidget {
-  const MoviewApp({this.response});
-
-  final response;
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(

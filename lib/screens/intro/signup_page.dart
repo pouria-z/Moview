@@ -72,16 +72,6 @@ class _SignUpPageState extends State<SignUpPage> {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Hero(
-                        tag: 'logo',
-                        child: SvgPicture.asset(
-                          'assets/images/logo.svg',
-                          height: size.height / 20,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
                       Container(
                         width: size.width,
                         child: FittedBox(
@@ -99,8 +89,12 @@ class _SignUpPageState extends State<SignUpPage> {
                         textAlign: TextAlign.center,
                         style: TextStyle(color: Colors.white70),
                       ),
-                      SizedBox(
-                        height: size.height / 15,
+                      Hero(
+                        tag: 'logo',
+                        child: SvgPicture.asset(
+                          'assets/images/signup.svg',
+                          height: MediaQuery.of(context).size.height / 4.2,
+                        ),
                       ),
                       Hero(
                         tag: 'username',
@@ -249,7 +243,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         child: MoviewButton(
                           title: "Create Account",
                           onPressed: () {
-                            moview.register(
+                            moview.signup(
                               context,
                               username: username,
                               password: password,

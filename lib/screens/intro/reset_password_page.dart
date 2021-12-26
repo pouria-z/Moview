@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moview/screens/intro/login_page.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moview/services.dart';
 import 'package:moview/widgets.dart';
 import 'package:provider/provider.dart';
@@ -31,10 +31,18 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           body: Center(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: ListView(
+                physics: BouncingScrollPhysics(),
                 children: [
-                  Text("Reset Your Password"),
+                  SvgPicture.asset(
+                    'assets/images/forgot-password.svg',
+                    height: MediaQuery.of(context).size.height / 3,
+                  ),
+                  Text(
+                    "Forgot your password? Don't worry! We will help you get a new password.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white54),
+                  ),
                   SizedBox(
                     height: 20,
                   ),
@@ -58,13 +66,15 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   SizedBox(
                     height: 20,
                   ),
-                  MoviewButton(
-                    title: "Send Email",
-                    onPressed: () {
-                      moview.resetPassword(context, emailAddress: resetEmail);
-                    },
-                    isLoading: moview.resetPasswordIsLoading,
-                    enableCondition: resetEmail.trim().isEmpty,
+                  Align(
+                    child: MoviewButton(
+                      title: "Send Email",
+                      onPressed: () {
+                        moview.resetPassword(context, emailAddress: resetEmail);
+                      },
+                      isLoading: moview.resetPasswordIsLoading,
+                      enableCondition: resetEmail.trim().isEmpty,
+                    ),
                   ),
                 ],
               ),

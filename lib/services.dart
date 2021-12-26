@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart';
 import 'package:moview/key.dart';
 import 'package:moview/models/favorites_model.dart';
@@ -77,7 +78,7 @@ class Moview with ChangeNotifier {
   Future<bool>? initialize;
 
   Future<bool> initial() async {
-    await Future.delayed(Duration(seconds: 2), () async {
+    await Future.delayed(Duration.zero, () async {
       await getMoviesImages();
       await getTvShowsImages();
     });
@@ -358,7 +359,7 @@ class Moview with ChangeNotifier {
       //Invalid session. Logout
       await currentUser.logout();
       moviewSnackBar(context,
-          response: 'something went wrong! please login again.');
+          response: 'Something went wrong! Please login again.');
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -372,7 +373,7 @@ class Moview with ChangeNotifier {
 
   bool registerIsLoading = false;
 
-  Future<void> register(context,
+  Future<void> signup(context,
       {required String username,
       required String password,
       required String email}) async {
@@ -401,12 +402,15 @@ class Moview with ChangeNotifier {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text(
-              "Verify your email",
-              style: TextStyle(color: Colors.white),
+            title: SvgPicture.asset(
+              'assets/images/check-email.svg',
+              height: MediaQuery.of(context).size.height / 6,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
             ),
             content: Text(
-                "An email containing a link to verify your email, was sent to $email."),
+                "Please check your email. An email containing a link to verify your email, was sent to $email"),
             actions: [
               TextButton(
                 onPressed: () {
@@ -550,12 +554,15 @@ class Moview with ChangeNotifier {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text(
-              "Check your email",
-              style: TextStyle(color: Colors.white),
+            title: SvgPicture.asset(
+              'assets/images/check-email.svg',
+              height: MediaQuery.of(context).size.height / 6,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
             ),
             content: Text(
-                "An email containing a link to reset your password, was sent to $email."),
+                "Please check your email. An email containing a link to reset your password, was sent to $emailAddress"),
             actions: [
               TextButton(
                 onPressed: () {
