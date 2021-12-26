@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:moview/screens/intro/login_page.dart';
 import 'package:moview/services.dart';
 import 'package:moview/widgets.dart';
 import 'package:provider/provider.dart';
@@ -73,12 +72,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                       onPressed: () async {
                         await moview.resetPassword(context,
                             emailAddress: resetEmail);
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LoginPage(),
-                          ),
-                        );
                       },
                       isLoading: moview.resetPasswordIsLoading,
                       enableCondition: resetEmail.trim().isEmpty,
